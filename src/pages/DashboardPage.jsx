@@ -332,6 +332,45 @@ export function DashboardPage() {
             Preview tomorrow's reading
           </button>
         )}
+
+        {/* Invite others */}
+        <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+          <button
+            onClick={async () => {
+              const shareData = {
+                title: 'Bible Reading Plan',
+                text: 'Join me in reading through the Bible! This app helps you create a personalized reading plan.',
+                url: window.location.origin + window.location.pathname
+              }
+
+              if (navigator.share && navigator.canShare?.(shareData)) {
+                try {
+                  await navigator.share(shareData)
+                } catch (err) {
+                  // User cancelled or share failed - ignore
+                  if (err.name !== 'AbortError') {
+                    console.error('Share failed:', err)
+                  }
+                }
+              } else {
+                // Fallback: copy link to clipboard
+                try {
+                  await navigator.clipboard.writeText(shareData.url)
+                  alert('Link copied to clipboard!')
+                } catch (err) {
+                  console.error('Copy failed:', err)
+                }
+              }
+            }}
+            className="w-full py-3 flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            Invite Others
+          </button>
+        </div>
       </main>
     </div>
   )
