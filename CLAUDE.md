@@ -16,6 +16,7 @@ A mobile-first React application that helps users read through the Bible on a cu
 - **Routing**: React Router v6 (HashRouter for GitHub Pages)
 - **Deployment**: GitHub Pages via GitHub Actions
 - **PWA**: vite-plugin-pwa with auto-update service worker
+- **Video Generation**: Remotion for creating Bible verse videos
 
 ## Live URL
 https://chrisgorham999.github.io/bibleapp/
@@ -38,6 +39,7 @@ https://chrisgorham999.github.io/bibleapp/
       Select.jsx             - Dropdown select
       Toggle.jsx             - Switch toggle
       RadioGroup.jsx         - Radio button group with cards
+    VerseVideoPreview.jsx    - Remotion player for in-app video preview
   /context
     AuthContext.jsx          - Firebase auth state management
     ThemeContext.jsx         - Dark mode state management
@@ -46,6 +48,10 @@ https://chrisgorham999.github.io/bibleapp/
     SignupPage.jsx           - Account creation
     OnboardingPage.jsx       - 5-step wizard for plan setup
     DashboardPage.jsx        - Main reading interface
+  /remotion
+    index.js                 - Remotion entry point
+    Root.jsx                 - Composition registration
+    BibleVerseVideo.jsx      - Animated verse video component
   /services
     firebase.js              - Firebase init, auth, and Firestore functions
     bibleAPI.js              - API.Bible wrapper for fetching passages
@@ -242,8 +248,34 @@ The GitHub Actions workflow uses secrets for environment variables.
 - Tagline: "Read through the Bible on your own schedule"
 - Consistent branding across auth pages
 
+## Remotion (Video Generation)
+Remotion is installed for creating Bible verse videos programmatically.
+
+### Remotion Files
+- `src/remotion/index.js` - Entry point for Remotion
+- `src/remotion/Root.jsx` - Registers video compositions
+- `src/remotion/BibleVerseVideo.jsx` - Animated Bible verse video component
+- `src/components/VerseVideoPreview.jsx` - In-app video preview using @remotion/player
+
+### Remotion Commands
+```bash
+npm run remotion:studio           # Open Remotion Studio to preview/edit videos
+npm run remotion:render           # Render portrait video (1080x1920)
+npm run remotion:render:landscape # Render landscape video (1920x1080)
+npm run remotion:render:square    # Render square video (1080x1080)
+```
+
+### Video Compositions Available
+- `BibleVerseVideo` - Portrait (1080x1920) - for Instagram Stories, TikTok
+- `BibleVerseVideoLandscape` - Landscape (1920x1080) - for YouTube
+- `BibleVerseVideoSquare` - Square (1080x1080) - for Instagram posts
+
+### Note
+Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands.
+
 ## Recent Session Updates
 - Added Bible icon and app description to LoginPage and SignupPage
 - Fixed date input overflow on mobile (box-sizing, max-width fixes)
 - Added custom duration and "finish by end of year" options to onboarding
 - Added date validation to prevent past date selection
+- Added Remotion for Bible verse video generation

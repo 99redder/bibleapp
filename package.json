@@ -8,13 +8,21 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "deploy": "npm run build && npx gh-pages -d dist"
+    "deploy": "npm run build && npx gh-pages -d dist",
+    "remotion:studio": "remotion studio src/remotion/index.js",
+    "remotion:render": "remotion render src/remotion/index.js BibleVerseVideo out/video.mp4",
+    "remotion:render:portrait": "remotion render src/remotion/index.js BibleVerseVideo out/video-portrait.mp4",
+    "remotion:render:landscape": "remotion render src/remotion/index.js BibleVerseVideoLandscape out/video-landscape.mp4",
+    "remotion:render:square": "remotion render src/remotion/index.js BibleVerseVideoSquare out/video-square.mp4"
   },
   "dependencies": {
+    "@remotion/cli": "^4.0.409",
+    "@remotion/player": "^4.0.409",
     "firebase": "^10.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.1"
+    "react-router-dom": "^6.21.1",
+    "remotion": "^4.0.409"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
