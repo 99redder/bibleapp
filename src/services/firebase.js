@@ -5,7 +5,10 @@ import {
   signInWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
-  onAuthStateChanged
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup
 } from 'firebase/auth'
 import {
   getFirestore,
@@ -34,6 +37,10 @@ const app = initializeApp(firebaseConfig)
 export const auth = getAuth(app)
 export const db = getFirestore(app)
 
+// Auth providers
+const googleProvider = new GoogleAuthProvider()
+const facebookProvider = new FacebookAuthProvider()
+
 // Auth functions
 export const signUp = (email, password) => {
   return createUserWithEmailAndPassword(auth, email, password)
@@ -49,6 +56,14 @@ export const logOut = () => {
 
 export const resetPassword = (email) => {
   return sendPasswordResetEmail(auth, email)
+}
+
+export const signInWithGoogle = () => {
+  return signInWithPopup(auth, googleProvider)
+}
+
+export const signInWithFacebook = () => {
+  return signInWithPopup(auth, facebookProvider)
 }
 
 // User document functions

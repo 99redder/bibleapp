@@ -6,6 +6,8 @@ import {
   logIn,
   logOut,
   resetPassword,
+  signInWithGoogle,
+  signInWithFacebook,
   createUserDocument,
   getUserDocument
 } from '../services/firebase'
@@ -88,6 +90,40 @@ export function AuthProvider({ children }) {
     }
   }
 
+  const loginWithGoogle = async () => {
+    try {
+      setError(null)
+      const { user: firebaseUser } = await signInWithGoogle()
+      // Check if user document exists, create if not
+      let doc = await getUserDocument(firebaseUser.uid)
+      if (!doc) {
+        doc = await createUserDocument(firebaseUser.uid, firebaseUser.email)
+      }
+      setUserDoc(doc)
+      return firebaseUser
+    } catch (err) {
+      setError(getErrorMessage(err.code))
+      throw err
+    }
+  }
+
+  const loginWithFacebook = async () => {
+    try {
+      setError(null)
+      const { user: firebaseUser } = await signInWithFacebook()
+      // Check if user document exists, create if not
+      let doc = await getUserDocument(firebaseUser.uid)
+      if (!doc) {
+        doc = await createUserDocument(firebaseUser.uid, firebaseUser.email)
+      }
+      setUserDoc(doc)
+      return firebaseUser
+    } catch (err) {
+      setError(getErrorMessage(err.code))
+      throw err
+    }
+  }
+
   const refreshUserDoc = async () => {
     if (user) {
       const doc = await getUserDocument(user.uid)
@@ -102,6 +138,8 @@ export function AuthProvider({ children }) {
     error,
     signup,
     login,
+    loginWithGoogle,
+    loginWithFacebook,
     logout,
     sendResetEmail,
     refreshUserDoc,
@@ -131,6 +169,14 @@ function getErrorMessage(code) {
       return 'Too many failed attempts. Please try again later.'
     case 'auth/invalid-credential':
       return 'Invalid email or password.'
+    case 'auth/popup-closed-by-user':
+      return 'Sign-in was cancelled.'
+    case 'auth/account-exists-with-different-credential':
+      return 'An account already exists with this email using a different sign-in method.'
+    case 'auth/popup-blocked':
+      return 'Sign-in popup was blocked. Please allow popups for this site.'
+    case 'auth/cancelled-popup-request':
+      return 'Sign-in was cancelled.'
     default:
       return 'An error occurred. Please try again.'
   }
