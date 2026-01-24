@@ -159,7 +159,7 @@ export function OnboardingPage() {
     switch (currentStep) {
       case 0:
         return (
-          <div className="space-y-4">
+          <div className="space-y-4 pb-48">
             <p className="text-gray-600 dark:text-gray-400">
               Choose when you'd like to begin your reading journey.
             </p>
@@ -281,8 +281,8 @@ export function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8">
-      <div className="max-w-md mx-auto">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8 overflow-visible">
+      <div className="max-w-md mx-auto overflow-visible">
         {/* Progress indicator */}
         <div className="mb-8">
           <div className="flex justify-between mb-2">
