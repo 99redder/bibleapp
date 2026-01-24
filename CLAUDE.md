@@ -224,6 +224,7 @@ The GitHub Actions workflow uses secrets for environment variables.
 - Date picker on iOS uses native spinner modal (works correctly)
 - Date picker on Firefox desktop has limited styling control for greying out past dates
 - Input fields have explicit `box-sizing: border-box` and `max-width: 100%` to prevent overflow on mobile
+- **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse date strings as local time (without the 'Z' suffix). Using `new Date("YYYY-MM-DD")` parses as UTC which causes timezone issues.
 
 ## Vite Configuration (vite.config.js)
 - `base: '/bibleapp/'` - Required for GitHub Pages subdirectory
@@ -285,3 +286,4 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
   - DashboardDemo (7s) - Daily reading experience
 - Fixed ESM module resolution by adding .jsx extensions to imports
 - Demo videos output to `/out/` folder (demo-intro.mp4, demo-onboarding.mp4, demo-dashboard.mp4)
+- Fixed date validation timezone bug - dates were being parsed as UTC instead of local time, preventing today's date from being selected in US timezones

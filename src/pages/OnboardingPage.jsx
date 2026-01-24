@@ -60,7 +60,8 @@ export function OnboardingPage() {
     const selectedDate = e.target.value
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    const selected = new Date(selectedDate)
+    // Parse as local time by appending T00:00:00 (without 'Z')
+    const selected = new Date(selectedDate + 'T00:00:00')
 
     if (selected < today) {
       setError('Please select today or a future date')
@@ -75,7 +76,8 @@ export function OnboardingPage() {
     if (currentStep === 0) {
       const today = new Date()
       today.setHours(0, 0, 0, 0)
-      const selected = new Date(startDate)
+      // Parse as local time by appending T00:00:00 (without 'Z')
+      const selected = new Date(startDate + 'T00:00:00')
       if (selected < today) {
         setError('Please select today or a future date')
         return
