@@ -1,5 +1,9 @@
 # Bible Reading App - Project Context
 
+## IMPORTANT: Deployment Workflow
+**Always push updates via GitHub Desktop** - do not use command line git push.
+After pushing from GitHub Desktop, GitHub Actions automatically builds and deploys to GitHub Pages.
+
 ## Overview
 A mobile-first React application that helps users read through the Bible on a customized schedule. Users sign up, complete an onboarding survey to customize their reading plan, and receive daily reading assignments with progress tracking.
 
@@ -11,9 +15,12 @@ A mobile-first React application that helps users read through the Bible on a cu
 - **State Management**: React Context
 - **Routing**: React Router v6 (HashRouter for GitHub Pages)
 - **Deployment**: GitHub Pages via GitHub Actions
+- **PWA**: vite-plugin-pwa with auto-update service worker
 
 ## Live URL
-https://chrisgorham999.github.io/BibleApp/
+https://chrisgorham999.github.io/bibleapp/
+
+**Note**: URL is lowercase "bibleapp" - repository was renamed from "BibleApp" to "bibleapp"
 
 ## Project Structure
 ```
@@ -55,13 +62,21 @@ https://chrisgorham999.github.io/BibleApp/
 
 ### Authentication
 - Email/password signup and login via Firebase Auth
+- **Google OAuth** login (requires enabling in Firebase Console)
+- **Facebook OAuth** login (requires enabling in Firebase Console + Facebook App)
 - Password reset functionality
 - Protected routes redirect to login
 - Auth state persisted across sessions
 
+### Firebase Console Setup for OAuth
+1. Go to Firebase Console → Authentication → Sign-in method
+2. Enable Google provider
+3. Enable Facebook provider (requires Facebook App ID and Secret)
+4. Add `chrisgorham999.github.io` to Authorized domains
+
 ### Onboarding Survey (5 Steps)
-1. **Start Date** - When to begin the reading plan
-2. **Duration** - 6, 12, 18, or 24 months
+1. **Start Date** - When to begin the reading plan (validates no past dates allowed)
+2. **Duration** - 6, 12, 18, 24 months, "Finish by end of year", or custom (1-120 months)
 3. **Bible Version** - 11 free translations available
 4. **Include Weekends** - Toggle for weekend readings
 5. **Review & Confirm** - Summary before generating plan
@@ -178,14 +193,15 @@ npm run preview    # Preview production build
 ```
 
 ## Deployment
-Automatic via GitHub Actions on push to main branch:
-1. Builds with Vite using GitHub Secrets for env vars
-2. Deploys to GitHub Pages
+**Always use GitHub Desktop to push changes.**
 
-Manual deployment (not recommended):
-```bash
-npm run deploy     # Builds and deploys via gh-pages
-```
+Workflow:
+1. Make code changes
+2. Run `npm run build` to build locally
+3. Commit and push via GitHub Desktop
+4. GitHub Actions automatically deploys to GitHub Pages
+
+The GitHub Actions workflow uses secrets for environment variables.
 
 ## Known Issues / Future Enhancements
 - Email daily portion feature (skipped for now, setting exists but not implemented)
@@ -199,3 +215,23 @@ npm run deploy     # Builds and deploys via gh-pages
 - Firebase functions use setDoc with merge:true to handle missing documents
 - Dark mode preference stored in localStorage
 - API.Bible has rate limits (5,000 requests/day on free tier)
+- Date picker on iOS uses native spinner modal (works correctly)
+- Date picker on Firefox desktop has limited styling control for greying out past dates
+- Input fields have explicit `box-sizing: border-box` and `max-width: 100%` to prevent overflow on mobile
+
+## Vite Configuration (vite.config.js)
+- `base: '/bibleapp/'` - Required for GitHub Pages subdirectory
+- PWA manifest `start_url` and `scope` also set to `/bibleapp/`
+
+## PWA Configuration
+- Service worker auto-updates
+- Bible API responses cached for 24 hours
+- Firebase requests are network-only (not cached)
+- Manifest configured for standalone display
+- Icons: pwa-192x192.png and pwa-512x512.png (placeholder icons - should be replaced)
+
+## CSS Custom Classes (index.css)
+- `.input` - Form inputs with dark mode, box-sizing fixes for mobile
+- `.card` - Card containers with `overflow-visible` for date pickers
+- `.btn`, `.btn-primary`, `.btn-secondary` - Button styles
+- `.scripture-text` - Bible text styling with serif font
