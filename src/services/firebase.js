@@ -78,15 +78,15 @@ export const getUserDocument = async (uid) => {
 
 export const updateUserSettings = async (uid, settings) => {
   const userRef = doc(db, 'users', uid)
-  await updateDoc(userRef, {
+  await setDoc(userRef, {
     settings,
     onboardingComplete: true
-  })
+  }, { merge: true })
 }
 
 export const updateUserProgress = async (uid, progress) => {
   const userRef = doc(db, 'users', uid)
-  await updateDoc(userRef, { progress })
+  await setDoc(userRef, { progress }, { merge: true })
 }
 
 // Reading plan functions
