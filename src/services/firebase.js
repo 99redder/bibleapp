@@ -132,4 +132,30 @@ export const getCompletedDays = async (uid) => {
   return snapshot.docs.map(doc => doc.data())
 }
 
+// Reset user's reading plan (start fresh)
+export const resetReadingPlan = async (uid) => {
+  // Delete all reading plan documents
+  const planRef = collection(db, 'users', uid, 'readingPlan')
+  const snapshot = await getDocs(planRef)
+
+  const batch = writeBatch(db)
+  snapshot.docs.forEach((document) => {
+    batch.delete(document.ref)
+  })
+
+  // Reset user settings and progress
+  const userRef = doc(db, 'users', uid)
+  batch.update(userRef, {
+    onboardingComplete: false,
+    settings: null,
+    progress: {
+      currentDay: 1,
+      completedDays: [],
+      lastReadDate: null
+    }
+  })
+
+  await batch.commit()
+}
+
 export { onAuthStateChanged, Timestamp }

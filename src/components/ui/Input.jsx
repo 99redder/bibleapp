@@ -16,7 +16,7 @@ export function Input({
   return (
     <div className="space-y-1">
       {label && (
-        <label htmlFor={inputId} className="block text-sm font-medium text-gray-700">
+        <label htmlFor={inputId} className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -34,7 +34,7 @@ export function Input({
         className={`input ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
       />
       {error && (
-        <p className="text-sm text-red-500">{error}</p>
+        <p className="text-sm text-red-500 dark:text-red-400">{error}</p>
       )}
     </div>
   )

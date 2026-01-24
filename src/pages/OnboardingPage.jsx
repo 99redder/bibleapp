@@ -100,7 +100,7 @@ export function OnboardingPage() {
       case 0:
         return (
           <div className="space-y-4">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               Choose when you'd like to begin your reading journey.
             </p>
             <Input
@@ -116,7 +116,7 @@ export function OnboardingPage() {
       case 1:
         return (
           <div className="space-y-4">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               How long would you like to take to read through the Bible?
             </p>
             <RadioGroup
@@ -131,7 +131,7 @@ export function OnboardingPage() {
       case 2:
         return (
           <div className="space-y-4">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               Which Bible translation would you prefer?
             </p>
             <Select
@@ -140,7 +140,7 @@ export function OnboardingPage() {
               onChange={(e) => setBibleVersion(e.target.value)}
               options={versionOptions}
             />
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               All versions shown are freely available through API.Bible.
             </p>
           </div>
@@ -149,7 +149,7 @@ export function OnboardingPage() {
       case 3:
         return (
           <div className="space-y-4">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
               Would you like reading assignments on Saturdays and Sundays?
             </p>
             <Toggle
@@ -168,25 +168,25 @@ export function OnboardingPage() {
       case 4:
         return (
           <div className="space-y-4">
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
               Here's a summary of your reading plan:
             </p>
             <div className="space-y-3">
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Start Date</span>
-                <span className="font-medium">{formatDate(new Date(startDate))}</span>
+              <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                <span className="text-gray-600 dark:text-gray-400">Start Date</span>
+                <span className="font-medium text-gray-900 dark:text-white">{formatDate(new Date(startDate))}</span>
               </div>
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Duration</span>
-                <span className="font-medium">{durationMonths} months</span>
+              <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                <span className="text-gray-600 dark:text-gray-400">Duration</span>
+                <span className="font-medium text-gray-900 dark:text-white">{durationMonths} months</span>
               </div>
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Bible Version</span>
-                <span className="font-medium">{BIBLE_VERSIONS[bibleVersion].name}</span>
+              <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                <span className="text-gray-600 dark:text-gray-400">Bible Version</span>
+                <span className="font-medium text-gray-900 dark:text-white">{BIBLE_VERSIONS[bibleVersion].name}</span>
               </div>
-              <div className="flex justify-between py-2 border-b">
-                <span className="text-gray-600">Reading Days</span>
-                <span className="font-medium">
+              <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                <span className="text-gray-600 dark:text-gray-400">Reading Days</span>
+                <span className="font-medium text-gray-900 dark:text-white">
                   {includeWeekends ? 'Every day' : 'Weekdays only'}
                 </span>
               </div>
@@ -200,7 +200,7 @@ export function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 px-4 py-8">
       <div className="max-w-md mx-auto">
         {/* Progress indicator */}
         <div className="mb-8">
@@ -209,26 +209,26 @@ export function OnboardingPage() {
               <div
                 key={step.id}
                 className={`h-2 flex-1 mx-0.5 rounded-full ${
-                  index <= currentStep ? 'bg-primary-600' : 'bg-gray-200'
+                  index <= currentStep ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'
                 }`}
               />
             ))}
           </div>
-          <p className="text-sm text-gray-500 text-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
             Step {currentStep + 1} of {STEPS.length}
           </p>
         </div>
 
         {/* Step content */}
         <div className="card mb-6">
-          <h2 className="text-xl font-semibold mb-4">{STEPS[currentStep].title}</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">{STEPS[currentStep].title}</h2>
           {renderStep()}
         </div>
 
         {/* Error message */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-600">{error}</p>
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           </div>
         )}
 

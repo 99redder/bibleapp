@@ -1,5 +1,6 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { LoginPage } from './pages/LoginPage'
 import { SignupPage } from './pages/SignupPage'
@@ -11,7 +12,7 @@ function AppRoutes() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="animate-spin h-8 w-8 border-4 border-primary-600 border-t-transparent rounded-full" />
       </div>
     )
@@ -72,11 +73,13 @@ function AppRoutes() {
 
 function App() {
   return (
-    <HashRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
-    </HashRouter>
+    <ThemeProvider>
+      <HashRouter>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </HashRouter>
+    </ThemeProvider>
   )
 }
 

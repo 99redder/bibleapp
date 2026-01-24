@@ -84,10 +84,10 @@ export function Calendar({ userDoc, completedDaysData }) {
     <div className="card">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Calendar</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Calendar</h3>
         <button
           onClick={goToToday}
-          className="text-sm text-primary-600 hover:text-primary-700"
+          className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
         >
           Today
         </button>
@@ -97,20 +97,20 @@ export function Calendar({ userDoc, completedDaysData }) {
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={goToPrevMonth}
-          className="p-2 hover:bg-gray-100 rounded-lg"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
           aria-label="Previous month"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <span className="font-medium">{monthName}</span>
+        <span className="font-medium text-gray-900 dark:text-white">{monthName}</span>
         <button
           onClick={goToNextMonth}
-          className="p-2 hover:bg-gray-100 rounded-lg"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
           aria-label="Next month"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -119,7 +119,7 @@ export function Calendar({ userDoc, completedDaysData }) {
       {/* Day headers */}
       <div className="grid grid-cols-7 gap-1 mb-2">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-          <div key={i} className="text-center text-xs font-medium text-gray-500 py-1">
+          <div key={i} className="text-center text-xs font-medium text-gray-500 dark:text-gray-400 py-1">
             {day}
           </div>
         ))}
@@ -131,12 +131,12 @@ export function Calendar({ userDoc, completedDaysData }) {
           <div
             key={i}
             className={`aspect-square flex items-center justify-center text-sm rounded-full
-              ${!day.isCurrentMonth ? 'text-gray-300' : ''}
+              ${!day.isCurrentMonth ? 'text-gray-300 dark:text-gray-600' : 'text-gray-900 dark:text-gray-100'}
               ${day.isToday ? 'ring-2 ring-primary-500' : ''}
               ${day.isCompleted ? 'bg-green-500 text-white' : ''}
               ${day.isPast && !day.isCompleted && !day.isBeforeStart && day.isCurrentMonth
-                ? 'bg-red-100 text-red-600' : ''}
-              ${day.isBeforeStart ? 'text-gray-300' : ''}
+                ? 'bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400' : ''}
+              ${day.isBeforeStart ? 'text-gray-300 dark:text-gray-600' : ''}
             `}
           >
             {day.day}
@@ -145,13 +145,13 @@ export function Calendar({ userDoc, completedDaysData }) {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t text-xs text-gray-500">
+      <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-green-500" />
           <span>Completed</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded-full bg-red-100" />
+          <div className="w-3 h-3 rounded-full bg-red-100 dark:bg-red-900/50" />
           <span>Missed</span>
         </div>
         <div className="flex items-center gap-1">

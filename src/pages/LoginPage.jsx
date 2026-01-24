@@ -46,11 +46,11 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center px-4 py-12 bg-gray-50">
+    <div className="min-h-screen flex flex-col justify-center px-4 py-12 bg-gray-50 dark:bg-gray-900">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-          <p className="mt-2 text-gray-600">Sign in to continue your reading plan</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome Back</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">Sign in to continue your reading plan</p>
         </div>
 
         <div className="card">
@@ -76,14 +76,14 @@ export function LoginPage() {
             />
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
               </div>
             )}
 
             {resetSent && (
-              <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-sm text-green-600">
+              <div className="p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg">
+                <p className="text-sm text-green-600 dark:text-green-400">
                   Password reset email sent! Check your inbox.
                 </p>
               </div>
@@ -98,16 +98,16 @@ export function LoginPage() {
             <button
               type="button"
               onClick={handleResetPassword}
-              className="text-sm text-primary-600 hover:text-primary-700"
+              className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
             >
               Forgot your password?
             </button>
           </div>
         </div>
 
-        <p className="mt-6 text-center text-gray-600">
+        <p className="mt-6 text-center text-gray-600 dark:text-gray-400">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-primary-600 hover:text-primary-700 font-medium">
+          <Link to="/signup" className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium">
             Sign up
           </Link>
         </p>
