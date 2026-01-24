@@ -279,3 +279,9 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 - Added custom duration and "finish by end of year" options to onboarding
 - Added date validation to prevent past date selection
 - Added Remotion for Bible verse video generation
+- Created 3 app demo videos using Remotion:
+  - AppIntroDemo (7s) - App introduction with features
+  - OnboardingDemo (9s) - Setup wizard walkthrough
+  - DashboardDemo (7s) - Daily reading experience
+- Fixed ESM module resolution by adding .jsx extensions to imports
+- Demo videos output to `/out/` folder (demo-intro.mp4, demo-onboarding.mp4, demo-dashboard.mp4)

@@ -13,7 +13,11 @@
     "remotion:render": "remotion render src/remotion/index.js BibleVerseVideo out/video.mp4",
     "remotion:render:portrait": "remotion render src/remotion/index.js BibleVerseVideo out/video-portrait.mp4",
     "remotion:render:landscape": "remotion render src/remotion/index.js BibleVerseVideoLandscape out/video-landscape.mp4",
-    "remotion:render:square": "remotion render src/remotion/index.js BibleVerseVideoSquare out/video-square.mp4"
+    "remotion:render:square": "remotion render src/remotion/index.js BibleVerseVideoSquare out/video-square.mp4",
+    "remotion:demo:intro": "remotion render src/remotion/index.js AppIntroDemo out/demo-intro.mp4",
+    "remotion:demo:onboarding": "remotion render src/remotion/index.js OnboardingDemo out/demo-onboarding.mp4",
+    "remotion:demo:dashboard": "remotion render src/remotion/index.js DashboardDemo out/demo-dashboard.mp4",
+    "remotion:demo:all": "npm run remotion:demo:intro && npm run remotion:demo:onboarding && npm run remotion:demo:dashboard"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.409",
