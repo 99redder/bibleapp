@@ -74,9 +74,20 @@ export function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col justify-center px-4 py-12 bg-gray-50 dark:bg-gray-900">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        {/* Logo and App Info */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Welcome Back</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">Sign in to continue your reading plan</p>
+          <div className="mx-auto w-20 h-20 mb-4 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H6zm0 2h12v16H6V4zm2 2v2h8V6H8zm0 4v2h8v-2H8zm0 4v2h5v-2H8z"/>
+            </svg>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Bible Reading Plan</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
+            Read through the Bible on your own schedule
+          </p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">
+            Create a personalized plan, track your progress, and stay on track with daily readings.
+          </p>
         </div>
 
         <div className="card">
