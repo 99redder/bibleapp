@@ -36,7 +36,7 @@ export function DashboardPage() {
   const loadDashboardData = async () => {
     setLoading(true)
     try {
-      const currentDay = userDoc.progress.currentDay
+      const currentDay = userDoc?.progress?.currentDay || 1
       // Load current day's reading
       const dayData = await getReadingPlanDay(user.uid, currentDay)
       setCurrentDayData(dayData)
@@ -88,7 +88,8 @@ export function DashboardPage() {
 
     setMarkingComplete(true)
     try {
-      await markDayComplete(user.uid, currentDayData.dayNumber, userDoc.progress)
+      const progress = userDoc?.progress || { currentDay: 1, completedDays: [], lastReadDate: null }
+      await markDayComplete(user.uid, currentDayData.dayNumber, progress)
       await refreshUserDoc()
 
       // Load next day's reading

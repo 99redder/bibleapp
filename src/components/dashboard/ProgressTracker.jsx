@@ -12,7 +12,8 @@ export function ProgressTracker({ userDoc }) {
 
   // Calculate expected day based on schedule
   const expectedDay = calculateExpectedDay(startDate, today, settings.includeWeekends)
-  const currentDay = progress.currentDay
+  const currentDay = progress?.currentDay || 1
+  const completedDays = progress?.completedDays || []
 
   // Get status (ahead, behind, or on track)
   const status = calculateProgressStatus(currentDay, expectedDay)
@@ -21,7 +22,7 @@ export function ProgressTracker({ userDoc }) {
   const totalDays = settings.includeWeekends
     ? Math.round(settings.durationMonths * 30.44)
     : Math.round(settings.durationMonths * 22)
-  const completionPercent = Math.min(100, Math.round((progress.completedDays.length / totalDays) * 100))
+  const completionPercent = Math.min(100, Math.round((completedDays.length / totalDays) * 100))
 
   return (
     <div className="card">
@@ -84,13 +85,13 @@ export function ProgressTracker({ userDoc }) {
       <div className="grid grid-cols-2 gap-4 mt-4">
         <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
           <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
-            {progress.completedDays.length}
+            {completedDays.length}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">Days completed</p>
         </div>
         <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
-            {totalDays - progress.completedDays.length}
+            {totalDays - completedDays.length}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">Days remaining</p>
         </div>

@@ -80,7 +80,12 @@ export const updateUserSettings = async (uid, settings) => {
   const userRef = doc(db, 'users', uid)
   await setDoc(userRef, {
     settings,
-    onboardingComplete: true
+    onboardingComplete: true,
+    progress: {
+      currentDay: 1,
+      completedDays: [],
+      lastReadDate: null
+    }
   }, { merge: true })
 }
 
