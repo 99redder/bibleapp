@@ -251,10 +251,10 @@ export function DashboardPage() {
         </div>
       )}
 
-      {/* Click outside to close settings */}
+      {/* Click outside to close settings - z-index below header (z-10) so dropdown remains clickable */}
       {showSettings && (
         <div
-          className="fixed inset-0 z-10"
+          className="fixed inset-0 z-[5]"
           onClick={() => setShowSettings(false)}
         />
       )}
