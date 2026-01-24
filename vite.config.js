@@ -43,8 +43,8 @@ export default defineConfig({
         background_color: '#f9fafb',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/BibleApp/',
-        scope: '/BibleApp/',
+        start_url: '/bibleapp/',
+        scope: '/bibleapp/',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -66,7 +66,7 @@ export default defineConfig({
       }
     })
   ],
-  base: '/BibleApp/',
+  base: '/bibleapp/',
   server: {
     port: 3000,
     open: true
