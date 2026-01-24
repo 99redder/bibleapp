@@ -9,7 +9,9 @@ export function Input({
   disabled = false,
   autoComplete,
   id,
-  name
+  name,
+  min,
+  max
 }) {
   const inputId = id || name || label?.toLowerCase().replace(/\s/g, '-')
 
@@ -31,6 +33,8 @@ export function Input({
         required={required}
         disabled={disabled}
         autoComplete={autoComplete}
+        min={min}
+        max={max}
         className={`input ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
       />
       {error && (

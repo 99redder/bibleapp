@@ -32,10 +32,40 @@ export function OnboardingPage() {
     getTomorrow().toISOString().split('T')[0]
   )
   const [durationMonths, setDurationMonths] = useState('12')
+  const [customMonths, setCustomMonths] = useState('')
   const [bibleVersion, setBibleVersion] = useState('KJV')
   const [includeWeekends, setIncludeWeekends] = useState(true)
 
+  // Calculate months until end of year from start date
+  const getMonthsUntilEndOfYear = () => {
+    const start = new Date(startDate)
+    const endOfYear = new Date(start.getFullYear(), 11, 31)
+    const diffMonths = (endOfYear.getFullYear() - start.getFullYear()) * 12 +
+                       (endOfYear.getMonth() - start.getMonth())
+    return Math.max(1, diffMonths)
+  }
+
+  // Get the actual duration value to use
+  const getActualDuration = () => {
+    if (durationMonths === 'end-of-year') {
+      return getMonthsUntilEndOfYear()
+    }
+    if (durationMonths === 'custom') {
+      return parseInt(customMonths) || 12
+    }
+    return parseInt(durationMonths)
+  }
+
   const handleNext = () => {
+    // Validate custom duration if selected
+    if (currentStep === 1 && durationMonths === 'custom') {
+      const months = parseInt(customMonths)
+      if (!months || months < 1 || months > 120) {
+        setError('Please enter a valid number of months (1-120)')
+        return
+      }
+    }
+    setError(null)
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1)
     }
@@ -52,9 +82,10 @@ export function OnboardingPage() {
     setError(null)
 
     try {
+      const actualDuration = getActualDuration()
       const settings = {
         startDate: Timestamp.fromDate(new Date(startDate)),
-        durationMonths: parseInt(durationMonths),
+        durationMonths: actualDuration,
         bibleVersion,
         includeWeekends,
         emailDailyPortion: false
@@ -63,7 +94,7 @@ export function OnboardingPage() {
       // Generate the reading plan
       const plan = generateReadingPlan({
         startDate: new Date(startDate),
-        durationMonths: parseInt(durationMonths),
+        durationMonths: actualDuration,
         includeWeekends
       })
 
@@ -83,11 +114,16 @@ export function OnboardingPage() {
     }
   }
 
+  const monthsUntilEndOfYear = getMonthsUntilEndOfYear()
+  const chaptersPerDayEndOfYear = Math.ceil(1189 / (monthsUntilEndOfYear * 30))
+
   const durationOptions = [
     { value: '6', label: '6 months', description: 'About 6-7 chapters per day' },
     { value: '12', label: '12 months', description: 'About 3-4 chapters per day' },
     { value: '18', label: '18 months', description: 'About 2-3 chapters per day' },
-    { value: '24', label: '24 months', description: 'About 1-2 chapters per day' }
+    { value: '24', label: '24 months', description: 'About 1-2 chapters per day' },
+    { value: 'end-of-year', label: `Finish by end of year`, description: `${monthsUntilEndOfYear} months - about ${chaptersPerDayEndOfYear} chapters per day` },
+    { value: 'custom', label: 'Custom duration', description: 'Choose your own timeline' }
   ]
 
   const versionOptions = Object.entries(BIBLE_VERSIONS).map(([key, v]) => ({
@@ -108,6 +144,7 @@ export function OnboardingPage() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
               required
             />
           </div>
@@ -125,6 +162,25 @@ export function OnboardingPage() {
               onChange={setDurationMonths}
               options={durationOptions}
             />
+            {durationMonths === 'custom' && (
+              <div className="mt-4 pl-4 border-l-2 border-primary-500">
+                <Input
+                  label="Number of months"
+                  type="number"
+                  value={customMonths}
+                  onChange={(e) => setCustomMonths(e.target.value)}
+                  placeholder="Enter number of months"
+                  min="1"
+                  max="120"
+                  required
+                />
+                {customMonths && parseInt(customMonths) > 0 && (
+                  <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    About {Math.ceil(1189 / (parseInt(customMonths) * 30))} chapters per day
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         )
 
@@ -178,7 +234,7 @@ export function OnboardingPage() {
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                 <span className="text-gray-600 dark:text-gray-400">Duration</span>
-                <span className="font-medium text-gray-900 dark:text-white">{durationMonths} months</span>
+                <span className="font-medium text-gray-900 dark:text-white">{getActualDuration()} months</span>
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                 <span className="text-gray-600 dark:text-gray-400">Bible Version</span>
