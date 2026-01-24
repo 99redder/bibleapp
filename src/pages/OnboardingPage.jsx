@@ -159,7 +159,7 @@ export function OnboardingPage() {
     switch (currentStep) {
       case 0:
         return (
-          <div className="space-y-4 pb-48">
+          <div className="space-y-4 min-h-[300px]">
             <p className="text-gray-600 dark:text-gray-400">
               Choose when you'd like to begin your reading journey.
             </p>

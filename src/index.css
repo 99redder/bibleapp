@@ -48,9 +48,19 @@
            placeholder-gray-400 min-h-[44px];
     @apply dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100
            dark:placeholder-gray-500;
+    box-sizing: border-box;
+    max-width: 100%;
   }
 
-  /* Style date picker to grey out past dates */
+  /* Style date picker */
+  input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
   input[type="date"]::-webkit-calendar-picker-indicator {
     cursor: pointer;
   }
