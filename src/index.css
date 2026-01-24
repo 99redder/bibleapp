@@ -50,6 +50,15 @@
            dark:placeholder-gray-500;
   }
 
+  /* Style date picker to grey out past dates */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+  }
+
+  input[type="date"]:invalid {
+    color: #9ca3af;
+  }
+
   .card {
     @apply bg-white rounded-xl shadow-sm border border-gray-100 p-4 overflow-visible;
     @apply dark:bg-gray-800 dark:border-gray-700;
