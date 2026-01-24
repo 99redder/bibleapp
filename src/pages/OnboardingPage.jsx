@@ -56,7 +56,31 @@ export function OnboardingPage() {
     return parseInt(durationMonths)
   }
 
+  const handleStartDateChange = (e) => {
+    const selectedDate = e.target.value
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const selected = new Date(selectedDate)
+
+    if (selected < today) {
+      setError('Please select today or a future date')
+      return
+    }
+    setError(null)
+    setStartDate(selectedDate)
+  }
+
   const handleNext = () => {
+    // Validate start date on step 0
+    if (currentStep === 0) {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const selected = new Date(startDate)
+      if (selected < today) {
+        setError('Please select today or a future date')
+        return
+      }
+    }
     // Validate custom duration if selected
     if (currentStep === 1 && durationMonths === 'custom') {
       const months = parseInt(customMonths)
@@ -143,9 +167,10 @@ export function OnboardingPage() {
               label="Start Date"
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={handleStartDateChange}
               min={new Date().toISOString().split('T')[0]}
               required
+              error={currentStep === 0 && error ? error : undefined}
             />
           </div>
         )
