@@ -7,14 +7,15 @@ import { Timestamp } from './firebase'
  * @param {Object} settings - User's reading plan settings
  * @param {Date} settings.startDate - When to start reading
  * @param {number} settings.durationMonths - How many months to complete (6, 12, 18, 24)
+ * @param {string} settings.testament - Which testament(s) to read: 'OT', 'NT', or 'BOTH'
  * @param {boolean} settings.includeWeekends - Whether to include Saturday/Sunday
  * @returns {Array} Array of reading day objects
  */
 export function generateReadingPlan(settings) {
-  const { startDate, durationMonths, includeWeekends } = settings
+  const { startDate, durationMonths, testament, includeWeekends } = settings
 
-  // Get all chapters in the Bible (1,189 total)
-  const allChapters = getAllChapters()
+  // Get chapters filtered by testament selection
+  const allChapters = getAllChapters(testament || 'BOTH')
 
   // Calculate total reading days
   const totalDays = getTotalReadingDays(durationMonths, includeWeekends)

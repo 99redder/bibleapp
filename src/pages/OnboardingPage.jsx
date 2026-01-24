@@ -8,12 +8,13 @@ import { Select } from '../components/ui/Select'
 import { Toggle } from '../components/ui/Toggle'
 import { generateReadingPlan } from '../services/readingPlanGenerator'
 import { updateUserSettings, saveReadingPlan, Timestamp } from '../services/firebase'
-import { BIBLE_VERSIONS } from '../utils/bibleStructure'
+import { BIBLE_VERSIONS, TESTAMENTS, getTestamentChapterCount } from '../utils/bibleStructure'
 import { getTomorrow, formatDate } from '../utils/dateHelpers'
 
 const STEPS = [
   { id: 'start-date', title: 'When do you want to start?' },
   { id: 'duration', title: 'Reading timeline' },
+  { id: 'testament', title: 'Which testament(s)?' },
   { id: 'version', title: 'Bible version' },
   { id: 'weekends', title: 'Include weekends?' },
   { id: 'confirm', title: 'Review your plan' }
@@ -33,6 +34,7 @@ export function OnboardingPage() {
   )
   const [durationMonths, setDurationMonths] = useState('12')
   const [customMonths, setCustomMonths] = useState('')
+  const [testament, setTestament] = useState('BOTH')
   const [bibleVersion, setBibleVersion] = useState('KJV')
   const [includeWeekends, setIncludeWeekends] = useState(true)
 
@@ -112,6 +114,7 @@ export function OnboardingPage() {
       const settings = {
         startDate: Timestamp.fromDate(new Date(startDate)),
         durationMonths: actualDuration,
+        testament: testament,
         bibleVersion,
         includeWeekends,
         emailDailyPortion: false
@@ -121,6 +124,7 @@ export function OnboardingPage() {
       const plan = generateReadingPlan({
         startDate: new Date(startDate),
         durationMonths: actualDuration,
+        testament: testament,
         includeWeekends
       })
 
@@ -140,14 +144,21 @@ export function OnboardingPage() {
     }
   }
 
+  const totalChapters = getTestamentChapterCount(testament)
   const monthsUntilEndOfYear = getMonthsUntilEndOfYear()
-  const chaptersPerDayEndOfYear = Math.ceil(1189 / (monthsUntilEndOfYear * 30))
+  const chaptersPerDayEndOfYear = Math.ceil(totalChapters / (monthsUntilEndOfYear * 30))
+
+  const testamentOptions = [
+    { value: 'BOTH', label: 'Full Bible', description: 'Old and New Testament - 1,189 chapters' },
+    { value: 'OT', label: 'Old Testament only', description: 'Genesis through Malachi - 929 chapters' },
+    { value: 'NT', label: 'New Testament only', description: 'Matthew through Revelation - 260 chapters' }
+  ]
 
   const durationOptions = [
-    { value: '6', label: '6 months', description: 'About 6-7 chapters per day' },
-    { value: '12', label: '12 months', description: 'About 3-4 chapters per day' },
-    { value: '18', label: '18 months', description: 'About 2-3 chapters per day' },
-    { value: '24', label: '24 months', description: 'About 1-2 chapters per day' },
+    { value: '6', label: '6 months', description: `About ${Math.ceil(totalChapters / (6 * 30))} chapters per day` },
+    { value: '12', label: '12 months', description: `About ${Math.ceil(totalChapters / (12 * 30))} chapters per day` },
+    { value: '18', label: '18 months', description: `About ${Math.ceil(totalChapters / (18 * 30))} chapters per day` },
+    { value: '24', label: '24 months', description: `About ${Math.ceil(totalChapters / (24 * 30))} chapters per day` },
     { value: 'end-of-year', label: `Finish by end of year`, description: `${monthsUntilEndOfYear} months - about ${chaptersPerDayEndOfYear} chapters per day` },
     { value: 'custom', label: 'Custom duration', description: 'Choose your own timeline' }
   ]
@@ -203,7 +214,7 @@ export function OnboardingPage() {
                 />
                 {customMonths && parseInt(customMonths) > 0 && (
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    About {Math.ceil(1189 / (parseInt(customMonths) * 30))} chapters per day
+                    About {Math.ceil(totalChapters / (parseInt(customMonths) * 30))} chapters per day
                   </p>
                 )}
               </div>
@@ -212,6 +223,21 @@ export function OnboardingPage() {
         )
 
       case 2:
+        return (
+          <div className="space-y-4">
+            <p className="text-gray-600 dark:text-gray-400">
+              Choose which part(s) of the Bible you'd like to read.
+            </p>
+            <RadioGroup
+              name="testament"
+              value={testament}
+              onChange={setTestament}
+              options={testamentOptions}
+            />
+          </div>
+        )
+
+      case 3:
         return (
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400">
@@ -229,7 +255,7 @@ export function OnboardingPage() {
           </div>
         )
 
-      case 3:
+      case 4:
         return (
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400">
@@ -248,7 +274,7 @@ export function OnboardingPage() {
           </div>
         )
 
-      case 4:
+      case 5:
         return (
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -262,6 +288,12 @@ export function OnboardingPage() {
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                 <span className="text-gray-600 dark:text-gray-400">Duration</span>
                 <span className="font-medium text-gray-900 dark:text-white">{getActualDuration()} months</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                <span className="text-gray-600 dark:text-gray-400">Reading Plan</span>
+                <span className="font-medium text-gray-900 dark:text-white">
+                  {testament === 'BOTH' ? 'Full Bible' : testament === 'OT' ? 'Old Testament' : 'New Testament'}
+                </span>
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                 <span className="text-gray-600 dark:text-gray-400">Bible Version</span>
