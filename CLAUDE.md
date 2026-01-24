@@ -1,8 +1,8 @@
 # Bible Reading App - Project Context
 
-## IMPORTANT: Deployment Workflow
-**Always push updates via GitHub Desktop** - do not use command line git push.
-After pushing from GitHub Desktop, GitHub Actions automatically builds and deploys to GitHub Pages.
+## IMPORTANT: Workflow Reminders
+1. **Deployment**: Always push updates via GitHub Desktop - do not use command line git push. After pushing, GitHub Actions automatically builds and deploys to GitHub Pages.
+2. **Context**: Always update this claude.md file with updated context at the end of each session.
 
 ## Overview
 A mobile-first React application that helps users read through the Bible on a customized schedule. Users sign up, complete an onboarding survey to customize their reading plan, and receive daily reading assignments with progress tracking.
@@ -235,3 +235,15 @@ The GitHub Actions workflow uses secrets for environment variables.
 - `.card` - Card containers with `overflow-visible` for date pickers
 - `.btn`, `.btn-primary`, `.btn-secondary` - Button styles
 - `.scripture-text` - Bible text styling with serif font
+
+## UI/Branding
+- Login and Signup pages have Bible icon logo (book with text lines SVG)
+- App name: "Bible Reading Plan"
+- Tagline: "Read through the Bible on your own schedule"
+- Consistent branding across auth pages
+
+## Recent Session Updates
+- Added Bible icon and app description to LoginPage and SignupPage
+- Fixed date input overflow on mobile (box-sizing, max-width fixes)
+- Added custom duration and "finish by end of year" options to onboarding
+- Added date validation to prevent past date selection
