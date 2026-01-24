@@ -1,6 +1,6 @@
 import { BIBLE_VERSIONS, getPassageId } from '../utils/bibleStructure'
 
-const API_BASE = 'https://api.scripture.api.bible/v1'
+const API_BASE = 'https://rest.api.bible/v1'
 const API_KEY = import.meta.env.VITE_BIBLE_API_KEY
 
 /**
