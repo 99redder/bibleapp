@@ -181,6 +181,19 @@ export function LoginPage() {
             Sign up
           </Link>
         </p>
+
+        {/* Footer links */}
+        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-center text-xs text-gray-500 dark:text-gray-400">
+            <Link to="/privacy" className="hover:text-primary-600 dark:hover:text-primary-400">
+              Privacy Policy
+            </Link>
+            {' · '}
+            <Link to="/terms" className="hover:text-primary-600 dark:hover:text-primary-400">
+              Terms of Service
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   )
