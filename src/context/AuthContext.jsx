@@ -7,7 +7,6 @@ import {
   logOut,
   resetPassword,
   signInWithGoogle,
-  signInWithFacebook,
   createUserDocument,
   getUserDocument
 } from '../services/firebase'
@@ -107,23 +106,6 @@ export function AuthProvider({ children }) {
     }
   }
 
-  const loginWithFacebook = async () => {
-    try {
-      setError(null)
-      const { user: firebaseUser } = await signInWithFacebook()
-      // Check if user document exists, create if not
-      let doc = await getUserDocument(firebaseUser.uid)
-      if (!doc) {
-        doc = await createUserDocument(firebaseUser.uid, firebaseUser.email)
-      }
-      setUserDoc(doc)
-      return firebaseUser
-    } catch (err) {
-      setError(getErrorMessage(err.code))
-      throw err
-    }
-  }
-
   const refreshUserDoc = async () => {
     if (user) {
       const doc = await getUserDocument(user.uid)
@@ -139,7 +121,6 @@ export function AuthProvider({ children }) {
     signup,
     login,
     loginWithGoogle,
-    loginWithFacebook,
     logout,
     sendResetEmail,
     refreshUserDoc,

@@ -7,7 +7,6 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged,
   GoogleAuthProvider,
-  FacebookAuthProvider,
   signInWithPopup
 } from 'firebase/auth'
 import {
@@ -39,7 +38,6 @@ export const db = getFirestore(app)
 
 // Auth providers
 const googleProvider = new GoogleAuthProvider()
-const facebookProvider = new FacebookAuthProvider()
 
 // Auth functions
 export const signUp = (email, password) => {
@@ -60,10 +58,6 @@ export const resetPassword = (email) => {
 
 export const signInWithGoogle = () => {
   return signInWithPopup(auth, googleProvider)
-}
-
-export const signInWithFacebook = () => {
-  return signInWithPopup(auth, facebookProvider)
 }
 
 // User document functions

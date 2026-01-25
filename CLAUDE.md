@@ -73,7 +73,6 @@ A mobile-first React application that helps users read through the Bible on a cu
 ### Authentication
 - Email/password signup and login via Firebase Auth
 - **Google OAuth** login (requires enabling in Firebase Console)
-- **Facebook OAuth** login (requires enabling in Firebase Console + Facebook App)
 - Password reset functionality
 - Protected routes redirect to login
 - Auth state persisted across sessions
@@ -81,8 +80,7 @@ A mobile-first React application that helps users read through the Bible on a cu
 ### Firebase Console Setup for OAuth
 1. Go to Firebase Console → Authentication → Sign-in method
 2. Enable Google provider
-3. Enable Facebook provider (requires Facebook App ID and Secret)
-4. Add `chrisgorham999.github.io` to Authorized domains
+3. Add your domain(s) to Authorized domains (e.g., `www.bibleplannerapp.com`)
 
 ### Onboarding Survey (5 Steps)
 1. **Start Date** - When to begin the reading plan (validates no past dates allowed)
@@ -301,3 +299,7 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
   - Updated CNAME to www.bibleplannerapp.com
   - Site now works at http://www.bibleplannerapp.com
   - HTTPS pending Let's Encrypt certificate provisioning (12-48 hours)
+- **Removed Facebook OAuth (2026-01-25)**:
+  - Removed Facebook login option from LoginPage and SignupPage
+  - Removed FacebookAuthProvider from firebase.js
+  - Only Google OAuth and email/password authentication remain
