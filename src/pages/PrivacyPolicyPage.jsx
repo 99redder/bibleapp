@@ -169,7 +169,7 @@ export function PrivacyPolicyPage() {
                 href="mailto:privacy@bibleplannerapp.com"
                 className="text-primary-600 hover:text-primary-700 dark:text-primary-400"
               >
-                privacy@bibleplannerapp.com
+                chris.gorham451@gmail.com
               </a>
             </p>
           </section>
