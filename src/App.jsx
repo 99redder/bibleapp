@@ -6,6 +6,8 @@ import { LoginPage } from './pages/LoginPage'
 import { SignupPage } from './pages/SignupPage'
 import { OnboardingPage } from './pages/OnboardingPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage'
+import { TermsOfServicePage } from './pages/TermsOfServicePage'
 
 function AppRoutes() {
   const { user, userDoc, loading } = useAuth()
@@ -29,6 +31,8 @@ function AppRoutes() {
         path="/signup"
         element={user ? <Navigate to="/dashboard" replace /> : <SignupPage />}
       />
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms" element={<TermsOfServicePage />} />
 
       {/* Protected routes */}
       <Route
