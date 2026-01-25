@@ -18,10 +18,14 @@ A mobile-first React application that helps users read through the Bible on a cu
 - **PWA**: vite-plugin-pwa with auto-update service worker
 - **Video Generation**: Remotion for creating Bible verse videos
 
-## Live URL
-https://chrisgorham999.github.io/bibleapp/
+## Live URLs
+**Primary (Custom Domain)**: http://www.bibleplannerapp.com (HTTPS pending Let's Encrypt certificate)
+**Fallback (GitHub Pages)**: https://chrisgorham999.github.io/bibleapp/
 
-**Note**: URL is lowercase "bibleapp" - repository was renamed from "BibleApp" to "bibleapp"
+**Notes**:
+- Custom domain registered: www.bibleplannerapp.com
+- Repository was renamed from "BibleApp" to "bibleapp"
+- HTTPS will be available 12-48 hours after DNS propagation
 
 ## Project Structure
 ```
@@ -218,6 +222,7 @@ The GitHub Actions workflow uses secrets for environment variables.
 
 ## Important Notes
 - Uses HashRouter for GitHub Pages compatibility (URLs have #)
+- Custom domain configured with CNAME file in `/public/CNAME`
 - Firebase functions use setDoc with merge:true to handle missing documents
 - Dark mode preference stored in localStorage
 - API.Bible has rate limits (5,000 requests/day on free tier)
@@ -227,8 +232,9 @@ The GitHub Actions workflow uses secrets for environment variables.
 - **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse date strings as local time (without the 'Z' suffix). Using `new Date("YYYY-MM-DD")` parses as UTC which causes timezone issues.
 
 ## Vite Configuration (vite.config.js)
-- `base: '/bibleapp/'` - Required for GitHub Pages subdirectory
-- PWA manifest `start_url` and `scope` also set to `/bibleapp/`
+- `base: '/'` - Root path for custom domain (bibleplanapp.com)
+- PWA manifest `start_url` and `scope` set to `/`
+- **Note**: Previously was `/bibleapp/` for subdirectory hosting at chrisgorham999.github.io/bibleapp/
 
 ## PWA Configuration
 - Service worker auto-updates
@@ -287,3 +293,11 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 - Fixed ESM module resolution by adding .jsx extensions to imports
 - Demo videos output to `/out/` folder (demo-intro.mp4, demo-onboarding.mp4, demo-dashboard.mp4)
 - Fixed date validation timezone bug - dates were being parsed as UTC instead of local time, preventing today's date from being selected in US timezones
+- **Custom Domain Setup (2026-01-24)**:
+  - Registered custom domain: bibleplanapp.com (later changed to www.bibleplannerapp.com)
+  - Changed Vite base path from `/bibleapp/` to `/` in vite.config.js
+  - Updated PWA manifest start_url and scope from `/bibleapp/` to `/`
+  - Created `/public/CNAME` file with domain for GitHub Pages
+  - Updated CNAME to www.bibleplannerapp.com
+  - Site now works at http://www.bibleplannerapp.com
+  - HTTPS pending Let's Encrypt certificate provisioning (12-48 hours)
