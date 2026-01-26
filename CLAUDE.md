@@ -107,14 +107,16 @@ A mobile-first React application that helps users read through the Bible on a cu
 ## Firebase Configuration
 
 ### Environment Variables (.env)
+**Note**: Actual values are stored in `.env` file (not committed to git) and GitHub Secrets. Replace placeholders below with your own API keys.
+
 ```
-VITE_FIREBASE_API_KEY=AIzaSyCWCMaofFbla3ea7PsTsnlTBgAJaA6FPYw
-VITE_FIREBASE_AUTH_DOMAIN=bibleapp-f097a.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=bibleapp-f097a
-VITE_FIREBASE_STORAGE_BUCKET=bibleapp-f097a.firebasestorage.app
-VITE_FIREBASE_MESSAGING_SENDER_ID=311938331759
-VITE_FIREBASE_APP_ID=1:311938331759:web:58651c2fd7d9048a84499a
-VITE_BIBLE_API_KEY=8gLNsKSdnTpTcHmC2bdoL
+VITE_FIREBASE_API_KEY=your_firebase_api_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project-id.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_firebase_app_id
+VITE_BIBLE_API_KEY=your_bible_api_key_here
 ```
 
 ### GitHub Secrets (for deployment)
