@@ -176,10 +176,10 @@ export function TermsOfServicePage() {
             <p className="text-gray-700 dark:text-gray-300">
               If you have questions about these Terms of Service, please contact us at:{' '}
               <a
-                href="mailto:redonx99@outlook.com"
+                href="mailto:redonx99@gmail.com"
                 className="text-primary-600 hover:text-primary-700 dark:text-primary-400"
               >
-                redonx99@outlook.com
+                redonx99@gmail.com
               </a>
             </p>
           </section>
