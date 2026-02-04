@@ -166,10 +166,10 @@ export function PrivacyPolicyPage() {
             <p className="text-gray-700 dark:text-gray-300">
               If you have questions about this Privacy Policy, please contact us at:{' '}
               <a
-                href="mailto:privacy@bibleplannerapp.com"
+                href="mailto:redonx99@outlook.com"
                 className="text-primary-600 hover:text-primary-700 dark:text-primary-400"
               >
-                chris.gorham451@gmail.com
+                redonx99@outlook.com
               </a>
             </p>
           </section>
