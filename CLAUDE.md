@@ -20,7 +20,7 @@ A mobile-first React application that helps users read through the Bible on a cu
 
 ## Live URLs
 **Primary (Custom Domain)**: http://www.bibleplannerapp.com (HTTPS pending Let's Encrypt certificate)
-**Fallback (GitHub Pages)**: https://chrisgorham999.github.io/bibleapp/
+**Fallback (GitHub Pages)**: https://99redder.github.io/bibleapp/
 
 **Notes**:
 - Custom domain registered: www.bibleplannerapp.com
@@ -234,7 +234,7 @@ The GitHub Actions workflow uses secrets for environment variables.
 ## Vite Configuration (vite.config.js)
 - `base: '/'` - Root path for custom domain (bibleplanapp.com)
 - PWA manifest `start_url` and `scope` set to `/`
-- **Note**: Previously was `/bibleapp/` for subdirectory hosting at chrisgorham999.github.io/bibleapp/
+- **Note**: Previously was `/bibleapp/` for subdirectory hosting at 99redder.github.io/bibleapp/
 
 ## PWA Configuration
 - Service worker auto-updates
