@@ -146,7 +146,24 @@ export function DashboardPage() {
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Bible Reading</h1>
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            {/* Bible icon */}
+            <svg
+              className="w-6 h-6 text-primary-600 dark:text-primary-400"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              {/* Simple book icon */}
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 0 4 19.5z" />
+            </svg>
+            <span>Your Bible Reading Plan</span>
+          </h1>
           <div className="flex items-center gap-2">
             {/* Dark mode toggle */}
             <button
