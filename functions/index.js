@@ -1,15 +1,18 @@
 import { onRequest } from 'firebase-functions/v2/https'
+import { defineSecret } from 'firebase-functions/params'
 
 const API_BASE = 'https://rest.api.bible/v1'
+const BIBLE_API_KEY = defineSecret('BIBLE_API_KEY')
 
 export const bibleApi = onRequest(
   {
     region: 'us-central1',
-    cors: true
+    cors: true,
+    secrets: [BIBLE_API_KEY]
   },
   async (req, res) => {
     try {
-      const apiKey = process.env.BIBLE_API_KEY
+      const apiKey = BIBLE_API_KEY.value()
       if (!apiKey) {
         res.status(500).json({ error: 'Server not configured: missing BIBLE_API_KEY' })
         return
