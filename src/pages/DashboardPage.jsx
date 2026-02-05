@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import { ReadingCard } from '../components/dashboard/ReadingCard'
@@ -351,7 +351,7 @@ export function DashboardPage() {
         )}
 
         {/* Invite others */}
-        <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="pt-6 border-t border-gray-200 dark:border-gray-700 space-y-3">
           <button
             onClick={async () => {
               const shareData = {
@@ -387,6 +387,31 @@ export function DashboardPage() {
             </svg>
             Invite Others
           </button>
+
+          <div className="flex items-center justify-center gap-4 text-sm">
+            <Link
+              to="/privacy"
+              className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              Privacy Policy
+            </Link>
+            <span className="text-gray-300 dark:text-gray-600">•</span>
+            <Link
+              to="/terms"
+              className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              Terms of Service
+            </Link>
+            <span className="text-gray-300 dark:text-gray-600">•</span>
+            <a
+              href="https://github.com/99redder"
+              target="_blank"
+              rel="noreferrer"
+              className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              GitHub
+            </a>
+          </div>
         </div>
       </main>
     </div>
