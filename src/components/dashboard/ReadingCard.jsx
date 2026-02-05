@@ -9,6 +9,13 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [expanded, setExpanded] = useState(true)
+  const [lineSpacing, setLineSpacing] = useState(() => {
+    try {
+      return localStorage.getItem('scriptureLineSpacing') || 'double'
+    } catch {
+      return 'double'
+    }
+  })
 
   useEffect(() => {
     if (dayData?.passages && isAPIConfigured()) {
@@ -18,6 +25,14 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
       setLoading(false)
     }
   }, [dayData, bibleVersion])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('scriptureLineSpacing', lineSpacing)
+    } catch {
+      // ignore
+    }
+  }, [lineSpacing])
 
   const loadPassages = async () => {
     setLoading(true)
@@ -50,7 +65,7 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
   return (
     <div className="card">
       {/* Header */}
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex justify-between items-start mb-4 gap-3">
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400">Day {dayData.dayNumber}</p>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{passageTitle}</h2>
@@ -58,20 +73,49 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
             {scheduledDate && formatDate(scheduledDate)}
           </p>
         </div>
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-          aria-label={expanded ? 'Collapse' : 'Expand'}
-        >
-          <svg
-            className={`w-5 h-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+
+        <div className="flex items-center gap-2">
+          {/* Line spacing toggle */}
+          <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            <button
+              type="button"
+              onClick={() => setLineSpacing('single')}
+              className={`px-2 py-1 text-xs rounded-md transition-colors ${lineSpacing === 'single'
+                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+              }`}
+              aria-pressed={lineSpacing === 'single'}
+            >
+              Single
+            </button>
+            <button
+              type="button"
+              onClick={() => setLineSpacing('double')}
+              className={`px-2 py-1 text-xs rounded-md transition-colors ${lineSpacing === 'double'
+                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+              }`}
+              aria-pressed={lineSpacing === 'double'}
+            >
+              Double
+            </button>
+          </div>
+
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            aria-label={expanded ? 'Collapse' : 'Expand'}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
+            <svg
+              className={`w-5 h-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Content */}
@@ -96,7 +140,7 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
               {passages.map((passage, index) => (
                 <div key={index} className="mb-6 last:mb-0">
                   <h3 className="font-medium text-gray-900 dark:text-white mb-2">{passage.reference}</h3>
-                  <div className="scripture-text whitespace-pre-wrap">
+                  <div className={`scripture-text whitespace-pre-wrap ${lineSpacing === 'single' ? 'leading-normal' : 'leading-loose'}`}>
                     {passage.content}
                   </div>
                 </div>

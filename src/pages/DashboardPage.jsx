@@ -152,21 +152,29 @@ export function DashboardPage() {
               <span className="block">Reading Plan</span>
             </span>
 
-            {/* Bible icon */}
-            <svg
-              className="w-10 h-10 text-primary-600 dark:text-primary-400 flex-shrink-0"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              {/* Simple book icon */}
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-              <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 0 4 19.5z" />
-            </svg>
+            {/* Logo mark + wordmark */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Bible icon */}
+              <svg
+                className="w-10 h-10 text-primary-600 dark:text-primary-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                {/* Simple book icon */}
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 0 4 19.5z" />
+              </svg>
+
+              {/* Small wordmark */}
+              <span className="text-xs font-semibold tracking-wide text-primary-700 dark:text-primary-300 select-none">
+                bibleplannerapp.com
+              </span>
+            </div>
           </h1>
           <div className="flex items-center gap-2">
             {/* Dark mode toggle */}
