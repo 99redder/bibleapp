@@ -8,6 +8,10 @@
     ],
     "rewrites": [
       {
+        "source": "/api/bible/**",
+        "function": "bibleApi"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
@@ -34,7 +38,7 @@
           },
           {
             "key": "Content-Security-Policy",
-            "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebase.googleapis.com https://rest.api.bible; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+            "value": "default-src 'self'; script-src 'self' https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firestore.googleapis.com https://firebase.googleapis.com https://www.google.com https://www.gstatic.com; frame-src 'self' https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'self'"
           }
         ]
       }
@@ -42,5 +46,8 @@
   },
   "firestore": {
     "rules": "firestore.rules"
+  },
+  "functions": {
+    "source": "functions"
   }
 }

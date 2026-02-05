@@ -21,7 +21,7 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
     if (dayData?.passages && isAPIConfigured()) {
       loadPassages()
     } else if (!isAPIConfigured()) {
-      setError('Bible API not configured. Add VITE_BIBLE_API_KEY to your .env file.')
+      setError('Bible service is not available right now. Please try again later.')
       setLoading(false)
     }
   }, [dayData, bibleVersion])

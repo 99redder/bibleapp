@@ -1,7 +1,10 @@
 import { BIBLE_VERSIONS, getPassageId } from '../utils/bibleStructure'
 
-const API_BASE = 'https://rest.api.bible/v1'
-const API_KEY = import.meta.env.VITE_BIBLE_API_KEY
+// Use a server-side proxy so the API.Bible key is not shipped to clients.
+// If hosted on Firebase Hosting, you can use the relative /api/bible rewrite.
+// If hosted elsewhere (e.g. GitHub Pages), set VITE_BIBLE_PROXY_BASE to a full URL.
+const API_BASE = import.meta.env.VITE_BIBLE_PROXY_BASE || '/api/bible'
+
 
 /**
  * Fetch a Bible passage from API.Bible
@@ -16,12 +19,7 @@ export async function fetchPassage(versionKey, bookAbbrev, chapter) {
 
   try {
     const response = await fetch(
-      `${API_BASE}/bibles/${version.id}/chapters/${passageId}?content-type=text&include-notes=false&include-titles=true&include-chapter-numbers=false&include-verse-numbers=true`,
-      {
-        headers: {
-          'api-key': API_KEY
-        }
-      }
+      `${API_BASE}/bibles/${version.id}/chapters/${passageId}?content-type=text&include-notes=false&include-titles=true&include-chapter-numbers=false&include-verse-numbers=true`
     )
 
     if (!response.ok) {
@@ -76,7 +74,8 @@ function cleanPassageContent(content) {
  * @returns {boolean} True if API is configured
  */
 export function isAPIConfigured() {
-  return Boolean(API_KEY)
+  // The proxy is always "configured" client-side.
+  return true
 }
 
 /**

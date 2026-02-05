@@ -116,7 +116,7 @@ VITE_FIREBASE_PROJECT_ID=your-project-id
 VITE_FIREBASE_STORAGE_BUCKET=your-project-id.firebasestorage.app
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
 VITE_FIREBASE_APP_ID=your_firebase_app_id
-VITE_BIBLE_API_KEY=your_bible_api_key_here
+VITE_BIBLE_PROXY_BASE=https://bibleapp-f097a.web.app/api/bible
 ```
 
 ### GitHub Secrets (for deployment)
