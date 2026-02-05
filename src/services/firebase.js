@@ -37,9 +37,10 @@ const app = initializeApp(firebaseConfig)
 
 // App Check (recommended): configure in Firebase Console and set VITE_FIREBASE_APPCHECK_SITE_KEY.
 const appCheckSiteKey = import.meta.env.VITE_FIREBASE_APPCHECK_SITE_KEY
+export let appCheck = null
 if (appCheckSiteKey) {
   try {
-    initializeAppCheck(app, {
+    appCheck = initializeAppCheck(app, {
       provider: new ReCaptchaV3Provider(appCheckSiteKey),
       isTokenAutoRefreshEnabled: true
     })
