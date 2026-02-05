@@ -36,7 +36,7 @@ export async function fetchPassage(versionKey, bookAbbrev, chapter) {
     }
 
     const response = await fetch(
-      `${API_BASE}/bibles/${version.id}/chapters/${passageId}?content-type=text&include-notes=false&include-titles=true&include-chapter-numbers=false&include-chapter-numbers=false&include-verse-numbers=true`,
+      `${API_BASE}/bibles/${version.id}/chapters/${passageId}?content-type=text&include-notes=false&include-titles=true&include-chapter-numbers=false&include-verse-numbers=true`,
       { headers }
     )
 
