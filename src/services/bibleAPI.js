@@ -1,6 +1,6 @@
 import { BIBLE_VERSIONS, getPassageId } from '../utils/bibleStructure'
 import { getToken } from 'firebase/app-check'
-import { appCheck } from './firebase'
+import { appCheck, auth } from './firebase'
 
 // Use a server-side proxy so the API.Bible key is not shipped to clients.
 // If hosted on Firebase Hosting, you can use the relative /api/bible rewrite.
@@ -22,8 +22,17 @@ export async function fetchPassage(versionKey, bookAbbrev, chapter) {
   try {
     const headers = {}
 
-    // When App Check enforcement is enabled for Functions, requests must include a valid token.
-    // Firebase SDK does not automatically attach App Check tokens to arbitrary fetch calls.
+    // Require Firebase Auth for the proxy
+    const user = auth.currentUser
+    if (user) {
+      try {
+        headers.Authorization = `Bearer ${await user.getIdToken()}`
+      } catch (err) {
+        console.warn('Failed to get auth token:', err)
+      }
+    }
+
+    // Optional: attach App Check token if available
     if (appCheck) {
       try {
         const token = await getToken(appCheck, false)

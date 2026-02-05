@@ -1,8 +1,13 @@
 import { onRequest } from 'firebase-functions/v2/https'
 import { defineSecret } from 'firebase-functions/params'
+import * as admin from 'firebase-admin'
 
 const API_BASE = 'https://rest.api.bible/v1'
 const BIBLE_API_KEY = defineSecret('BIBLE_API_KEY')
+
+if (!admin.apps.length) {
+  admin.initializeApp()
+}
 
 export const bibleApi = onRequest(
   {
@@ -12,6 +17,22 @@ export const bibleApi = onRequest(
   },
   async (req, res) => {
     try {
+      // Require Firebase Auth
+      const authHeader = req.get('authorization') || ''
+      const match = authHeader.match(/^Bearer\s+(.+)$/i)
+      const idToken = match?.[1]
+      if (!idToken) {
+        res.status(401).json({ error: 'Missing Authorization bearer token' })
+        return
+      }
+
+      try {
+        await admin.auth().verifyIdToken(idToken)
+      } catch {
+        res.status(401).json({ error: 'Invalid auth token' })
+        return
+      }
+
       const apiKey = BIBLE_API_KEY.value()
       if (!apiKey) {
         res.status(500).json({ error: 'Server not configured: missing BIBLE_API_KEY' })
