@@ -146,10 +146,15 @@ export function DashboardPage() {
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl sm:text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2 leading-tight">
+          <h1 className="text-xl sm:text-xl font-bold text-gray-900 dark:text-white flex items-center gap-3 leading-tight">
+            <span className="block text-center">
+              <span className="block">Your Bible</span>
+              <span className="block">Reading Plan</span>
+            </span>
+
             {/* Bible icon */}
             <svg
-              className="w-6 h-6 text-primary-600 dark:text-primary-400 flex-shrink-0"
+              className="w-10 h-10 text-primary-600 dark:text-primary-400 flex-shrink-0"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -162,11 +167,6 @@ export function DashboardPage() {
               <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
               <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 0 4 19.5z" />
             </svg>
-
-            <span className="block text-center">
-              <span className="block">Your Bible</span>
-              <span className="block">Reading Plan</span>
-            </span>
           </h1>
           <div className="flex items-center gap-2">
             {/* Dark mode toggle */}
