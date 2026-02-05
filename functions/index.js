@@ -1,12 +1,13 @@
 import { onRequest } from 'firebase-functions/v2/https'
 import { defineSecret } from 'firebase-functions/params'
-import * as admin from 'firebase-admin'
+import { initializeApp, getApps } from 'firebase-admin/app'
+import { getAuth } from 'firebase-admin/auth'
 
 const API_BASE = 'https://rest.api.bible/v1'
 const BIBLE_API_KEY = defineSecret('BIBLE_API_KEY')
 
-if (!admin.apps.length) {
-  admin.initializeApp()
+if (!getApps().length) {
+  initializeApp()
 }
 
 export const bibleApi = onRequest(
@@ -27,7 +28,7 @@ export const bibleApi = onRequest(
       }
 
       try {
-        await admin.auth().verifyIdToken(idToken)
+        await getAuth().verifyIdToken(idToken)
       } catch {
         res.status(401).json({ error: 'Invalid auth token' })
         return
