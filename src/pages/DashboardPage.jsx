@@ -407,7 +407,7 @@ export function DashboardPage() {
               href="https://github.com/99redder"
               target="_blank"
               rel="noreferrer"
-              className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
             >
               App created by Red
             </a>
