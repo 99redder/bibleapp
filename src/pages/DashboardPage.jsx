@@ -156,7 +156,7 @@ export function DashboardPage() {
             <div className="flex items-center gap-2 flex-shrink-0">
               {/* Bible icon */}
               <svg
-                className="w-10 h-10 text-primary-600 dark:text-primary-400"
+                className="w-8 h-8 text-primary-600 dark:text-primary-400"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -170,9 +170,11 @@ export function DashboardPage() {
                 <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 0 4 19.5z" />
               </svg>
 
-              {/* Small wordmark */}
-              <span className="text-xs font-semibold tracking-wide text-primary-700 dark:text-primary-300 select-none underline underline-offset-2">
-                bibleplannerapp.com
+              {/* Compact wordmark */}
+              <span className="text-[10px] leading-[1.05] font-serif font-semibold text-primary-700 dark:text-primary-300 select-none">
+                <span className="block">Bible</span>
+                <span className="block">Planner</span>
+                <span className="block">App.com</span>
               </span>
             </div>
           </h1>
