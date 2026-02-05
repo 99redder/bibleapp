@@ -171,7 +171,7 @@ export function DashboardPage() {
               </svg>
 
               {/* Small wordmark */}
-              <span className="text-xs font-semibold tracking-wide text-primary-700 dark:text-primary-300 select-none">
+              <span className="text-xs font-semibold tracking-wide text-primary-700 dark:text-primary-300 select-none underline underline-offset-2">
                 bibleplannerapp.com
               </span>
             </div>
