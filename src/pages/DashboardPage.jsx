@@ -409,7 +409,7 @@ export function DashboardPage() {
               rel="noreferrer"
               className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
             >
-              GitHub
+              App created by Red
             </a>
           </div>
         </div>
