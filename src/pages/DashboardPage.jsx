@@ -426,14 +426,6 @@ export function DashboardPage() {
             >
               Terms of Service
             </Link>
-            <a
-              href="https://github.com/99redder"
-              target="_blank"
-              rel="noreferrer"
-              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
-            >
-              App created by Red
-            </a>
           </div>
         </div>
       </main>
