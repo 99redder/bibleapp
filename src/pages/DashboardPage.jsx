@@ -403,6 +403,14 @@ export function DashboardPage() {
           </button>
 
           <div className="flex flex-col items-center justify-center gap-2 text-sm">
+            <a
+              href="https://www.easternshore.ai"
+              target="_blank"
+              rel="noreferrer"
+              className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              Website created and maintained by Eastern Shore AI, LLC
+            </a>
             <Link
               to="/privacy"
               className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"

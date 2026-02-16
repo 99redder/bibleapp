@@ -184,6 +184,16 @@ export function LoginPage() {
 
         {/* Footer links */}
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <p className="text-center text-xs text-gray-500 dark:text-gray-400 mb-2">
+            <a
+              href="https://www.easternshore.ai"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              Website created and maintained by Eastern Shore AI, LLC
+            </a>
+          </p>
           <p className="text-center text-xs text-gray-500 dark:text-gray-400">
             <Link to="/privacy" className="hover:text-primary-600 dark:hover:text-primary-400">
               Privacy Policy
