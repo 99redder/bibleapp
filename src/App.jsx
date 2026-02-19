@@ -2,6 +2,7 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { LandingPage } from './pages/LandingPage'
 import { LoginPage } from './pages/LoginPage'
 import { SignupPage } from './pages/SignupPage'
 import { OnboardingPage } from './pages/OnboardingPage'
@@ -23,6 +24,10 @@ function AppRoutes() {
   return (
     <Routes>
       {/* Public routes */}
+      <Route
+        path="/"
+        element={user ? <Navigate to="/dashboard" replace /> : <LandingPage />}
+      />
       <Route
         path="/login"
         element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />}
@@ -67,7 +72,7 @@ function AppRoutes() {
               <Navigate to="/onboarding" replace />
             )
           ) : (
-            <Navigate to="/login" replace />
+            <Navigate to="/" replace />
           )
         }
       />

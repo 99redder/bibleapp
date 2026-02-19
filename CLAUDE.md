@@ -9,72 +9,97 @@ A mobile-first React application that helps users read through the Bible on a cu
 
 ## Tech Stack
 - **Frontend**: React 18 + Vite 4.5.0
-- **Styling**: Tailwind CSS with dark mode support
+- **Styling**: Tailwind CSS with dark mode support (`darkMode: 'class'`)
 - **Backend**: Firebase (Auth + Firestore)
-- **Bible Data**: API.Bible (free tier)
-- **State Management**: React Context
+- **Bible Data**: API.Bible (free tier) — proxied through Firebase Functions
+- **State Management**: React Context (AuthContext, ThemeContext)
 - **Routing**: React Router v6 (HashRouter for GitHub Pages)
 - **Deployment**: GitHub Pages via GitHub Actions
 - **PWA**: vite-plugin-pwa with auto-update service worker
 - **Video Generation**: Remotion for creating Bible verse videos
 
 ## Live URLs
-**Primary (Custom Domain)**: http://www.bibleplannerapp.com (HTTPS pending Let's Encrypt certificate)
+**Primary (Custom Domain)**: https://www.bibleplannerapp.com
 **Fallback (GitHub Pages)**: https://99redder.github.io/bibleapp/
 
 **Notes**:
-- Custom domain registered: www.bibleplannerapp.com
+- Custom domain: www.bibleplannerapp.com
+- HTTPS active via Let's Encrypt (domain set up 2026-01-24)
 - Repository was renamed from "BibleApp" to "bibleapp"
-- HTTPS will be available 12-48 hours after DNS propagation
 
 ## Project Structure
 ```
+/public
+  CNAME                      - Custom domain: www.bibleplannerapp.com
+  favicon.svg / .png         - Favicons
+  apple-touch-icon.png       - iOS home screen icon
+  pwa-192x192.png            - PWA icon
+  pwa-512x512.png            - PWA icon (also maskable)
+  robots.txt                 - Allow all crawlers, points to sitemap
+  sitemap.xml                - XML sitemap for SEO
+
 /src
   /components
     /auth
-      ProtectedRoute.jsx     - Route guard for authenticated users
+      ProtectedRoute.jsx     - Route guard; redirects unauthenticated to /login
     /dashboard
-      Calendar.jsx           - Monthly calendar showing completed/missed days
-      ProgressTracker.jsx    - Shows ahead/behind/on-track status
-      ReadingCard.jsx        - Displays daily scripture with mark complete
+      Calendar.jsx           - Monthly calendar showing completed (green) / missed (red) days
+      ProgressTracker.jsx    - Shows ahead/behind/on-track status relative to schedule
+      ReadingCard.jsx        - Displays daily scripture passage with Mark Complete button
     /ui
-      Button.jsx             - Primary/secondary button variants
-      Input.jsx              - Form input with label and error
+      Button.jsx             - Primary/secondary button variants with loading state
+      Input.jsx              - Form input with label and error message
       Select.jsx             - Dropdown select
-      Toggle.jsx             - Switch toggle
-      RadioGroup.jsx         - Radio button group with cards
-    VerseVideoPreview.jsx    - Remotion player for in-app video preview
+      Toggle.jsx             - Switch toggle (used for include weekends setting)
+      RadioGroup.jsx         - Radio button group rendered as cards
+    VerseVideoPreview.jsx    - Remotion @remotion/player for in-app video preview
   /context
-    AuthContext.jsx          - Firebase auth state management
-    ThemeContext.jsx         - Dark mode state management
+    AuthContext.jsx          - Firebase auth state; exposes user, userDoc, login, logout, etc.
+    ThemeContext.jsx         - Dark mode state; reads/writes localStorage; applies 'dark' class to html
   /pages
-    LoginPage.jsx            - Email/password login
-    SignupPage.jsx           - Account creation
-    OnboardingPage.jsx       - 5-step wizard for plan setup
-    DashboardPage.jsx        - Main reading interface
+    LandingPage.jsx          - Public marketing/landing page (route /) with SEO content
+    LoginPage.jsx            - Email/password + Google OAuth login
+    SignupPage.jsx           - Account creation (email/password + Google OAuth)
+    OnboardingPage.jsx       - 5-step wizard to configure the reading plan
+    DashboardPage.jsx        - Main reading interface (largest file ~19KB)
+    PrivacyPolicyPage.jsx    - Privacy policy (linked in footer)
+    TermsOfServicePage.jsx   - Terms of service (linked in footer)
   /remotion
     index.js                 - Remotion entry point
-    Root.jsx                 - Composition registration
-    BibleVerseVideo.jsx      - Animated verse video component
+    Root.jsx                 - Registers video compositions
+    BibleVerseVideo.jsx      - Animated verse video + app demo compositions
   /services
-    firebase.js              - Firebase init, auth, and Firestore functions
-    bibleAPI.js              - API.Bible wrapper for fetching passages
-    readingPlanGenerator.js  - Algorithm to divide Bible into daily readings
+    firebase.js              - Firebase init, auth helpers, Firestore CRUD functions
+    bibleAPI.js              - API.Bible proxy wrapper for fetching passages
+    readingPlanGenerator.js  - Algorithm to divide Bible books/chapters into daily readings
   /utils
-    bibleStructure.js        - Bible books/chapters data, version IDs
+    bibleStructure.js        - All 66 Bible books with chapter counts and API.Bible version IDs
     dateHelpers.js           - Date formatting and calculation utilities
-  App.jsx                    - Main app with routing
-  main.jsx                   - React entry point
-  index.css                  - Tailwind + custom styles
+    browserDetection.js      - Detects in-app browsers (Facebook, Instagram) to hide Google OAuth
+  App.jsx                    - Main app with HashRouter and all route definitions
+  main.jsx                   - React entry point (renders App into #root)
+  index.css                  - Tailwind directives + custom CSS classes
 ```
+
+## Routing (App.jsx)
+All routes use HashRouter (URLs contain `#`):
+- `/` — LandingPage (unauthenticated) or redirect to dashboard (authenticated)
+- `/login` — LoginPage (unauthenticated only)
+- `/signup` — SignupPage (unauthenticated only)
+- `/privacy` — PrivacyPolicyPage (public)
+- `/terms` — TermsOfServicePage (public)
+- `/onboarding` — OnboardingPage (auth required; skips to dashboard if already complete)
+- `/dashboard` — DashboardPage (auth required)
+- `*` wildcard — redirects to dashboard or onboarding based on auth/onboarding state
 
 ## Key Features
 
 ### Authentication
 - Email/password signup and login via Firebase Auth
-- **Google OAuth** login (requires enabling in Firebase Console)
-- Password reset functionality
-- Protected routes redirect to login
+- **Google OAuth** login (popup-based, hidden in in-app browsers)
+- In-app browser detection (Facebook, Instagram) — warns user to open in Safari/Chrome
+- Password reset functionality via email
+- Protected routes redirect to login; redirect back after login via `location.state.from`
 - Auth state persisted across sessions
 
 ### Firebase Console Setup for OAuth
@@ -83,31 +108,32 @@ A mobile-first React application that helps users read through the Bible on a cu
 3. Add your domain(s) to Authorized domains (e.g., `www.bibleplannerapp.com`)
 
 ### Onboarding Survey (5 Steps)
-1. **Start Date** - When to begin the reading plan (validates no past dates allowed)
-2. **Duration** - 6, 12, 18, 24 months, "Finish by end of year", or custom (1-120 months)
+1. **Start Date** - When to begin the reading plan (validates: no past dates, today OK)
+2. **Duration** - 6, 12, 18, 24 months, "Finish by end of year", or custom (1–120 months)
 3. **Bible Version** - 11 free translations available
 4. **Include Weekends** - Toggle for weekend readings
-5. **Review & Confirm** - Summary before generating plan
+5. **Review & Confirm** - Summary before generating and saving plan to Firestore
 
 ### Dashboard
-- Daily reading card with scripture text from API.Bible
+- Daily reading card with scripture text fetched from API.Bible via proxy
 - Mark as Read button to advance progress
 - Progress tracker showing ahead/behind/on-track status
 - Calendar view showing completed (green) and missed (red) days
 - **Read Ahead**: Navigate to view/complete future readings
 - **Start Fresh**: Reset plan and go through onboarding again
-- Dark mode toggle
+- Dark mode toggle in header
 
 ### Dark Mode
-- System preference detection
+- System preference detection on first load
 - Manual toggle in header
-- Preference saved to localStorage
-- Full dark mode support across all pages
+- Preference saved to localStorage key `theme`
+- Implemented by toggling `dark` class on `<html>` element
+- Full dark mode support across all pages via Tailwind `dark:` variants
 
 ## Firebase Configuration
 
 ### Environment Variables (.env)
-**Note**: Actual values are stored in `.env` file (not committed to git) and GitHub Secrets. Replace placeholders below with your own API keys.
+**Note**: Actual values are stored in `.env` file (not committed to git) and GitHub Secrets.
 
 ```
 VITE_FIREBASE_API_KEY=your_firebase_api_key_here
@@ -155,14 +181,14 @@ service cloud.firestore {
   onboardingComplete: boolean,
   settings: {
     startDate: Timestamp,
-    durationMonths: 6 | 12 | 18 | 24,
+    durationMonths: number,        // 6, 12, 18, 24, or custom
     bibleVersion: "KJV" | "ASV" | "WEB" | etc.,
     includeWeekends: boolean,
-    emailDailyPortion: false
+    emailDailyPortion: false       // not yet implemented
   },
   progress: {
     currentDay: number,
-    completedDays: [number],
+    completedDays: [number],       // array of day numbers
     lastReadDate: Timestamp
   }
 }
@@ -200,108 +226,138 @@ npm install        # Install dependencies
 npm run dev        # Start dev server (port 3000)
 npm run build      # Build for production
 npm run preview    # Preview production build
+npm run lint       # Run ESLint
 ```
 
 ## Deployment
 **Always use GitHub Desktop to push changes.**
 
 Workflow:
-1. Make code changes
-2. Run `npm run build` to build locally
+1. Make code changes locally
+2. Run `npm run build` to verify the build succeeds
 3. Commit and push via GitHub Desktop
-4. GitHub Actions automatically deploys to GitHub Pages
+4. GitHub Actions workflow (`.github/workflows/`) automatically builds with secrets and deploys to GitHub Pages
 
-The GitHub Actions workflow uses secrets for environment variables.
+The GitHub Actions workflow injects the environment variables from GitHub Secrets at build time.
 
 ## Known Issues / Future Enhancements
 - Email daily portion feature (skipped for now, setting exists but not implemented)
-- Some Bible versions may have limited chapter availability
+- Some Bible versions may have limited chapter availability in API.Bible
+- PWA icons (pwa-192x192.png, pwa-512x512.png) are placeholder icons — should be replaced with real branded icons
 - Consider adding streak tracking
 - Consider adding notes/highlights feature
-- Consider adding verse sharing
+- Consider adding verse sharing (social media)
+- Consider adding push notifications for daily readings
 
 ## Important Notes
-- Uses HashRouter for GitHub Pages compatibility (URLs have #)
-- Custom domain configured with CNAME file in `/public/CNAME`
-- Firebase functions use setDoc with merge:true to handle missing documents
-- Dark mode preference stored in localStorage
-- API.Bible has rate limits (5,000 requests/day on free tier)
-- Date picker on iOS uses native spinner modal (works correctly)
-- Date picker on Firefox desktop has limited styling control for greying out past dates
-- Input fields have explicit `box-sizing: border-box` and `max-width: 100%` to prevent overflow on mobile
-- **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse date strings as local time (without the 'Z' suffix). Using `new Date("YYYY-MM-DD")` parses as UTC which causes timezone issues.
+- **HashRouter**: URLs use `#` (e.g., `/#/dashboard`). Required for GitHub Pages static hosting since there's no server-side routing.
+- **Custom domain**: Configured with CNAME file in `/public/CNAME` (value: `www.bibleplannerapp.com`)
+- **Firebase setDoc with merge:true**: Used throughout to handle cases where the user document may not exist yet
+- **Dark mode**: Stored in localStorage key `theme`; `dark` class applied to `<html>` element
+- **API.Bible rate limits**: 5,000 requests/day on free tier; responses cached 24hrs in service worker
+- **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse YYYY-MM-DD strings as local time. `new Date("YYYY-MM-DD")` parses as UTC, causing off-by-one timezone bugs.
+- **In-app browser detection**: `browserDetection.js` detects Facebook/Instagram browsers; Google OAuth is hidden when in-app browser is detected
+- **Bible proxy**: API.Bible requests go through Firebase Functions proxy at `VITE_BIBLE_PROXY_BASE` to keep API key server-side
+- **Vite base path**: `base: '/'` — for custom domain root hosting (previously was `/bibleapp/` for GitHub Pages subdirectory)
 
 ## Vite Configuration (vite.config.js)
-- `base: '/'` - Root path for custom domain (bibleplanapp.com)
+- `base: '/'` — root path for custom domain
 - PWA manifest `start_url` and `scope` set to `/`
-- **Note**: Previously was `/bibleapp/` for subdirectory hosting at 99redder.github.io/bibleapp/
+- Bible API cached for 24 hours (NetworkFirst)
+- Firebase is NetworkOnly (no caching)
+- Dev server port: 3000
 
 ## PWA Configuration
-- Service worker auto-updates
+- Service worker auto-updates (registerType: 'autoUpdate')
 - Bible API responses cached for 24 hours
-- Firebase requests are network-only (not cached)
-- Manifest configured for standalone display
-- Icons: pwa-192x192.png and pwa-512x512.png (placeholder icons - should be replaced)
+- Firebase requests are network-only (auth and Firestore must be fresh)
+- Manifest configured for standalone display, portrait orientation
+- Icons: pwa-192x192.png and pwa-512x512.png (placeholder — replace with real icons)
 
 ## CSS Custom Classes (index.css)
-- `.input` - Form inputs with dark mode, box-sizing fixes for mobile
-- `.card` - Card containers with `overflow-visible` for date pickers
-- `.btn`, `.btn-primary`, `.btn-secondary` - Button styles
-- `.scripture-text` - Bible text styling with serif font
+- `.input` — Form inputs with dark mode support, box-sizing fixes for mobile
+- `.card` — White/dark card containers with `overflow-visible` (needed for date picker dropdowns)
+- `.btn`, `.btn-primary`, `.btn-secondary` — Button styles
+- `.scripture-text` — Bible passage text; Georgia serif font, larger line-height
+
+## Tailwind Theme
+- **Primary color**: Sky blue (`primary-600: #0284c7`) — used for buttons, links, focus rings
+- **Dark mode**: Class-based (`darkMode: 'class'`)
+- **Font**: Extends with `serif` family (Georgia) for scripture text
 
 ## UI/Branding
-- Login and Signup pages have Bible icon logo (book with text lines SVG)
-- App name: "Bible Reading Plan"
+- App name: "Bible Planner" / "Bible Reading Plan"
 - Tagline: "Read through the Bible on your own schedule"
-- Consistent branding across auth pages
+- Bible icon: SVG book with text lines, white on primary-600 background, rounded corners
+- Login and Signup pages display the icon, app name, and tagline
+- Footer credit: "Website created and maintained by Eastern Shore AI, LLC" (links to easternshore.ai)
+- Footer links: Privacy Policy, Terms of Service
+- Consistent branding across all pages
+
+## SEO Configuration (added 2026-02-19)
+- `index.html`: Comprehensive meta tags — title, description, keywords, canonical URL, Open Graph, Twitter Card, JSON-LD (WebApplication schema)
+- `public/robots.txt`: Allows all crawlers; references sitemap
+- `public/sitemap.xml`: Includes root URL; updated with current date
+- `src/pages/LandingPage.jsx`: Public marketing page at route `/`; keyword-rich content targeting "bible reading plan", "read through the bible", "daily bible readings"
+- **SEO target audience**: People searching for guided Bible reading plans, especially on mobile
 
 ## Remotion (Video Generation)
 Remotion is installed for creating Bible verse videos programmatically.
 
 ### Remotion Files
-- `src/remotion/index.js` - Entry point for Remotion
-- `src/remotion/Root.jsx` - Registers video compositions
-- `src/remotion/BibleVerseVideo.jsx` - Animated Bible verse video component
-- `src/components/VerseVideoPreview.jsx` - In-app video preview using @remotion/player
+- `src/remotion/index.js` — Entry point for Remotion
+- `src/remotion/Root.jsx` — Registers video compositions
+- `src/remotion/BibleVerseVideo.jsx` — Animated Bible verse video + 3 app demo compositions
 
 ### Remotion Commands
 ```bash
-npm run remotion:studio           # Open Remotion Studio to preview/edit videos
-npm run remotion:render           # Render portrait video (1080x1920)
-npm run remotion:render:landscape # Render landscape video (1920x1080)
-npm run remotion:render:square    # Render square video (1080x1080)
+npm run remotion:studio            # Open Remotion Studio
+npm run remotion:render            # Portrait (1080x1920)
+npm run remotion:render:landscape  # Landscape (1920x1080)
+npm run remotion:render:square     # Square (1080x1080)
+npm run remotion:demo:all          # Render all 3 demo videos
 ```
 
 ### Video Compositions Available
-- `BibleVerseVideo` - Portrait (1080x1920) - for Instagram Stories, TikTok
-- `BibleVerseVideoLandscape` - Landscape (1920x1080) - for YouTube
-- `BibleVerseVideoSquare` - Square (1080x1080) - for Instagram posts
+- `BibleVerseVideo` — Portrait (1080x1920) — Instagram Stories, TikTok
+- `BibleVerseVideoLandscape` — Landscape (1920x1080) — YouTube
+- `BibleVerseVideoSquare` — Square (1080x1080) — Instagram posts
+- `AppIntroDemo` (7s) — App introduction
+- `OnboardingDemo` (9s) — Setup wizard walkthrough
+- `DashboardDemo` (7s) — Daily reading experience
+
+Demo videos output to `/out/` folder: demo-intro.mp4, demo-onboarding.mp4, demo-dashboard.mp4
 
 ### Note
 Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands.
 
-## Recent Session Updates
+## Session History
+
+### 2026-01-24: Custom Domain Setup
+- Registered custom domain: www.bibleplannerapp.com
+- Changed Vite base path from `/bibleapp/` to `/`
+- Updated PWA manifest start_url and scope to `/`
+- Created `/public/CNAME` with domain for GitHub Pages
+- HTTPS active via Let's Encrypt
+
+### 2026-01-25: Auth Cleanup
+- Removed Facebook OAuth (LoginPage, SignupPage, firebase.js)
+- Only Google OAuth and email/password remain
+
+### Earlier: Initial Features
 - Added Bible icon and app description to LoginPage and SignupPage
 - Fixed date input overflow on mobile (box-sizing, max-width fixes)
 - Added custom duration and "finish by end of year" options to onboarding
 - Added date validation to prevent past date selection
-- Added Remotion for Bible verse video generation
-- Created 3 app demo videos using Remotion:
-  - AppIntroDemo (7s) - App introduction with features
-  - OnboardingDemo (9s) - Setup wizard walkthrough
-  - DashboardDemo (7s) - Daily reading experience
-- Fixed ESM module resolution by adding .jsx extensions to imports
-- Demo videos output to `/out/` folder (demo-intro.mp4, demo-onboarding.mp4, demo-dashboard.mp4)
-- Fixed date validation timezone bug - dates were being parsed as UTC instead of local time, preventing today's date from being selected in US timezones
-- **Custom Domain Setup (2026-01-24)**:
-  - Registered custom domain: bibleplanapp.com (later changed to www.bibleplannerapp.com)
-  - Changed Vite base path from `/bibleapp/` to `/` in vite.config.js
-  - Updated PWA manifest start_url and scope from `/bibleapp/` to `/`
-  - Created `/public/CNAME` file with domain for GitHub Pages
-  - Updated CNAME to www.bibleplannerapp.com
-  - Site now works at http://www.bibleplannerapp.com
-  - HTTPS pending Let's Encrypt certificate provisioning (12-48 hours)
-- **Removed Facebook OAuth (2026-01-25)**:
-  - Removed Facebook login option from LoginPage and SignupPage
-  - Removed FacebookAuthProvider from firebase.js
-  - Only Google OAuth and email/password authentication remain
+- Fixed timezone bug: dates parsed as UTC instead of local time
+- Added Remotion for Bible verse video generation (3 demo videos)
+- Fixed ESM module resolution (.jsx extensions in imports)
+
+### 2026-02-19: SEO & AI Navigation Optimization
+- Enhanced `index.html` with full SEO meta tags: title, description, keywords, canonical, Open Graph, Twitter Card, JSON-LD WebApplication schema
+- Created `public/robots.txt` — allows all crawlers, references sitemap
+- Created `public/sitemap.xml` — lists root URL for search engine indexing
+- Created `src/pages/LandingPage.jsx` — public marketing/landing page targeting Bible reading plan keywords
+- Updated `src/App.jsx` to route `/` to LandingPage (unauthenticated) instead of redirecting to /login
+- Updated `README.md` with comprehensive AI-agent-friendly project guide
+- Updated `CLAUDE.md` with complete project structure including all files
