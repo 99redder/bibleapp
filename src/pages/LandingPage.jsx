@@ -84,7 +84,7 @@ export function LandingPage() {
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <BookIcon className="w-5 h-5 text-white" />
             </div>
-            <span className="text-base font-bold text-gray-900 dark:text-white">Bible Planner</span>
+            <span className="text-base font-bold text-gray-900 dark:text-white">Bible Planner App</span>
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
             <button
