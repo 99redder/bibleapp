@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" fill="none">
+  <!-- Bible Icon -->
+  <rect x="4" y="8" width="48" height="56" rx="6" fill="#2563EB"/>
+  <rect x="8" y="14" width="36" height="44" rx="3" fill="white" fill-opacity="0.2"/>
+  <path d="M14 22h24M14 28h24M14 34h18M14 40h20M14 46h16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Text Section -->
+  <text x="62" y="28" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="#1F2937">bibleplannerapp.com</text>
+  <text x="62" y="50" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#6B7280">Your Bible Reading Plan</text>
+</svg>

@@ -81,10 +81,11 @@ export function LandingPage() {
       <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
-              <BookIcon className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-base font-bold text-gray-900 dark:text-white">Bible Planner</span>
+            <img 
+              src="/logo-combined.svg" 
+              alt="Bible Planner" 
+              style={{ height: '36px', width: 'auto' }}
+            />
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -113,9 +114,12 @@ export function LandingPage() {
       <main>
         {/* ── Hero ── */}
         <section className="px-4 py-16 text-center max-w-2xl mx-auto">
-          <div className="mx-auto w-20 h-20 mb-6 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <BookIcon className="w-12 h-12 text-white" />
-          </div>
+          <img 
+            src="/logo-combined.svg" 
+            alt="Bible Planner" 
+            className="mx-auto mb-6"
+            style={{ height: '80px', width: 'auto' }}
+          />
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
             Read Through the Bible<br />on Your Own Schedule
           </h1>
@@ -280,14 +284,14 @@ export function LandingPage() {
           <span className="text-white font-semibold text-sm">Bible Planner App</span>
         </div>
         <p className="text-xs text-gray-500 mb-3">
-          Website created and maintained by{' '}
+          Website created by{' '}
           <a
             href="https://www.easternshore.ai"
             target="_blank"
             rel="noreferrer"
             className="hover:text-primary-400 transition-colors"
           >
-            Eastern Shore AI, LLC
+            Eastern Shore AI
           </a>
         </p>
         <p className="text-xs text-gray-500">

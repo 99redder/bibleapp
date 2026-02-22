@@ -404,14 +404,14 @@ export function DashboardPage() {
 
           <div className="flex flex-col items-center justify-center gap-2 text-sm">
             <p className="text-gray-500 dark:text-gray-400">
-              Website created and maintained by{' '}
+              Website created by{' '}
               <a
                 href="https://www.easternshore.ai"
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-primary-600 dark:hover:text-primary-400"
               >
-                Eastern Shore AI, LLC
+                Eastern Shore AI
               </a>
             </p>
             <Link
