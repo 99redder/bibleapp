@@ -72,7 +72,7 @@ const steps = [
 const versions = ['KJV', 'ASV', 'WEB', 'BBE', 'Darby', 'YLT', 'CPDV', 'RV', 'T4T']
 
 export function LandingPage() {
-  const { isDark, toggleTheme } = useTheme()
+  const { darkMode, toggleDarkMode } = useTheme()
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -81,29 +81,28 @@ export function LandingPage() {
       <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <img 
-              src="/logo-combined.svg" 
-              alt="Bible Planner" 
-              style={{ height: '36px', width: 'auto' }}
-            />
+            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
+              <BookIcon className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-base font-bold text-gray-900 dark:text-white">Bible Planner</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <button
-              onClick={toggleTheme}
+              onClick={toggleDarkMode}
               className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               aria-label="Toggle dark mode"
             >
-              {isDark ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
+              {darkMode ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
             </button>
             <Link
               to="/login"
-              className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-1.5"
+              className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-2 sm:px-3 py-1.5"
             >
               Sign In
             </Link>
             <Link
               to="/signup"
-              className="text-sm font-semibold bg-primary-600 hover:bg-primary-700 text-white px-4 py-1.5 rounded-lg transition-colors"
+              className="text-xs sm:text-sm font-semibold bg-primary-600 hover:bg-primary-700 text-white px-3 sm:px-4 py-1.5 rounded-lg transition-colors"
             >
               Get Started
             </Link>
@@ -114,12 +113,9 @@ export function LandingPage() {
       <main>
         {/* ── Hero ── */}
         <section className="px-4 py-16 text-center max-w-2xl mx-auto">
-          <img 
-            src="/logo-combined.svg" 
-            alt="Bible Planner" 
-            className="mx-auto mb-6"
-            style={{ height: '80px', width: 'auto' }}
-          />
+          <div className="mx-auto w-20 h-20 mb-6 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg">
+            <BookIcon className="w-12 h-12 text-white" />
+          </div>
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
             Read Through the Bible<br />on Your Own Schedule
           </h1>
