@@ -280,14 +280,14 @@ export function LandingPage() {
           <span className="text-white font-semibold text-sm">Bible Planner App</span>
         </div>
         <p className="text-xs text-gray-500 mb-3">
-          Website created by{' '}
+          Website created and maintained by{' '}
           <a
             href="https://www.easternshore.ai"
             target="_blank"
             rel="noreferrer"
             className="hover:text-primary-400 transition-colors"
           >
-            Eastern Shore AI
+            Eastern Shore AI, LLC
           </a>
         </p>
         <p className="text-xs text-gray-500">
