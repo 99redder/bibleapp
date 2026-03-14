@@ -9,6 +9,7 @@ import { OnboardingPage } from './pages/OnboardingPage'
 import { DashboardPage } from './pages/DashboardPage'
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage'
 import { TermsOfServicePage } from './pages/TermsOfServicePage'
+import { NotFoundPage } from './pages/NotFoundPage'
 
 function AppRoutes() {
   const { user, userDoc, loading } = useAuth()
@@ -61,7 +62,7 @@ function AppRoutes() {
         }
       />
 
-      {/* Default redirect */}
+      {/* 404 / fallback */}
       <Route
         path="*"
         element={
@@ -72,7 +73,7 @@ function AppRoutes() {
               <Navigate to="/onboarding" replace />
             )
           ) : (
-            <Navigate to="/" replace />
+            <NotFoundPage />
           )
         }
       />
