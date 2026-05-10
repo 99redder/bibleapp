@@ -88,13 +88,21 @@ export function DashboardPage() {
 
     setMarkingComplete(true)
     try {
+      const completedDayNumber = currentDayData.dayNumber
+      const wasViewingCurrentDay = completedDayNumber === userDoc?.progress?.currentDay
       const progress = userDoc?.progress || { currentDay: 1, completedDays: [], lastReadDate: null }
-      await markDayComplete(user.uid, currentDayData.dayNumber, progress)
+      await markDayComplete(user.uid, completedDayNumber, progress)
       await refreshUserDoc()
 
-      // Load next day's reading
-      const nextDayData = await getReadingPlanDay(user.uid, currentDayData.dayNumber + 1)
-      setCurrentDayData(nextDayData)
+      if (wasViewingCurrentDay) {
+        // Keep the normal flow moving when today's reading is marked complete.
+        const nextDayData = await getReadingPlanDay(user.uid, completedDayNumber + 1)
+        setCurrentDayData(nextDayData)
+        setViewingDayNumber(completedDayNumber + 1)
+      } else {
+        // If the user marks a day out of order, stay on that day and show it as complete.
+        setCurrentDayData({ ...currentDayData, completed: true })
+      }
 
       // Refresh completed days
       const completed = await getCompletedDays(user.uid)
@@ -139,7 +147,7 @@ export function DashboardPage() {
 
   const isViewingCurrentDay = viewingDayNumber === userDoc?.progress?.currentDay
   const isViewingCompletedDay = completedDays.some(d => d.dayNumber === viewingDayNumber)
-  const canMarkComplete = isViewingCurrentDay || (!isViewingCompletedDay && viewingDayNumber <= (userDoc?.progress?.currentDay || 1))
+  const canMarkComplete = !!currentDayData && !isViewingCompletedDay
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">

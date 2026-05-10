@@ -147,8 +147,9 @@ export const markDayComplete = async (uid, dayNumber, userProgress) => {
   const newCompletedDays = userProgress.completedDays.includes(dayNumber)
     ? [...userProgress.completedDays]
     : [...userProgress.completedDays, dayNumber]
+  const currentDay = Number(userProgress.currentDay || 1)
   const newProgress = {
-    currentDay: dayNumber + 1,
+    currentDay: Math.max(currentDay, dayNumber + 1),
     completedDays: newCompletedDays,
     lastReadDate: Timestamp.now()
   }
