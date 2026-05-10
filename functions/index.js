@@ -1,6 +1,7 @@
 import { onRequest } from 'firebase-functions/v2/https'
 import { defineSecret } from 'firebase-functions/params'
 import { initializeApp, getApps } from 'firebase-admin/app'
+import { getAppCheck } from 'firebase-admin/app-check'
 import { getAuth } from 'firebase-admin/auth'
 
 const API_BASE = 'https://rest.api.bible/v1'
@@ -13,11 +14,25 @@ if (!getApps().length) {
 export const bibleApi = onRequest(
   {
     region: 'us-central1',
-    cors: true,
+    cors: ['https://www.bibleplannerapp.com', 'http://localhost:3000'],
     secrets: [BIBLE_API_KEY]
   },
   async (req, res) => {
     try {
+      // Require Firebase App Check. App Check enforcement must also be enabled in the Firebase Console.
+      const appCheckToken = req.headers['x-firebase-appcheck']
+      if (!appCheckToken) {
+        res.status(401).json({ error: 'Missing App Check token' })
+        return
+      }
+
+      try {
+        await getAppCheck().verifyToken(appCheckToken)
+      } catch {
+        res.status(401).json({ error: 'Invalid App Check token' })
+        return
+      }
+
       // Require Firebase Auth
       const authHeader = req.get('authorization') || ''
       const match = authHeader.match(/^Bearer\s+(.+)$/i)
