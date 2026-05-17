@@ -5,6 +5,28 @@ import { Input } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
 import { isInAppBrowser, getInAppBrowserName } from '../utils/browserDetection.js'
 
+function validatePassword(password) {
+  const unmetRequirements = []
+
+  if (password.length < 12) {
+    unmetRequirements.push('At least 12 characters')
+  }
+
+  if (!/[A-Z]/.test(password)) {
+    unmetRequirements.push('At least one uppercase letter')
+  }
+
+  if (!/\d/.test(password)) {
+    unmetRequirements.push('At least one number')
+  }
+
+  if (!/[!@#$%^&*(),.?":{}|<>_\-+=[\]\\;/`~']/.test(password)) {
+    unmetRequirements.push('At least one special character')
+  }
+
+  return unmetRequirements
+}
+
 export function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -14,6 +36,7 @@ export function SignupPage() {
 
   const inAppBrowser = useMemo(() => isInAppBrowser(), [])
   const browserName = useMemo(() => getInAppBrowserName(), [])
+  const passwordRequirements = validatePassword(password)
 
   const { signup, loginWithGoogle, error, clearError } = useAuth()
   const navigate = useNavigate()
@@ -41,8 +64,8 @@ export function SignupPage() {
       return
     }
 
-    if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters')
+    if (passwordRequirements.length > 0) {
+      setPasswordError('Password does not meet the requirements')
       return
     }
 
@@ -91,10 +114,23 @@ export function SignupPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
+              placeholder="At least 12 characters"
               required
               autoComplete="new-password"
             />
+
+            {password && passwordRequirements.length > 0 && (
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                <p className="text-sm text-amber-800 dark:text-amber-200 font-medium">
+                  Password needs:
+                </p>
+                <ul className="mt-1 list-disc list-inside text-sm text-amber-700 dark:text-amber-300">
+                  {passwordRequirements.map((requirement) => (
+                    <li key={requirement}>{requirement}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <Input
               label="Confirm Password"
