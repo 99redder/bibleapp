@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import { RadioGroup } from '../components/ui/RadioGroup'
-import { Select } from '../components/ui/Select'
 import { Toggle } from '../components/ui/Toggle'
 import { generateReadingPlan } from '../services/readingPlanGenerator'
 import { updateUserSettings, saveReadingPlan, Timestamp } from '../services/firebase'
@@ -165,8 +164,13 @@ export function OnboardingPage() {
 
   const versionOptions = Object.entries(BIBLE_VERSIONS).map(([key, v]) => ({
     value: key,
-    label: `${v.name} (${v.abbreviation})`
+    label: `${v.name} (${v.abbreviation})`,
+    source: v.source || 'local',
+    name: v.name,
+    abbreviation: v.abbreviation
   }))
+
+  const selectedBibleVersion = BIBLE_VERSIONS[bibleVersion] || BIBLE_VERSIONS.WEB
 
   const renderStep = () => {
     switch (currentStep) {
@@ -243,15 +247,53 @@ export function OnboardingPage() {
             <p className="text-gray-600 dark:text-gray-400">
               Which Bible translation would you prefer?
             </p>
-            <Select
-              label="Bible Version"
-              value={bibleVersion}
-              onChange={(e) => setBibleVersion(e.target.value)}
-              options={versionOptions}
-            />
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              These public-domain translations are included locally for fast, reliable reading.
-            </p>
+
+            <div className="rounded-lg border border-gray-200 bg-blue-50 p-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-blue-900/20 dark:text-gray-300">
+              <p>
+                <span className="font-medium text-gray-900 dark:text-white">Local</span> versions are bundled with the app and usually load faster.{' '}
+                <span className="font-medium text-gray-900 dark:text-white">API</span> versions come from an external source and may load slower.
+              </p>
+            </div>
+
+            <div className="space-y-2" role="radiogroup" aria-label="Bible Version">
+              {versionOptions.map(option => {
+                const isSelected = bibleVersion === option.value
+                const isLocal = option.source === 'local'
+
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    onClick={() => setBibleVersion(option.value)}
+                    className={`w-full rounded-lg border p-3 text-left transition-colors ${
+                      isSelected
+                        ? 'border-primary-600 bg-primary-50 ring-2 ring-primary-200 dark:border-primary-400 dark:bg-primary-900/30 dark:ring-primary-900'
+                        : 'border-gray-200 bg-white hover:border-primary-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-primary-600 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {option.name}
+                        </p>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                          {option.abbreviation}
+                        </p>
+                      </div>
+                      <span className={`shrink-0 rounded-full px-2 py-1 text-xs font-medium ${
+                        isLocal
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
+                          : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
+                      }`}>
+                        {isLocal ? 'Local' : 'API'}
+                      </span>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
           </div>
         )
 
@@ -297,7 +339,9 @@ export function OnboardingPage() {
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                 <span className="text-gray-600 dark:text-gray-400">Bible Version</span>
-                <span className="font-medium text-gray-900 dark:text-white">{BIBLE_VERSIONS[bibleVersion].name}</span>
+                <span className="font-medium text-gray-900 dark:text-white">
+                  {selectedBibleVersion.name} ({selectedBibleVersion.source === 'api' ? 'API' : 'Local'})
+                </span>
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                 <span className="text-gray-600 dark:text-gray-400">Reading Days</span>
