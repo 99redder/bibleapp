@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
@@ -21,6 +21,7 @@ export function DashboardPage() {
   const [showSettings, setShowSettings] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [resetting, setResetting] = useState(false)
+  const readingSectionRef = useRef(null)
 
   useEffect(() => {
     if (userDoc && !userDoc.onboardingComplete) {
@@ -83,6 +84,15 @@ export function DashboardPage() {
     }
   }
 
+  const scrollToReadingSection = () => {
+    requestAnimationFrame(() => {
+      readingSectionRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+    })
+  }
+
   const handleMarkComplete = async () => {
     if (!currentDayData) return
 
@@ -99,6 +109,7 @@ export function DashboardPage() {
         const nextDayData = await getReadingPlanDay(user.uid, completedDayNumber + 1)
         setCurrentDayData(nextDayData)
         setViewingDayNumber(completedDayNumber + 1)
+        scrollToReadingSection()
       } else {
         // If the user marks a day out of order, stay on that day and show it as complete.
         setCurrentDayData({ ...currentDayData, completed: true })
@@ -309,7 +320,7 @@ export function DashboardPage() {
         <ProgressTracker userDoc={userDoc} />
 
         {/* Day navigation */}
-        <div className="flex items-center justify-between">
+        <div ref={readingSectionRef} className="scroll-mt-24 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             {isViewingCurrentDay ? "Today's Reading" : `Day ${viewingDayNumber}`}
           </h2>
