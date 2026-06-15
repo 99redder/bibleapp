@@ -329,6 +329,11 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 
 ## Session History
 
+### 2026-06-15: Compact Onboarding Version Picker
+- Replaced the Bible version onboarding radio-card list with a single dropdown to avoid forcing users to scroll through every bundled translation.
+- Kept source visibility in one compact selected-version panel with a Local/API badge and explanation.
+- Current public-domain translations are all local/bundled; future API-backed translations can still display as API through `BIBLE_VERSIONS[source]`.
+
 ### 2026-01-24: Custom Domain Setup
 - Registered custom domain: www.bibleplannerapp.com
 - Changed Vite base path from `/bibleapp/` to `/`
