@@ -1,63 +1,30 @@
-import { BIBLE_VERSIONS, getPassageId } from '../utils/bibleStructure'
-import { getToken } from 'firebase/app-check'
-import { appCheck, auth } from './firebase'
+import { BIBLE_VERSIONS } from '../utils/bibleStructure'
 
-// Use a server-side proxy so the API.Bible key is not shipped to clients.
-// If hosted on Firebase Hosting, you can use the relative /api/bible rewrite.
-// If hosted elsewhere (e.g. GitHub Pages), set VITE_BIBLE_PROXY_BASE to a full URL.
-const API_BASE = import.meta.env.VITE_BIBLE_PROXY_BASE || '/api/bible'
+const LOCAL_BIBLE_BASE = `${import.meta.env.BASE_URL}bibles`
 
 
 /**
- * Fetch a Bible passage from API.Bible
- * @param {string} versionKey - Key from BIBLE_VERSIONS (e.g., 'KJV')
+ * Fetch a Bible passage from local static Bible data.
+ * @param {string} versionKey - Key from BIBLE_VERSIONS (e.g., 'WEB')
  * @param {string} bookAbbrev - Book abbreviation (e.g., 'GEN')
  * @param {number} chapter - Chapter number
  * @returns {Object} Passage data with content
  */
 export async function fetchPassage(versionKey, bookAbbrev, chapter) {
-  const version = BIBLE_VERSIONS[versionKey] || BIBLE_VERSIONS.KJV
-  const passageId = getPassageId(bookAbbrev, chapter)
+  const version = BIBLE_VERSIONS[versionKey] || BIBLE_VERSIONS.WEB
 
   try {
-    const headers = {}
-
-    // Require Firebase Auth for the proxy
-    const user = auth.currentUser
-    if (user) {
-      try {
-        headers.Authorization = `Bearer ${await user.getIdToken()}`
-      } catch (err) {
-        console.warn('Failed to get auth token:', err)
-      }
-    }
-
-    // Optional: attach App Check token if available
-    if (appCheck) {
-      try {
-        const token = await getToken(appCheck, false)
-        if (token?.token) {
-          headers['X-Firebase-AppCheck'] = token.token
-        }
-      } catch (err) {
-        console.warn('App Check token fetch failed:', err)
-      }
-    }
-
-    const response = await fetch(
-      `${API_BASE}/bibles/${version.id}/chapters/${passageId}?content-type=text&include-notes=false&include-titles=true&include-chapter-numbers=false&include-verse-numbers=true`,
-      { headers }
-    )
+    const response = await fetch(`${LOCAL_BIBLE_BASE}/${version.key}/${bookAbbrev}/${chapter}.json`)
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`)
+      throw new Error(`Bible data error: ${response.status}`)
     }
 
     const data = await response.json()
     return {
-      reference: data.data.reference,
-      content: cleanPassageContent(data.data.content),
-      copyright: data.data.copyright
+      reference: data.reference,
+      content: formatVerses(data.verses),
+      copyright: data.copyright
     }
   } catch (error) {
     console.error('Error fetching passage:', error)
@@ -83,17 +50,10 @@ export async function fetchDayPassages(versionKey, passages) {
  * @param {string} content - Raw content from API
  * @returns {string} Cleaned content
  */
-function cleanPassageContent(content) {
-  if (!content) return ''
-
-  // Remove paragraph markers and extra whitespace
-  let cleaned = content
-    .replace(/\[[\d]+\]/g, '') // Remove footnote markers like [1]
-    .replace(/¶/g, '\n\n') // Convert pilcrow to paragraph break
-    .replace(/\n{3,}/g, '\n\n') // Limit consecutive newlines
-    .trim()
-
-  return cleaned
+function formatVerses(verses = []) {
+  return verses
+    .map(verse => `${verse.verse} ${verse.text}`)
+    .join('\n\n')
 }
 
 /**

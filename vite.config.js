@@ -17,14 +17,14 @@ export default defineConfig({
         // Cache strategies
         runtimeCaching: [
           {
-            // API calls - network first, fall back to cache
-            urlPattern: /^https:\/\/rest\.api\.bible\//,
-            handler: 'NetworkFirst',
+            // Local Bible chapter data - cache first for offline-friendly reading
+            urlPattern: /\/bibles\/WEB\/.+\.json$/,
+            handler: 'CacheFirst',
             options: {
-              cacheName: 'bible-api-cache',
+              cacheName: 'bible-data-cache',
               expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 // 24 hours
+                maxEntries: 1300,
+                maxAgeSeconds: 60 * 60 * 24 * 365
               }
             }
           },

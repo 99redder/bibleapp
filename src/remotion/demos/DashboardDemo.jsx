@@ -169,11 +169,11 @@ function ReadingCard({ showCompleted, progress }) {
             margin: 0,
           }}
         >
-          "After these things the word of the LORD came unto Abram in a vision, saying, Fear not,
-          Abram: I am thy shield, and thy exceeding great reward."
+          "After these things Yahweh’s word came to Abram in a vision, saying, Don’t be afraid,
+          Abram. I am your shield, your exceedingly great reward."
         </p>
         <p style={{ color: '#6b7280', fontSize: 12, marginTop: 8, marginBottom: 0 }}>
-          — Genesis 15:1 (KJV)
+          — Genesis 15:1 (WEB)
         </p>
       </div>
 

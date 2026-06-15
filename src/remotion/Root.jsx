@@ -16,8 +16,8 @@ export function RemotionRoot() {
         width={1080}
         height={1920}
         defaultProps={{
-          verse: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
-          reference: "John 3:16 (KJV)",
+          verse: "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.",
+          reference: "John 3:16 (WEB)",
           backgroundColor: '#1e3a5f',
         }}
       />
@@ -29,8 +29,8 @@ export function RemotionRoot() {
         width={1920}
         height={1080}
         defaultProps={{
-          verse: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
-          reference: "John 3:16 (KJV)",
+          verse: "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.",
+          reference: "John 3:16 (WEB)",
           backgroundColor: '#1e3a5f',
         }}
       />
@@ -42,8 +42,8 @@ export function RemotionRoot() {
         width={1080}
         height={1080}
         defaultProps={{
-          verse: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
-          reference: "John 3:16 (KJV)",
+          verse: "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.",
+          reference: "John 3:16 (WEB)",
           backgroundColor: '#1e3a5f',
         }}
       />

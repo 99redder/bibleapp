@@ -79,9 +79,8 @@ export function TermsOfServicePage() {
               Bible Content
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Bible text is provided through API.Bible and is subject to the copyright and
-              licensing terms of each respective translation. The translations available are
-              those permitted for free public use.
+              Bible text is provided from the World English Bible, a public domain
+              translation included locally with the Service.
             </p>
             <p className="text-gray-700 dark:text-gray-300">
               We do not claim ownership of the Bible text content. All Scripture quotations

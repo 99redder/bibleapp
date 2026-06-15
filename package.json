@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "generate:bible:web": "node scripts/generateWebBible.mjs",
     "deploy": "npm run build && npx gh-pages -d dist",
     "remotion:studio": "remotion studio src/remotion/index.js",
     "remotion:render": "remotion render src/remotion/index.js BibleVerseVideo out/video.mp4",

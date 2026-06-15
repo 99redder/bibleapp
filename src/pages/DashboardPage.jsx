@@ -357,7 +357,7 @@ export function DashboardPage() {
         {/* Reading card */}
         <ReadingCard
           dayData={currentDayData}
-          bibleVersion={userDoc?.settings?.bibleVersion || 'KJV'}
+          bibleVersion={userDoc?.settings?.bibleVersion || 'WEB'}
           onMarkComplete={canMarkComplete ? handleMarkComplete : null}
           loading={markingComplete}
         />

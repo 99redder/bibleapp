@@ -117,66 +117,11 @@ export function getTestamentChapterCount(testament) {
   }
 }
 
-// Bible version IDs for API.Bible
+// Local Bible versions bundled as static JSON under public/bibles
 export const BIBLE_VERSIONS = {
-  KJV: {
-    id: 'de4e12af7f28f599-02',
-    name: 'King James Version',
-    abbreviation: 'KJV'
-  },
-  ASV: {
-    id: '06125adad2d5898a-01',
-    name: 'American Standard Version',
-    abbreviation: 'ASV'
-  },
   WEB: {
-    id: '9879dbb7cfe39e4d-04',
+    key: 'WEB',
     name: 'World English Bible',
     abbreviation: 'WEB'
-  },
-  BBE: {
-    id: '65eec8e0b60e656b-01',
-    name: 'Bible in Basic English',
-    abbreviation: 'BBE'
-  },
-  DARBY: {
-    id: '478f0e49c63acf21-01',
-    name: 'Darby Translation',
-    abbreviation: 'DARBY'
-  },
-  YLT: {
-    id: 'f32e5dbdebc937a1-01',
-    name: "Young's Literal Translation",
-    abbreviation: 'YLT'
-  },
-  WBT: {
-    id: '7142879509583d59-04',
-    name: "Webster's Bible Translation",
-    abbreviation: 'WBT'
-  },
-  FBV: {
-    id: '65eec8e0b60e656b-01',
-    name: 'Free Bible Version',
-    abbreviation: 'FBV'
-  },
-  CPDV: {
-    id: 'bba9f40f9c70cddc-01',
-    name: 'Catholic Public Domain Version',
-    abbreviation: 'CPDV'
-  },
-  RV: {
-    id: '40072c4a5aba4022-01',
-    name: 'Revised Version 1885',
-    abbreviation: 'RV'
-  },
-  T4T: {
-    id: 'b0f3a3d2dafb7e0b-01',
-    name: 'Translation for Translators',
-    abbreviation: 'T4T'
   }
-}
-
-// Helper to get passage ID for API.Bible
-export function getPassageId(abbrev, chapter) {
-  return `${abbrev}.${chapter}`
 }

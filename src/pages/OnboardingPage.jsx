@@ -35,7 +35,7 @@ export function OnboardingPage() {
   const [durationMonths, setDurationMonths] = useState('12')
   const [customMonths, setCustomMonths] = useState('')
   const [testament, setTestament] = useState('BOTH')
-  const [bibleVersion, setBibleVersion] = useState('KJV')
+  const [bibleVersion, setBibleVersion] = useState('WEB')
   const [includeWeekends, setIncludeWeekends] = useState(true)
 
   // Calculate months until end of year from start date
@@ -250,7 +250,7 @@ export function OnboardingPage() {
               options={versionOptions}
             />
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              All versions shown are freely available through API.Bible.
+              The World English Bible is included locally for fast, reliable reading.
             </p>
           </div>
         )

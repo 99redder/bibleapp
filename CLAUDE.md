@@ -11,7 +11,7 @@ A mobile-first React application that helps users read through the Bible on a cu
 - **Frontend**: React 18 + Vite 4.5.0
 - **Styling**: Tailwind CSS with dark mode support (`darkMode: 'class'`)
 - **Backend**: Firebase (Auth + Firestore)
-- **Bible Data**: API.Bible (free tier) — proxied through Firebase Functions
+- **Bible Data**: World English Bible (WEB) static JSON generated into `public/bibles/WEB`
 - **State Management**: React Context (AuthContext, ThemeContext)
 - **Routing**: React Router v6 (HashRouter for GitHub Pages)
 - **Deployment**: GitHub Pages via GitHub Actions
@@ -31,6 +31,7 @@ A mobile-first React application that helps users read through the Bible on a cu
 ```
 /public
   CNAME                      - Custom domain: www.bibleplannerapp.com
+  /bibles/WEB                - Generated local WEB chapter JSON files
   favicon.svg / .png         - Favicons
   apple-touch-icon.png       - iOS home screen icon
   pwa-192x192.png            - PWA icon
@@ -70,10 +71,10 @@ A mobile-first React application that helps users read through the Bible on a cu
     BibleVerseVideo.jsx      - Animated verse video + app demo compositions
   /services
     firebase.js              - Firebase init, auth helpers, Firestore CRUD functions
-    bibleAPI.js              - API.Bible proxy wrapper for fetching passages
+    bibleAPI.js              - Local static Bible JSON wrapper for fetching passages
     readingPlanGenerator.js  - Algorithm to divide Bible books/chapters into daily readings
   /utils
-    bibleStructure.js        - All 66 Bible books with chapter counts and API.Bible version IDs
+    bibleStructure.js        - All 66 Bible books with chapter counts and bundled Bible versions
     dateHelpers.js           - Date formatting and calculation utilities
     browserDetection.js      - Detects in-app browsers (Facebook, Instagram) to hide Google OAuth
   App.jsx                    - Main app with HashRouter and all route definitions
@@ -110,12 +111,12 @@ All routes use HashRouter (URLs contain `#`):
 ### Onboarding Survey (5 Steps)
 1. **Start Date** - When to begin the reading plan (validates: no past dates, today OK)
 2. **Duration** - 6, 12, 18, 24 months, "Finish by end of year", or custom (1–120 months)
-3. **Bible Version** - 11 free translations available
+3. **Bible Version** - WEB included locally
 4. **Include Weekends** - Toggle for weekend readings
 5. **Review & Confirm** - Summary before generating and saving plan to Firestore
 
 ### Dashboard
-- Daily reading card with scripture text fetched from API.Bible via proxy
+- Daily reading card with scripture text fetched from local WEB JSON
 - Mark as Read button to advance progress
 - Progress tracker showing ahead/behind/on-track status
 - Calendar view showing completed (green) and missed (red) days
@@ -142,7 +143,6 @@ VITE_FIREBASE_PROJECT_ID=your-project-id
 VITE_FIREBASE_STORAGE_BUCKET=your-project-id.firebasestorage.app
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
 VITE_FIREBASE_APP_ID=your_firebase_app_id
-VITE_BIBLE_PROXY_BASE=https://bibleapp-f097a.web.app/api/bible
 ```
 
 ### GitHub Secrets (for deployment)
@@ -153,7 +153,6 @@ Same variables must be set in GitHub repo → Settings → Secrets and variables
 - VITE_FIREBASE_STORAGE_BUCKET
 - VITE_FIREBASE_MESSAGING_SENDER_ID
 - VITE_FIREBASE_APP_ID
-- VITE_BIBLE_API_KEY
 
 ### Firestore Security Rules
 ```javascript
@@ -182,7 +181,7 @@ service cloud.firestore {
   settings: {
     startDate: Timestamp,
     durationMonths: number,        // 6, 12, 18, 24, or custom
-    bibleVersion: "KJV" | "ASV" | "WEB" | etc.,
+    bibleVersion: "WEB",
     includeWeekends: boolean,
     emailDailyPortion: false       // not yet implemented
   },
@@ -207,18 +206,9 @@ service cloud.firestore {
 }
 ```
 
-## Bible Versions Available (API.Bible IDs)
-- KJV: `de4e12af7f28f599-02`
-- ASV: `06125adad2d5898a-01`
-- WEB: `9879dbb7cfe39e4d-04`
-- BBE: `65eec8e0b60e656b-01`
-- DARBY: `478f0e49c63acf21-01`
-- YLT: `f32e5dbdebc937a1-01`
-- WBT: `7142879509583d59-04`
-- FBV: `65eec8e0b60e656b-01`
-- CPDV: `bba9f40f9c70cddc-01`
-- RV: `40072c4a5aba4022-01`
-- T4T: `b0f3a3d2dafb7e0b-01`
+## Bible Versions Available
+- WEB: World English Bible, public domain, generated from `https://ebible.org/Scriptures/eng-web_usfm.zip`
+- Regenerate static chapter JSON with `npm run generate:bible:web`
 
 ## Development Commands
 ```bash
@@ -242,7 +232,6 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 
 ## Known Issues / Future Enhancements
 - Email daily portion feature (skipped for now, setting exists but not implemented)
-- Some Bible versions may have limited chapter availability in API.Bible
 - PWA icons (pwa-192x192.png, pwa-512x512.png) are placeholder icons — should be replaced with real branded icons
 - Consider adding streak tracking
 - Consider adding notes/highlights feature
@@ -254,10 +243,9 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - **Custom domain**: Configured with CNAME file in `/public/CNAME` (value: `www.bibleplannerapp.com`)
 - **Firebase setDoc with merge:true**: Used throughout to handle cases where the user document may not exist yet
 - **Dark mode**: Stored in localStorage key `theme`; `dark` class applied to `<html>` element
-- **API.Bible rate limits**: 5,000 requests/day on free tier; responses cached 24hrs in service worker
+- **Bible text**: WEB chapter JSON is served locally from `public/bibles/WEB` and cached by the service worker
 - **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse YYYY-MM-DD strings as local time. `new Date("YYYY-MM-DD")` parses as UTC, causing off-by-one timezone bugs.
 - **In-app browser detection**: `browserDetection.js` detects Facebook/Instagram browsers; Google OAuth is hidden when in-app browser is detected
-- **Bible proxy**: API.Bible requests go through Firebase Functions proxy at `VITE_BIBLE_PROXY_BASE` to keep API key server-side
 - **Vite base path**: `base: '/'` — for custom domain root hosting (previously was `/bibleapp/` for GitHub Pages subdirectory)
 
 ## Vite Configuration (vite.config.js)

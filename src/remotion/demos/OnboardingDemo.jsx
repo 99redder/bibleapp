@@ -142,7 +142,7 @@ function VersionStep() {
           alignItems: 'center',
         }}
       >
-        <span>King James Version (KJV)</span>
+        <span>World English Bible (WEB)</span>
         <span style={{ color: '#9ca3af' }}>▼</span>
       </div>
     </StepContent>
@@ -158,7 +158,7 @@ function ReviewStep() {
       {[
         ['Start Date', 'January 25, 2026'],
         ['Duration', '12 months'],
-        ['Version', 'KJV'],
+        ['Version', 'WEB'],
         ['Reading Days', 'Every day'],
       ].map(([label, value], i) => (
         <div

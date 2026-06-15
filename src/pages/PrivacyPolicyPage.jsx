@@ -104,7 +104,6 @@ export function PrivacyPolicyPage() {
             </p>
             <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
               <li><strong>Google Firebase</strong> - Authentication and data storage</li>
-              <li><strong>API.Bible</strong> - Bible text content delivery</li>
               <li><strong>Google Sign-In</strong> - Optional authentication method</li>
             </ul>
             <p className="text-gray-700 dark:text-gray-300">

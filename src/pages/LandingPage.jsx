@@ -69,7 +69,7 @@ const steps = [
   },
 ]
 
-const versions = ['KJV', 'ASV', 'WEB', 'BBE', 'Darby', 'YLT', 'CPDV', 'RV', 'T4T']
+const versions = ['WEB']
 
 export function LandingPage() {
   const { darkMode, toggleDarkMode } = useTheme()
