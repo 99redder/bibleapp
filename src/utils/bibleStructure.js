@@ -122,55 +122,46 @@ export const BIBLE_VERSIONS = {
   BSB: {
     key: 'BSB',
     name: 'Berean Standard Bible',
-    abbreviation: 'BSB',
-    source: 'local'
+    abbreviation: 'BSB'
   },
   WEB: {
     key: 'WEB',
     name: 'World English Bible',
-    abbreviation: 'WEB',
-    source: 'local'
+    abbreviation: 'WEB'
   },
   KJV: {
     key: 'KJV',
     name: 'King James Version',
-    abbreviation: 'KJV',
-    source: 'local'
+    abbreviation: 'KJV'
   },
   ASV: {
     key: 'ASV',
     name: 'American Standard Version',
-    abbreviation: 'ASV',
-    source: 'local'
+    abbreviation: 'ASV'
   },
   BBE: {
     key: 'BBE',
     name: 'Bible in Basic English',
-    abbreviation: 'BBE',
-    source: 'local'
+    abbreviation: 'BBE'
   },
   YLT: {
     key: 'YLT',
     name: "Young's Literal Translation",
-    abbreviation: 'YLT',
-    source: 'local'
+    abbreviation: 'YLT'
   },
   DARBY: {
     key: 'DARBY',
     name: 'Darby Translation',
-    abbreviation: 'DARBY',
-    source: 'local'
+    abbreviation: 'DARBY'
   },
   WBT: {
     key: 'WBT',
     name: "Webster's Bible Translation",
-    abbreviation: 'WBT',
-    source: 'local'
+    abbreviation: 'WBT'
   },
   DRA: {
     key: 'DRA',
     name: 'Douay-Rheims 1899 American Edition',
-    abbreviation: 'DRA',
-    source: 'local'
+    abbreviation: 'DRA'
   }
 }

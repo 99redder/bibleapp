@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Button } from '../ui/Button'
-import { fetchDayPassages, isAPIConfigured } from '../../services/bibleAPI'
+import { fetchDayPassages, isBibleDataAvailable } from '../../services/bibleAPI'
 import { formatPassageDescription } from '../../services/readingPlanGenerator'
 import { formatDate, timestampToDate } from '../../utils/dateHelpers'
 
@@ -18,10 +18,10 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
   })
 
   useEffect(() => {
-    if (dayData?.passages && isAPIConfigured()) {
+    if (dayData?.passages && isBibleDataAvailable()) {
       loadPassages()
-    } else if (!isAPIConfigured()) {
-      setError('Bible service is not available right now. Please try again later.')
+    } else if (!isBibleDataAvailable()) {
+      setError('Bible data is not available right now. Please try again later.')
       setLoading(false)
     }
   }, [dayData, bibleVersion])

@@ -259,13 +259,13 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 ## Vite Configuration (vite.config.js)
 - `base: '/'` — root path for custom domain
 - PWA manifest `start_url` and `scope` set to `/`
-- Bible API cached for 24 hours (NetworkFirst)
+- Local Bible chapter JSON cached for offline-friendly reading
 - Firebase is NetworkOnly (no caching)
 - Dev server port: 3000
 
 ## PWA Configuration
 - Service worker auto-updates (registerType: 'autoUpdate')
-- Bible API responses cached for 24 hours
+- Local Bible chapter JSON cached for offline-friendly reading
 - Firebase requests are network-only (auth and Firestore must be fresh)
 - Manifest configured for standalone display, portrait orientation
 - Icons: pwa-192x192.png and pwa-512x512.png (placeholder — replace with real icons)
@@ -331,8 +331,7 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 
 ### 2026-06-15: Compact Onboarding Version Picker
 - Replaced the Bible version onboarding radio-card list with a single dropdown to avoid forcing users to scroll through every bundled translation.
-- Kept source visibility in one compact selected-version panel with a Local/API badge and explanation.
-- Current public-domain translations are all local/bundled; future API-backed translations can still display as API through `BIBLE_VERSIONS[source]`.
+- Removed source labels from the visible picker because all current public-domain translations are bundled local chapter JSON.
 
 ### 2026-01-24: Custom Domain Setup
 - Registered custom domain: www.bibleplannerapp.com

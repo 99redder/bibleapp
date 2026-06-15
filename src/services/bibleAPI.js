@@ -45,11 +45,6 @@ export async function fetchDayPassages(versionKey, passages) {
   return results
 }
 
-/**
- * Clean up passage content from API
- * @param {string} content - Raw content from API
- * @returns {string} Cleaned content
- */
 function formatVerses(verses = []) {
   return verses
     .map(verse => `${verse.verse} ${verse.text}`)
@@ -57,11 +52,10 @@ function formatVerses(verses = []) {
 }
 
 /**
- * Check if API is configured and working
- * @returns {boolean} True if API is configured
+ * Check if bundled Bible data is available client-side.
+ * @returns {boolean} True when the app can attempt local Bible data loads
  */
-export function isAPIConfigured() {
-  // The proxy is always "configured" client-side.
+export function isBibleDataAvailable() {
   return true
 }
 

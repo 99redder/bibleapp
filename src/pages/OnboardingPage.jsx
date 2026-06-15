@@ -166,14 +166,11 @@ export function OnboardingPage() {
   const versionOptions = Object.entries(BIBLE_VERSIONS).map(([key, v]) => ({
     value: key,
     label: `${v.name} (${v.abbreviation})`,
-    source: v.source || 'local',
     name: v.name,
     abbreviation: v.abbreviation
   }))
 
   const selectedBibleVersion = BIBLE_VERSIONS[bibleVersion] || BIBLE_VERSIONS.WEB
-  const selectedBibleSource = selectedBibleVersion.source || 'local'
-  const selectedBibleSourceLabel = selectedBibleSource === 'api' ? 'API' : 'Local'
 
   const renderStep = () => {
     switch (currentStep) {
@@ -261,22 +258,11 @@ export function OnboardingPage() {
             />
 
             <div className="rounded-lg border border-gray-200 bg-blue-50 p-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-blue-900/20 dark:text-gray-300">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className={`rounded-full px-2 py-1 text-xs font-medium ${
-                  selectedBibleSource === 'local'
-                    ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300'
-                    : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300'
-                }`}>
-                  {selectedBibleSourceLabel}
-                </span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {selectedBibleVersion.name}
-                </span>
+              <div className="font-medium text-gray-900 dark:text-white">
+                {selectedBibleVersion.name}
               </div>
               <p className="mt-2">
-                {selectedBibleSource === 'local'
-                  ? 'This translation is bundled with the app for fast loading and offline access after it is cached.'
-                  : 'This translation loads from an external Bible API and may be slower than bundled local translations.'}
+                Scripture text is bundled with the app for fast loading and offline access after it is cached.
               </p>
             </div>
           </div>
@@ -325,7 +311,7 @@ export function OnboardingPage() {
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                 <span className="text-gray-600 dark:text-gray-400">Bible Version</span>
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {selectedBibleVersion.name} ({selectedBibleSourceLabel})
+                  {selectedBibleVersion.name}
                 </span>
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
