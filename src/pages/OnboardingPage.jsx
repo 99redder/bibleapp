@@ -250,7 +250,7 @@ export function OnboardingPage() {
               options={versionOptions}
             />
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              The World English Bible is included locally for fast, reliable reading.
+              These public-domain translations are included locally for fast, reliable reading.
             </p>
           </div>
         )

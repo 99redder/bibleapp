@@ -29,7 +29,7 @@ Requires a `.env` file with Firebase keys (see `.env.example`).
 React 18 + Vite 4 + Tailwind CSS
 ├── Firebase Auth (email/password + Google OAuth)
 ├── Firestore (user data, reading plans, progress)
-├── Local WEB Bible JSON (static scripture text in public/bibles/WEB)
+├── Local public-domain Bible JSON (static scripture text in public/bibles)
 └── GitHub Pages (hosting via custom domain www.bibleplannerapp.com)
 ```
 
@@ -112,7 +112,7 @@ Same variables must be set as **GitHub Secrets** for CI/CD deployment.
 - **Date parsing**: Use `new Date(str + 'T00:00:00')` — never `new Date("YYYY-MM-DD")` which parses as UTC and causes timezone bugs.
 - **HashRouter**: All React Router paths are hash-based (`/#/dashboard`). Do not switch to BrowserRouter without adding server-side redirect config.
 - **Firebase writes**: Use `setDoc(..., { merge: true })` to safely write without overwriting the whole document.
-- **Bible text**: WEB chapter JSON is generated with `npm run generate:bible:web` and served from `public/bibles/WEB`.
+- **Bible text**: Public-domain chapter JSON is generated with `npm run generate:bible` and served from `public/bibles`.
 - **Google OAuth**: Hidden when an in-app browser (Facebook, Instagram) is detected. Users are prompted to open in Safari/Chrome.
 - **Dark mode**: Class-based (`dark` class on `<html>`). Toggle stored in `localStorage` key `theme`.
 - **PWA icons**: Current icons are placeholders — replace `pwa-192x192.png` and `pwa-512x512.png` for production.

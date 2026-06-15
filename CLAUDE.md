@@ -11,7 +11,7 @@ A mobile-first React application that helps users read through the Bible on a cu
 - **Frontend**: React 18 + Vite 4.5.0
 - **Styling**: Tailwind CSS with dark mode support (`darkMode: 'class'`)
 - **Backend**: Firebase (Auth + Firestore)
-- **Bible Data**: World English Bible (WEB) static JSON generated into `public/bibles/WEB`
+- **Bible Data**: Public-domain Bible translation JSON generated into `public/bibles`
 - **State Management**: React Context (AuthContext, ThemeContext)
 - **Routing**: React Router v6 (HashRouter for GitHub Pages)
 - **Deployment**: GitHub Pages via GitHub Actions
@@ -31,7 +31,7 @@ A mobile-first React application that helps users read through the Bible on a cu
 ```
 /public
   CNAME                      - Custom domain: www.bibleplannerapp.com
-  /bibles/WEB                - Generated local WEB chapter JSON files
+  /bibles                    - Generated local Bible chapter JSON files
   favicon.svg / .png         - Favicons
   apple-touch-icon.png       - iOS home screen icon
   pwa-192x192.png            - PWA icon
@@ -111,12 +111,12 @@ All routes use HashRouter (URLs contain `#`):
 ### Onboarding Survey (5 Steps)
 1. **Start Date** - When to begin the reading plan (validates: no past dates, today OK)
 2. **Duration** - 6, 12, 18, 24 months, "Finish by end of year", or custom (1–120 months)
-3. **Bible Version** - WEB included locally
+3. **Bible Version** - Public-domain translations included locally
 4. **Include Weekends** - Toggle for weekend readings
 5. **Review & Confirm** - Summary before generating and saving plan to Firestore
 
 ### Dashboard
-- Daily reading card with scripture text fetched from local WEB JSON
+- Daily reading card with scripture text fetched from local Bible JSON
 - Mark as Read button to advance progress
 - Progress tracker showing ahead/behind/on-track status
 - Calendar view showing completed (green) and missed (red) days
@@ -207,8 +207,16 @@ service cloud.firestore {
 ```
 
 ## Bible Versions Available
+- BSB: Berean Standard Bible, public domain, generated from `https://ebible.org/Scriptures/engbsb_usfm.zip`
 - WEB: World English Bible, public domain, generated from `https://ebible.org/Scriptures/eng-web_usfm.zip`
-- Regenerate static chapter JSON with `npm run generate:bible:web`
+- KJV: King James Version, public domain, generated from `https://ebible.org/Scriptures/eng-kjv_usfm.zip`
+- ASV: American Standard Version, public domain, generated from `https://ebible.org/Scriptures/eng-asv_usfm.zip`
+- BBE: Bible in Basic English, public domain, generated from `https://ebible.org/Scriptures/engBBE_usfm.zip`
+- YLT: Young's Literal Translation, public domain, generated from `https://ebible.org/Scriptures/engylt_usfm.zip`
+- DARBY: Darby Translation, public domain, generated from `https://ebible.org/Scriptures/engDBY_usfm.zip`
+- WBT: Webster's Bible Translation, public domain, generated from `https://ebible.org/Scriptures/engwebster_usfm.zip`
+- DRA: Douay-Rheims 1899 American Edition, public domain, generated from `https://ebible.org/Scriptures/engDRA_usfm.zip`
+- Regenerate static chapter JSON with `npm run generate:bible`
 
 ## Development Commands
 ```bash
@@ -243,7 +251,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - **Custom domain**: Configured with CNAME file in `/public/CNAME` (value: `www.bibleplannerapp.com`)
 - **Firebase setDoc with merge:true**: Used throughout to handle cases where the user document may not exist yet
 - **Dark mode**: Stored in localStorage key `theme`; `dark` class applied to `<html>` element
-- **Bible text**: WEB chapter JSON is served locally from `public/bibles/WEB` and cached by the service worker
+- **Bible text**: Generated chapter JSON is served locally from `public/bibles` and cached by the service worker
 - **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse YYYY-MM-DD strings as local time. `new Date("YYYY-MM-DD")` parses as UTC, causing off-by-one timezone bugs.
 - **In-app browser detection**: `browserDetection.js` detects Facebook/Instagram browsers; Google OAuth is hidden when in-app browser is detected
 - **Vite base path**: `base: '/'` — for custom domain root hosting (previously was `/bibleapp/` for GitHub Pages subdirectory)

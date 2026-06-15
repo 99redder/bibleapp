@@ -119,9 +119,49 @@ export function getTestamentChapterCount(testament) {
 
 // Local Bible versions bundled as static JSON under public/bibles
 export const BIBLE_VERSIONS = {
+  BSB: {
+    key: 'BSB',
+    name: 'Berean Standard Bible',
+    abbreviation: 'BSB'
+  },
   WEB: {
     key: 'WEB',
     name: 'World English Bible',
     abbreviation: 'WEB'
+  },
+  KJV: {
+    key: 'KJV',
+    name: 'King James Version',
+    abbreviation: 'KJV'
+  },
+  ASV: {
+    key: 'ASV',
+    name: 'American Standard Version',
+    abbreviation: 'ASV'
+  },
+  BBE: {
+    key: 'BBE',
+    name: 'Bible in Basic English',
+    abbreviation: 'BBE'
+  },
+  YLT: {
+    key: 'YLT',
+    name: "Young's Literal Translation",
+    abbreviation: 'YLT'
+  },
+  DARBY: {
+    key: 'DARBY',
+    name: 'Darby Translation',
+    abbreviation: 'DARBY'
+  },
+  WBT: {
+    key: 'WBT',
+    name: "Webster's Bible Translation",
+    abbreviation: 'WBT'
+  },
+  DRA: {
+    key: 'DRA',
+    name: 'Douay-Rheims 1899 American Edition',
+    abbreviation: 'DRA'
   }
 }

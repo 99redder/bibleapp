@@ -18,12 +18,12 @@ export default defineConfig({
         runtimeCaching: [
           {
             // Local Bible chapter data - cache first for offline-friendly reading
-            urlPattern: /\/bibles\/WEB\/.+\.json$/,
+            urlPattern: /\/bibles\/[^/]+\/.+\.json$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'bible-data-cache',
               expiration: {
-                maxEntries: 1300,
+                maxEntries: 12000,
                 maxAgeSeconds: 60 * 60 * 24 * 365
               }
             }
