@@ -122,46 +122,80 @@ export const BIBLE_VERSIONS = {
   BSB: {
     key: 'BSB',
     name: 'Berean Standard Bible',
-    abbreviation: 'BSB'
+    abbreviation: 'BSB',
+    source: 'local'
   },
   WEB: {
     key: 'WEB',
     name: 'World English Bible',
-    abbreviation: 'WEB'
+    abbreviation: 'WEB',
+    source: 'local'
   },
   KJV: {
     key: 'KJV',
     name: 'King James Version',
-    abbreviation: 'KJV'
+    abbreviation: 'KJV',
+    source: 'local'
   },
   ASV: {
     key: 'ASV',
     name: 'American Standard Version',
-    abbreviation: 'ASV'
+    abbreviation: 'ASV',
+    source: 'local'
   },
   BBE: {
     key: 'BBE',
     name: 'Bible in Basic English',
-    abbreviation: 'BBE'
+    abbreviation: 'BBE',
+    source: 'local'
   },
   YLT: {
     key: 'YLT',
     name: "Young's Literal Translation",
-    abbreviation: 'YLT'
+    abbreviation: 'YLT',
+    source: 'local'
   },
   DARBY: {
     key: 'DARBY',
     name: 'Darby Translation',
-    abbreviation: 'DARBY'
+    abbreviation: 'DARBY',
+    source: 'local'
   },
   WBT: {
     key: 'WBT',
     name: "Webster's Bible Translation",
-    abbreviation: 'WBT'
+    abbreviation: 'WBT',
+    source: 'local'
   },
   DRA: {
     key: 'DRA',
     name: 'Douay-Rheims 1899 American Edition',
-    abbreviation: 'DRA'
+    abbreviation: 'DRA',
+    source: 'local'
+  },
+  FBV: {
+    key: 'FBV',
+    id: '65eec8e0b60e656b-01',
+    name: 'Free Bible Version',
+    abbreviation: 'FBV',
+    source: 'api'
+  },
+  RV: {
+    key: 'RV',
+    id: '40072c4a5aba4022-01',
+    name: 'Revised Version 1885',
+    abbreviation: 'RV',
+    source: 'api'
+  },
+  T4T: {
+    key: 'T4T',
+    id: '66c22495370cdfc0-01',
+    name: 'Translation for Translators',
+    abbreviation: 'T4T',
+    source: 'api'
   }
+}
+
+export function getPassageId(abbrev, chapter) {
+  return `${abbrev}.${chapter}`
 }

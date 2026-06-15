@@ -29,7 +29,7 @@ Requires a `.env` file with Firebase keys (see `.env.example`).
 React 18 + Vite 4 + Tailwind CSS
 ├── Firebase Auth (email/password + Google OAuth)
 ├── Firestore (user data, reading plans, progress)
-├── Local public-domain Bible JSON (static scripture text in public/bibles)
+├── Local public-domain Bible JSON + API.Bible proxy for select translations
 └── GitHub Pages (hosting via custom domain www.bibleplannerapp.com)
 ```
 
@@ -47,9 +47,9 @@ React 18 + Vite 4 + Tailwind CSS
 | `src/pages/DashboardPage.jsx` | Main app screen for logged-in users |
 | `src/pages/OnboardingPage.jsx` | 5-step plan setup wizard |
 | `src/services/firebase.js` | Firebase init + all auth/Firestore helpers |
-| `src/services/bibleAPI.js` | Fetches scripture passages from local static Bible JSON |
+| `src/services/bibleAPI.js` | Fetches scripture passages from bundled JSON or the API.Bible proxy |
 | `src/services/readingPlanGenerator.js` | Divides Bible into daily reading chunks |
-| `src/utils/bibleStructure.js` | All 66 books with chapter counts + bundled Bible versions |
+| `src/utils/bibleStructure.js` | All 66 books with chapter counts + Bible version metadata |
 | `src/utils/browserDetection.js` | Detects in-app browsers to hide Google OAuth |
 | `src/context/AuthContext.jsx` | Provides `user`, `userDoc`, `login`, `logout`, etc. |
 | `src/context/ThemeContext.jsx` | Provides `isDark`, `toggleTheme`; persists to localStorage |

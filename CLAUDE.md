@@ -251,7 +251,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - **Custom domain**: Configured with CNAME file in `/public/CNAME` (value: `www.bibleplannerapp.com`)
 - **Firebase setDoc with merge:true**: Used throughout to handle cases where the user document may not exist yet
 - **Dark mode**: Stored in localStorage key `theme`; `dark` class applied to `<html>` element
-- **Bible text**: Generated chapter JSON is served locally from `public/bibles` and cached by the service worker
+- **Bible text**: Most translations use generated chapter JSON from `public/bibles`; select API-backed translations use the Firebase `bibleApi` proxy
 - **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse YYYY-MM-DD strings as local time. `new Date("YYYY-MM-DD")` parses as UTC, causing off-by-one timezone bugs.
 - **In-app browser detection**: `browserDetection.js` detects Facebook/Instagram browsers; Google OAuth is hidden when in-app browser is detected
 - **Vite base path**: `base: '/'` — for custom domain root hosting (previously was `/bibleapp/` for GitHub Pages subdirectory)
@@ -261,6 +261,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - PWA manifest `start_url` and `scope` set to `/`
 - Local Bible chapter JSON cached for offline-friendly reading
 - Firebase is NetworkOnly (no caching)
+- `VITE_BIBLE_PROXY_BASE` must be set in GitHub Secrets so API-backed translations work on GitHub Pages
 - Dev server port: 3000
 
 ## PWA Configuration
@@ -331,7 +332,8 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 
 ### 2026-06-15: Compact Onboarding Version Picker
 - Replaced the Bible version onboarding radio-card list with a single dropdown to avoid forcing users to scroll through every bundled translation.
-- Removed source labels from the visible picker because all current public-domain translations are bundled local chapter JSON.
+- Restored accessible API.Bible-only options as API-backed translations: FBV, RV, and T4T.
+- CPDV is not shown because the current API.Bible key returns 403 for that Bible ID.
 
 ### 2026-01-24: Custom Domain Setup
 - Registered custom domain: www.bibleplannerapp.com
