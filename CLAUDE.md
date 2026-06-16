@@ -188,7 +188,15 @@ service cloud.firestore {
   progress: {
     currentDay: number,
     completedDays: [number],       // array of day numbers
-    lastReadDate: Timestamp
+    lastReadDate: Timestamp,
+    currentStreak: number,         // consecutive days read (weekend-aware)
+    longestStreak: number,         // all-time best streak
+    lastStreakDate: "YYYY-MM-DD",  // local date key streak was last credited
+    shownMilestones: {             // milestones already celebrated (prevents repeats)
+      percent: [number],           // e.g. [10, 20, 30]
+      streak: [number],            // e.g. [3, 7]
+      daysAhead: [number]          // e.g. [3, 7]
+    }
   }
 }
 ```
@@ -329,6 +337,16 @@ Demo videos output to `/out/` folder: demo-intro.mp4, demo-onboarding.mp4, demo-
 Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands.
 
 ## Session History
+
+### 2026-06-16: Encouragement / Rewards Features
+- Added streak tracking + milestone celebrations to the dashboard (mobile-first, modeled on familiar habit apps like Duolingo).
+- **Streak rules**: consecutive real-world days a reading is logged. Weekend-aware — if the user excluded weekends (`settings.includeWeekends === false`), missing Sat/Sun does NOT break the streak; if weekends are included, every calendar day must be read. Streak is credited once per real day (guarded by `lastStreakDate`).
+- **Celebration triggers**: completion % every 10% (50% & 100% are full-screen "major"), streak milestones 3/7/14/30/50/100 (7/30/100 major), and days-ahead 3/7/14/30 (7/30 major). "Major" = full-screen confetti overlay; "minor" = slide-in toast.
+- **No-repeat / no-backlog**: `progress.shownMilestones` records what's been celebrated. On first load after this feature ships, already-passed milestones are silently seeded (no celebration backlog).
+- New files: `src/utils/streakHelpers.js`, `src/utils/rewards.js`, `src/utils/progressMetrics.js`, `src/components/dashboard/StreakCard.jsx`, `CelebrationOverlay.jsx`, `RewardToast.jsx`.
+- Modified: `src/services/firebase.js` (`markDayComplete` now computes streak + takes `settings`; added `updateShownMilestones`), `src/pages/DashboardPage.jsx` (streak card, seeding, detection, overlay/toasts), `src/index.css` (keyframes + reduced-motion), `package.json` (added `canvas-confetti`).
+- Confetti via `canvas-confetti` (~6kb); respects `prefers-reduced-motion`.
+- Core streak/reward logic covered by 19 passing unit assertions (run ad hoc against the util modules).
 
 ### 2026-06-15: Compact Onboarding Version Picker
 - Replaced the Bible version onboarding radio-card list with a single dropdown to avoid forcing users to scroll through every bundled translation.

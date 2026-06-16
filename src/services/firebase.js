@@ -24,6 +24,9 @@ import {
   Timestamp
 } from 'firebase/firestore'
 
+import { computeStreakUpdate } from '../utils/streakHelpers'
+import { emptyShownMilestones } from '../utils/rewards'
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -144,7 +147,7 @@ export const getReadingPlanDay = async (uid, dayNumber) => {
   return daySnap.exists() ? daySnap.data() : null
 }
 
-export const markDayComplete = async (uid, dayNumber, userProgress) => {
+export const markDayComplete = async (uid, dayNumber, userProgress, settings) => {
   const dayRef = doc(db, 'users', uid, 'readingPlan', `day-${dayNumber}`)
   await updateDoc(dayRef, {
     completed: true,
@@ -155,14 +158,35 @@ export const markDayComplete = async (uid, dayNumber, userProgress) => {
     ? [...userProgress.completedDays]
     : [...userProgress.completedDays, dayNumber]
   const currentDay = Number(userProgress.currentDay || 1)
+
+  // Update the reading streak based on the real-world day this reading is logged.
+  const streak = computeStreakUpdate({
+    lastStreakDate: userProgress.lastStreakDate || null,
+    currentStreak: userProgress.currentStreak || 0,
+    longestStreak: userProgress.longestStreak || 0,
+    today: new Date(),
+    includeWeekends: settings?.includeWeekends
+  })
+
   const newProgress = {
     currentDay: Math.max(currentDay, dayNumber + 1),
     completedDays: newCompletedDays,
-    lastReadDate: Timestamp.now()
+    lastReadDate: Timestamp.now(),
+    currentStreak: streak.currentStreak,
+    longestStreak: streak.longestStreak,
+    lastStreakDate: streak.lastStreakDate,
+    // Preserve any milestones already celebrated (updated separately after detection).
+    shownMilestones: userProgress.shownMilestones || emptyShownMilestones()
   }
 
   await updateUserProgress(uid, newProgress)
   return newProgress
+}
+
+// Persist which milestones have been celebrated (deep-merged into progress).
+export const updateShownMilestones = async (uid, shownMilestones) => {
+  const userRef = doc(db, 'users', uid)
+  await setDoc(userRef, { progress: { shownMilestones } }, { merge: true })
 }
 
 export const getCompletedDays = async (uid) => {

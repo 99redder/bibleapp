@@ -5,8 +5,13 @@ import { useTheme } from '../context/ThemeContext'
 import { ReadingCard } from '../components/dashboard/ReadingCard'
 import { ProgressTracker } from '../components/dashboard/ProgressTracker'
 import { Calendar } from '../components/dashboard/Calendar'
-import { getReadingPlanDay, markDayComplete, getCompletedDays, resetReadingPlan, updateBibleVersion } from '../services/firebase'
+import { StreakCard } from '../components/dashboard/StreakCard'
+import { CelebrationOverlay } from '../components/dashboard/CelebrationOverlay'
+import { RewardToastStack } from '../components/dashboard/RewardToast'
+import { getReadingPlanDay, markDayComplete, getCompletedDays, resetReadingPlan, updateBibleVersion, updateShownMilestones } from '../services/firebase'
 import { BIBLE_VERSIONS } from '../utils/bibleStructure'
+import { computeMetrics } from '../utils/progressMetrics'
+import { detectRewards, achievedMilestones } from '../utils/rewards'
 
 export function DashboardPage() {
   const { user, userDoc, logout, refreshUserDoc } = useAuth()
@@ -26,6 +31,9 @@ export function DashboardPage() {
   const [migrationBibleVersion, setMigrationBibleVersion] = useState('WEB')
   const [savingMigration, setSavingMigration] = useState(false)
   const [migrationError, setMigrationError] = useState(null)
+  const [celebrationQueue, setCelebrationQueue] = useState([])
+  const [toasts, setToasts] = useState([])
+  const seededRef = useRef(false)
 
   useEffect(() => {
     if (userDoc && !userDoc.onboardingComplete) {
@@ -50,6 +58,20 @@ export function DashboardPage() {
       // Load completed days for calendar
       const completed = await getCompletedDays(user.uid)
       setCompletedDays(completed)
+
+      // First time we see this user with the rewards feature, silently mark any
+      // milestones they've already passed as "shown" so we don't fire a backlog
+      // of celebrations on their next reading.
+      if (!seededRef.current && userDoc?.progress && !userDoc.progress.shownMilestones) {
+        seededRef.current = true
+        const metrics = computeMetrics(userDoc)
+        try {
+          await updateShownMilestones(user.uid, achievedMilestones(metrics))
+          await refreshUserDoc()
+        } catch (seedErr) {
+          console.error('Error seeding milestones:', seedErr)
+        }
+      }
     } catch (err) {
       console.error('Error loading dashboard:', err)
     } finally {
@@ -105,7 +127,24 @@ export function DashboardPage() {
       const completedDayNumber = currentDayData.dayNumber
       const wasViewingCurrentDay = completedDayNumber === userDoc?.progress?.currentDay
       const progress = userDoc?.progress || { currentDay: 1, completedDays: [], lastReadDate: null }
-      await markDayComplete(user.uid, completedDayNumber, progress)
+      const priorShown = progress.shownMilestones
+      const newProgress = await markDayComplete(user.uid, completedDayNumber, progress, userDoc?.settings)
+
+      // Detect any newly-earned milestones and surface celebrations / toasts.
+      const metrics = computeMetrics({ settings: userDoc?.settings, progress: newProgress })
+      const { rewards, shownMilestones } = detectRewards(metrics, priorShown)
+      if (rewards.length > 0) {
+        const major = rewards.filter(r => r.tier === 'major')
+        const minor = rewards.filter(r => r.tier === 'minor')
+        if (major.length) setCelebrationQueue(prev => [...prev, ...major])
+        if (minor.length) setToasts(prev => [...prev, ...minor])
+        try {
+          await updateShownMilestones(user.uid, shownMilestones)
+        } catch (mErr) {
+          console.error('Error saving milestones:', mErr)
+        }
+      }
+
       await refreshUserDoc()
 
       if (wasViewingCurrentDay) {
@@ -166,6 +205,9 @@ export function DashboardPage() {
     }
   }
 
+  const dismissCelebration = () => setCelebrationQueue(prev => prev.slice(1))
+  const removeToast = (id) => setToasts(prev => prev.filter(t => t.id !== id))
+
   if (loading && !currentDayData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -174,6 +216,8 @@ export function DashboardPage() {
     )
   }
 
+  const displayMetrics = userDoc?.settings ? computeMetrics(userDoc) : null
+  const longestStreak = userDoc?.progress?.longestStreak || 0
   const isViewingCurrentDay = viewingDayNumber === userDoc?.progress?.currentDay
   const isViewingCompletedDay = completedDays.some(d => d.dayNumber === viewingDayNumber)
   const canMarkComplete = !!currentDayData && !isViewingCompletedDay
@@ -185,6 +229,14 @@ export function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+      {/* Reward toasts (smaller milestones) */}
+      <RewardToastStack toasts={toasts} onDone={removeToast} />
+
+      {/* Full-screen celebration (major milestones, shown one at a time) */}
+      {celebrationQueue.length > 0 && (
+        <CelebrationOverlay reward={celebrationQueue[0]} onDismiss={dismissCelebration} />
+      )}
+
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
@@ -337,6 +389,11 @@ export function DashboardPage() {
         {/* Calendar (toggleable) */}
         {showCalendar && (
           <Calendar userDoc={userDoc} completedDaysData={completedDays} />
+        )}
+
+        {/* Reading streak */}
+        {displayMetrics && (
+          <StreakCard currentStreak={displayMetrics.streak} longestStreak={longestStreak} />
         )}
 
         {/* Progress tracker */}
