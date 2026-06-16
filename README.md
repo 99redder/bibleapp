@@ -18,8 +18,7 @@ npm run build      # Production build → dist/
 
 Requires a `.env` file with Firebase keys (see `.env.example`).
 
-**Deployment**: Push via GitHub Desktop → GitHub Actions builds and deploys to GitHub Pages automatically.
-**Do not** use `git push` from the command line.
+**Deployment**: After making changes, auto commit and push them with git. GitHub Actions builds and deploys to GitHub Pages automatically.
 
 ---
 

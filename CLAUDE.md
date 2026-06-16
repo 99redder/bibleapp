@@ -1,7 +1,7 @@
 # Bible Reading App - Project Context
 
 ## IMPORTANT: Workflow Reminders
-1. **Deployment**: Always push updates via GitHub Desktop - do not use command line git push. After pushing, GitHub Actions automatically builds and deploys to GitHub Pages.
+1. **Deployment**: Auto commit and push all completed changes with git. GitHub Actions automatically builds and deploys to GitHub Pages after push.
 2. **Context**: Always update this claude.md file with updated context at the end of each session.
 
 ## Overview
@@ -228,12 +228,12 @@ npm run lint       # Run ESLint
 ```
 
 ## Deployment
-**Always use GitHub Desktop to push changes.**
+**Auto commit and push all completed changes with git.**
 
 Workflow:
 1. Make code changes locally
 2. Run `npm run build` to verify the build succeeds
-3. Commit and push via GitHub Desktop
+3. Commit and push with git
 4. GitHub Actions workflow (`.github/workflows/`) automatically builds with secrets and deploys to GitHub Pages
 
 The GitHub Actions workflow injects the environment variables from GitHub Secrets at build time.
@@ -334,6 +334,11 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 - Replaced the Bible version onboarding radio-card list with a single dropdown to avoid forcing users to scroll through every bundled translation.
 - Restored accessible API.Bible-only options as API-backed translations: FBV, RV, and T4T.
 - CPDV is not shown because the current API.Bible key returns 403 for that Bible ID.
+
+### 2026-06-16: Reading Scroll Reset
+- Fixed Dashboard Mark as Read flow so advancing from the current day scrolls the reading section back into view.
+- Added a scripture pane ref in `ReadingCard` so the internal scroll container resets to the top when the day, Bible version, or fetched passages change.
+- Verified with `npm run build`.
 
 ### 2026-01-24: Custom Domain Setup
 - Registered custom domain: www.bibleplannerapp.com

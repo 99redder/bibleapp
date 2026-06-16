@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '../ui/Button'
 import { fetchDayPassages, isBibleDataAvailable } from '../../services/bibleAPI'
 import { formatPassageDescription } from '../../services/readingPlanGenerator'
 import { formatDate, timestampToDate } from '../../utils/dateHelpers'
 
 export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: markingComplete }) {
+  const scriptureScrollRef = useRef(null)
   const [passages, setPassages] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -25,6 +26,12 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
       setLoading(false)
     }
   }, [dayData, bibleVersion])
+
+  useEffect(() => {
+    if (scriptureScrollRef.current) {
+      scriptureScrollRef.current.scrollTop = 0
+    }
+  }, [dayData?.dayNumber, bibleVersion, passages])
 
   useEffect(() => {
     try {
@@ -136,7 +143,7 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
               </button>
             </div>
           ) : (
-            <div className="max-h-96 overflow-y-auto">
+            <div ref={scriptureScrollRef} className="max-h-96 overflow-y-auto">
               {passages.map((passage, index) => (
                 <div key={index} className="mb-6 last:mb-0">
                   <h3 className="font-medium text-gray-900 dark:text-white mb-2">{passage.reference}</h3>

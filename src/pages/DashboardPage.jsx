@@ -12,6 +12,7 @@ export function DashboardPage() {
   const { user, userDoc, logout, refreshUserDoc } = useAuth()
   const { darkMode, toggleDarkMode } = useTheme()
   const navigate = useNavigate()
+  const readingSectionRef = useRef(null)
 
   const [currentDayData, setCurrentDayData] = useState(null)
   const [viewingDayNumber, setViewingDayNumber] = useState(null)
@@ -25,7 +26,6 @@ export function DashboardPage() {
   const [migrationBibleVersion, setMigrationBibleVersion] = useState('WEB')
   const [savingMigration, setSavingMigration] = useState(false)
   const [migrationError, setMigrationError] = useState(null)
-  const readingSectionRef = useRef(null)
 
   useEffect(() => {
     if (userDoc && !userDoc.onboardingComplete) {
