@@ -1,38 +1,12 @@
-// The app uses Eastern Time as the canonical "day" boundary for deciding which
-// calendar day a reading counts toward (streaks, calendar, schedule pace). Using
-// the IANA zone — not a fixed UTC offset — means it tracks EST/EDT automatically.
-export const EASTERN_TZ = 'America/New_York'
-
-const easternParts = new Intl.DateTimeFormat('en-US', {
-  timeZone: EASTERN_TZ,
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit'
-})
-
-// Plain local YYYY-MM-DD key from a Date's calendar fields (no timezone shift).
-// Use this for Dates that already represent a civil date (e.g. calendar cells).
-export function toCivilDateKey(date) {
+// "Which calendar day a reading counts toward" (streaks, calendar, schedule pace)
+// is determined in the user's own local timezone — the day rolls over at the
+// user's local midnight. This helper returns the local YYYY-MM-DD key for a Date.
+export function toCivilDateKey(date = new Date()) {
   const d = date instanceof Date ? date : new Date(date)
   const year = d.getFullYear()
   const month = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
-}
-
-// The Eastern-Time calendar date (YYYY-MM-DD) on which a given instant falls.
-// Use this for real moments-in-time such as Firestore Timestamps or `new Date()`.
-export function toEasternDateKey(instant = new Date()) {
-  const parts = easternParts.formatToParts(instant)
-  const get = (type) => parts.find((p) => p.type === type).value
-  return `${get('year')}-${get('month')}-${get('day')}`
-}
-
-// A local-midnight Date representing the Eastern-Time calendar date of `instant`.
-// Lets downstream civil-date logic (weekday checks, day counting) stay unchanged
-// while still being anchored to Eastern Time.
-export function toEasternCivilDate(instant = new Date()) {
-  return new Date(toEasternDateKey(instant) + 'T00:00:00')
 }
 
 // Calculate number of reading days between two dates

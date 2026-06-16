@@ -1,5 +1,5 @@
 import { calculateExpectedDay } from '../services/readingPlanGenerator'
-import { getTotalReadingDays, timestampToDate, toEasternCivilDate } from './dateHelpers'
+import { getTotalReadingDays, timestampToDate, getToday } from './dateHelpers'
 import { displayStreak } from './streakHelpers'
 
 /**
@@ -7,10 +7,10 @@ import { displayStreak } from './streakHelpers'
  * the currently-alive streak) from a user document's settings + progress.
  *
  * @param {Object} userDoc - the Firestore user document ({ settings, progress })
- * @param {Date} [today] - override for "today" (defaults to the current Eastern-Time date)
+ * @param {Date} [today] - override for "today" (defaults to the start of the user's local day)
  * @returns {{ percent: number, daysAhead: number, streak: number, totalDays: number, completedCount: number }}
  */
-export function computeMetrics(userDoc, today = toEasternCivilDate()) {
+export function computeMetrics(userDoc, today = getToday()) {
   const settings = userDoc?.settings
   const progress = userDoc?.progress
 

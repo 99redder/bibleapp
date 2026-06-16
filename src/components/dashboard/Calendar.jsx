@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { timestampToDate, toEasternDateKey, toCivilDateKey, toEasternCivilDate } from '../../utils/dateHelpers'
+import { timestampToDate, toCivilDateKey, getToday } from '../../utils/dateHelpers'
 
 export function Calendar({ userDoc, completedDaysData }) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
@@ -8,12 +8,12 @@ export function Calendar({ userDoc, completedDaysData }) {
     ? timestampToDate(userDoc.settings.startDate)
     : null
 
-  // Build a set of completed dates (keyed by Eastern-Time calendar day) for lookup
+  // Build a set of completed dates (keyed by the user's local calendar day) for lookup
   const completedDates = useMemo(() => {
     const dates = new Set()
     completedDaysData?.forEach(day => {
       if (day.completedAt) {
-        dates.add(toEasternDateKey(timestampToDate(day.completedAt)))
+        dates.add(toCivilDateKey(timestampToDate(day.completedAt)))
       }
     })
     return dates
@@ -39,7 +39,7 @@ export function Calendar({ userDoc, completedDaysData }) {
 
     const days = []
     const current = new Date(startCalendar)
-    const today = toEasternCivilDate()
+    const today = getToday()
     const todayKey = toCivilDateKey(today)
 
     while (current <= endCalendar) {
