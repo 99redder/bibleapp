@@ -5,7 +5,8 @@ import { useTheme } from '../context/ThemeContext'
 import { ReadingCard } from '../components/dashboard/ReadingCard'
 import { ProgressTracker } from '../components/dashboard/ProgressTracker'
 import { Calendar } from '../components/dashboard/Calendar'
-import { getReadingPlanDay, markDayComplete, getCompletedDays, resetReadingPlan } from '../services/firebase'
+import { getReadingPlanDay, markDayComplete, getCompletedDays, resetReadingPlan, updateBibleVersion } from '../services/firebase'
+import { BIBLE_VERSIONS } from '../utils/bibleStructure'
 
 export function DashboardPage() {
   const { user, userDoc, logout, refreshUserDoc } = useAuth()
@@ -21,6 +22,9 @@ export function DashboardPage() {
   const [showSettings, setShowSettings] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [resetting, setResetting] = useState(false)
+  const [migrationBibleVersion, setMigrationBibleVersion] = useState('WEB')
+  const [savingMigration, setSavingMigration] = useState(false)
+  const [migrationError, setMigrationError] = useState(null)
   const readingSectionRef = useRef(null)
 
   useEffect(() => {
@@ -148,6 +152,20 @@ export function DashboardPage() {
     }
   }
 
+  const handleSaveMigrationBibleVersion = async () => {
+    setSavingMigration(true)
+    setMigrationError(null)
+    try {
+      await updateBibleVersion(user.uid, migrationBibleVersion)
+      await refreshUserDoc()
+    } catch (err) {
+      console.error('Error updating Bible version:', err)
+      setMigrationError('Could not update your Bible version. Please try again.')
+    } finally {
+      setSavingMigration(false)
+    }
+  }
+
   if (loading && !currentDayData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -159,6 +177,11 @@ export function DashboardPage() {
   const isViewingCurrentDay = viewingDayNumber === userDoc?.progress?.currentDay
   const isViewingCompletedDay = completedDays.some(d => d.dayNumber === viewingDayNumber)
   const canMarkComplete = !!currentDayData && !isViewingCompletedDay
+  const needsBibleVersionMigration = userDoc?.settings?.bibleVersion === 'CPDV'
+  const migrationVersionOptions = Object.entries(BIBLE_VERSIONS).map(([key, version]) => ({
+    value: key,
+    label: `${version.name} (${version.abbreviation})${version.source === 'api' ? ' - API' : ''}`
+  }))
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
@@ -318,6 +341,41 @@ export function DashboardPage() {
 
         {/* Progress tracker */}
         <ProgressTracker userDoc={userDoc} />
+
+        {/* Removed Bible version migration */}
+        {needsBibleVersionMigration && (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-100">
+            <div className="font-semibold">Choose a new Bible version</div>
+            <p className="mt-1">
+              Catholic Public Domain Version is no longer available through the current Bible API key. Your reading plan and progress are safe; only the translation needs to be updated.
+            </p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto]">
+              <select
+                value={migrationBibleVersion}
+                onChange={(e) => setMigrationBibleVersion(e.target.value)}
+                className="input bg-white dark:bg-gray-800"
+                aria-label="Choose replacement Bible version"
+              >
+                {migrationVersionOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={handleSaveMigrationBibleVersion}
+                disabled={savingMigration}
+                className="rounded-lg bg-amber-600 px-4 py-2 font-medium text-white hover:bg-amber-700 disabled:opacity-50"
+              >
+                {savingMigration ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+            {migrationError && (
+              <p className="mt-2 text-red-700 dark:text-red-300">{migrationError}</p>
+            )}
+          </div>
+        )}
 
         {/* Day navigation */}
         <div ref={readingSectionRef} className="scroll-mt-24 flex items-center justify-between">

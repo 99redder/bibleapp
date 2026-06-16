@@ -114,6 +114,13 @@ export const updateUserSettings = async (uid, settings) => {
   }, { merge: true })
 }
 
+export const updateBibleVersion = async (uid, bibleVersion) => {
+  const userRef = doc(db, 'users', uid)
+  await updateDoc(userRef, {
+    'settings.bibleVersion': bibleVersion
+  })
+}
+
 export const updateUserProgress = async (uid, progress) => {
   const userRef = doc(db, 'users', uid)
   await setDoc(userRef, { progress }, { merge: true })
