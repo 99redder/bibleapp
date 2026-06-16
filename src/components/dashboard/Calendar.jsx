@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { timestampToDate } from '../../utils/dateHelpers'
+import { timestampToDate, toEasternDateKey, toCivilDateKey, toEasternCivilDate } from '../../utils/dateHelpers'
 
 export function Calendar({ userDoc, completedDaysData }) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
@@ -8,13 +8,12 @@ export function Calendar({ userDoc, completedDaysData }) {
     ? timestampToDate(userDoc.settings.startDate)
     : null
 
-  // Build a set of completed dates for quick lookup
+  // Build a set of completed dates (keyed by Eastern-Time calendar day) for lookup
   const completedDates = useMemo(() => {
     const dates = new Set()
     completedDaysData?.forEach(day => {
       if (day.completedAt) {
-        const date = timestampToDate(day.completedAt)
-        dates.add(date.toDateString())
+        dates.add(toEasternDateKey(timestampToDate(day.completedAt)))
       }
     })
     return dates
@@ -40,13 +39,14 @@ export function Calendar({ userDoc, completedDaysData }) {
 
     const days = []
     const current = new Date(startCalendar)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
+    const today = toEasternCivilDate()
+    const todayKey = toCivilDateKey(today)
 
     while (current <= endCalendar) {
       const isCurrentMonth = current.getMonth() === month
-      const isToday = current.toDateString() === today.toDateString()
-      const isCompleted = completedDates.has(current.toDateString())
+      const currentKey = toCivilDateKey(current)
+      const isToday = currentKey === todayKey
+      const isCompleted = completedDates.has(currentKey)
       const isPast = current < today && !isToday
       const isBeforeStart = startDate && current < startDate
 

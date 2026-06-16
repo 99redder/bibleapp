@@ -26,6 +26,7 @@ import {
 
 import { computeStreakUpdate } from '../utils/streakHelpers'
 import { emptyShownMilestones } from '../utils/rewards'
+import { toEasternCivilDate } from '../utils/dateHelpers'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -159,12 +160,12 @@ export const markDayComplete = async (uid, dayNumber, userProgress, settings) =>
     : [...userProgress.completedDays, dayNumber]
   const currentDay = Number(userProgress.currentDay || 1)
 
-  // Update the reading streak based on the real-world day this reading is logged.
+  // Update the reading streak based on the Eastern-Time day this reading is logged.
   const streak = computeStreakUpdate({
     lastStreakDate: userProgress.lastStreakDate || null,
     currentStreak: userProgress.currentStreak || 0,
     longestStreak: userProgress.longestStreak || 0,
-    today: new Date(),
+    today: toEasternCivilDate(),
     includeWeekends: settings?.includeWeekends
   })
 

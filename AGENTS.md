@@ -2,7 +2,7 @@
 
 ## IMPORTANT: Workflow Reminders
 1. **Deployment**: Auto commit and push all completed changes with git. GitHub Actions automatically builds and deploys to GitHub Pages after push.
-2. **Context**: Always update this claude.md file with updated context at the end of each session.
+2. **Context**: Always update this AGENTS.md file with updated context at the end of each session.
 
 ## Overview
 A mobile-first React application that helps users read through the Bible on a customized schedule. Users sign up, complete an onboarding survey to customize their reading plan, and receive daily reading assignments with progress tracking.
@@ -261,7 +261,6 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - **Dark mode**: Stored in localStorage key `theme`; `dark` class applied to `<html>` element
 - **Bible text**: Most translations use generated chapter JSON from `public/bibles`; select API-backed translations use the Firebase `bibleApi` proxy
 - **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse YYYY-MM-DD strings as local time. `new Date("YYYY-MM-DD")` parses as UTC, causing off-by-one timezone bugs.
-- **Eastern Time day boundary**: "Which calendar day a reading counts toward" (streaks, calendar completed/missed dots, schedule pace) is determined in Eastern Time, not device-local time, so it's consistent regardless of the user's timezone. Helpers in `dateHelpers.js`: `toEasternDateKey(instant)` (Eastern YYYY-MM-DD for a real moment, e.g. a Firestore Timestamp), `toEasternCivilDate(instant)` (local-midnight Date of that Eastern date, for civil-date math), `toCivilDateKey(date)` (plain local YYYY-MM-DD for Dates that already represent a civil date, e.g. calendar cells). Uses IANA zone `America/New_York` so it tracks EST/EDT automatically. The day rolls over at midnight Eastern.
 - **In-app browser detection**: `browserDetection.js` detects Facebook/Instagram browsers; Google OAuth is hidden when in-app browser is detected
 - **Vite base path**: `base: '/'` — for custom domain root hosting (previously was `/bibleapp/` for GitHub Pages subdirectory)
 
@@ -341,7 +340,7 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 
 ### 2026-06-16: Encouragement / Rewards Features
 - Added streak tracking + milestone celebrations to the dashboard (mobile-first, modeled on familiar habit apps like Duolingo).
-- **Streak rules**: consecutive real-world days a reading is logged, with the day boundary defined in Eastern Time (see "Eastern Time day boundary" note). Weekend-aware — if the user excluded weekends (`settings.includeWeekends === false`), missing Sat/Sun does NOT break the streak; if weekends are included, every calendar day must be read. Streak is credited once per real day (guarded by `lastStreakDate`).
+- **Streak rules**: consecutive real-world days a reading is logged. Weekend-aware — if the user excluded weekends (`settings.includeWeekends === false`), missing Sat/Sun does NOT break the streak; if weekends are included, every calendar day must be read. Streak is credited once per real day (guarded by `lastStreakDate`).
 - **Celebration triggers**: completion % every 10% (50% & 100% are full-screen "major"), streak milestones 3/7/14/30/50/100 (7/30/100 major), and days-ahead 3/7/14/30 (7/30 major). "Major" = full-screen confetti overlay; "minor" = slide-in toast.
 - **No-repeat / no-backlog**: `progress.shownMilestones` records what's been celebrated. On first load after this feature ships, already-passed milestones are silently seeded (no celebration backlog).
 - New files: `src/utils/streakHelpers.js`, `src/utils/rewards.js`, `src/utils/progressMetrics.js`, `src/components/dashboard/StreakCard.jsx`, `CelebrationOverlay.jsx`, `RewardToast.jsx`.
@@ -386,4 +385,4 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 - Created `src/pages/LandingPage.jsx` — public marketing/landing page targeting Bible reading plan keywords
 - Updated `src/App.jsx` to route `/` to LandingPage (unauthenticated) instead of redirecting to /login
 - Updated `README.md` with comprehensive AI-agent-friendly project guide
-- Updated `CLAUDE.md` with complete project structure including all files
+- Updated `AGENTS.md` with complete project structure including all files
