@@ -275,7 +275,7 @@ export function OnboardingPage() {
               </div>
               <p className="mt-2">
                 {selectedBibleSource === 'api'
-                  ? 'This translation loads securely from API.Bible when you read.'
+                  ? 'This translation loads securely from API.Bible when you read and may load slower than bundled translations.'
                   : 'Scripture text is bundled with the app for fast loading and offline access after it is cached.'}
               </p>
             </div>
