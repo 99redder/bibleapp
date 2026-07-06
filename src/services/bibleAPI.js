@@ -107,6 +107,18 @@ export async function fetchDayPassages(versionKey, passages) {
   return results
 }
 
+export function prefetchDayPassages(versionKey, passages = []) {
+  const version = BIBLE_VERSIONS[versionKey] || BIBLE_VERSIONS.WEB
+  if (version.source === 'api') return
+
+  passages.forEach((passage) => {
+    fetch(`${LOCAL_BIBLE_BASE}/${version.key}/${passage.abbrev}/${passage.chapter}.json`)
+      .catch(() => {
+        // Best-effort cache warmup.
+      })
+  })
+}
+
 function formatVerses(verses = []) {
   return verses
     .map(verse => `${verse.verse} ${verse.text}`)

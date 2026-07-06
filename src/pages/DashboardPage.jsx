@@ -1,17 +1,20 @@
-import { useState, useEffect, useRef } from 'react'
+import { lazy, Suspense, useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import { ReadingCard } from '../components/dashboard/ReadingCard'
 import { ProgressTracker } from '../components/dashboard/ProgressTracker'
-import { Calendar } from '../components/dashboard/Calendar'
 import { StreakCard } from '../components/dashboard/StreakCard'
-import { CelebrationOverlay } from '../components/dashboard/CelebrationOverlay'
 import { RewardToastStack } from '../components/dashboard/RewardToast'
 import { getReadingPlanDay, markDayComplete, getCompletedDays, resetReadingPlan, updateBibleVersion, updateShownMilestones } from '../services/firebase'
+import { getCachedDashboard, setCachedDashboard } from '../services/localCache'
+import { prefetchDayPassages } from '../services/bibleAPI'
 import { BIBLE_VERSIONS } from '../utils/bibleStructure'
 import { computeMetrics } from '../utils/progressMetrics'
 import { detectRewards, achievedMilestones } from '../utils/rewards'
+
+const Calendar = lazy(() => import('../components/dashboard/Calendar').then(module => ({ default: module.Calendar })))
+const CelebrationOverlay = lazy(() => import('../components/dashboard/CelebrationOverlay').then(module => ({ default: module.CelebrationOverlay })))
 
 export function DashboardPage() {
   const { user, userDoc, logout, refreshUserDoc } = useAuth()
@@ -46,18 +49,75 @@ export function DashboardPage() {
     }
   }, [user, userDoc])
 
+  useEffect(() => {
+    if (!user || !currentDayData) return
+    setCachedDashboard(user.uid, {
+      currentDayData,
+      viewingDayNumber,
+      completedDays
+    })
+  }, [user, currentDayData, viewingDayNumber, completedDays])
+
+  useEffect(() => {
+    const handlePageShow = (event) => {
+      if (event.persisted && user && userDoc?.onboardingComplete) {
+        loadDashboardData()
+      }
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && user && userDoc?.onboardingComplete && currentDayData) {
+        loadDashboardData()
+      }
+    }
+
+    window.addEventListener('pageshow', handlePageShow)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [user, userDoc, currentDayData])
+
   const loadDashboardData = async () => {
-    setLoading(true)
+    const currentDay = userDoc?.progress?.currentDay || 1
+    const cachedDashboard = getCachedDashboard(user.uid)
+
+    if (cachedDashboard?.currentDayData && cachedDashboard.viewingDayNumber === currentDay) {
+      setCurrentDayData(cachedDashboard.currentDayData)
+      setViewingDayNumber(cachedDashboard.viewingDayNumber)
+      setCompletedDays(cachedDashboard.completedDays || [])
+      setLoading(false)
+    } else {
+      setLoading(true)
+    }
+
     try {
-      const currentDay = userDoc?.progress?.currentDay || 1
       // Load current day's reading
       const dayData = await getReadingPlanDay(user.uid, currentDay)
       setCurrentDayData(dayData)
       setViewingDayNumber(currentDay)
+      setLoading(false)
+      setCachedDashboard(user.uid, {
+        currentDayData: dayData,
+        viewingDayNumber: currentDay,
+        completedDays: cachedDashboard?.completedDays || []
+      })
+      warmUpcomingReadings(currentDay)
 
-      // Load completed days for calendar
-      const completed = await getCompletedDays(user.uid)
-      setCompletedDays(completed)
+      // Load completed days separately so the reading card can render first.
+      getCompletedDays(user.uid)
+        .then((completed) => {
+          setCompletedDays(completed)
+          setCachedDashboard(user.uid, {
+            currentDayData: dayData,
+            viewingDayNumber: currentDay,
+            completedDays: completed
+          })
+        })
+        .catch((completedErr) => {
+          console.error('Error loading completed days:', completedErr)
+        })
 
       // First time we see this user with the rewards feature, silently mark any
       // milestones they've already passed as "shown" so we don't fire a backlog
@@ -76,6 +136,28 @@ export function DashboardPage() {
       console.error('Error loading dashboard:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const warmUpcomingReadings = (startDay) => {
+    const run = async () => {
+      try {
+        const bibleVersion = userDoc?.settings?.bibleVersion || 'WEB'
+        const upcoming = await Promise.all(
+          [0, 1, 2, 3].map(offset => getReadingPlanDay(user.uid, startDay + offset))
+        )
+        upcoming
+          .filter(Boolean)
+          .forEach(day => prefetchDayPassages(bibleVersion, day.passages))
+      } catch (err) {
+        console.warn('Unable to warm upcoming Bible passages:', err)
+      }
+    }
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(run, { timeout: 3000 })
+    } else {
+      window.setTimeout(run, 1000)
     }
   }
 
@@ -147,20 +229,28 @@ export function DashboardPage() {
 
       await refreshUserDoc()
 
+      let dashboardDayData
       if (wasViewingCurrentDay) {
         // Keep the normal flow moving when today's reading is marked complete.
         const nextDayData = await getReadingPlanDay(user.uid, completedDayNumber + 1)
+        dashboardDayData = nextDayData
         setCurrentDayData(nextDayData)
         setViewingDayNumber(completedDayNumber + 1)
         scrollToReadingSection()
       } else {
         // If the user marks a day out of order, stay on that day and show it as complete.
-        setCurrentDayData({ ...currentDayData, completed: true })
+        dashboardDayData = { ...currentDayData, completed: true }
+        setCurrentDayData(dashboardDayData)
       }
 
       // Refresh completed days
       const completed = await getCompletedDays(user.uid)
       setCompletedDays(completed)
+      setCachedDashboard(user.uid, {
+        currentDayData: dashboardDayData,
+        viewingDayNumber: wasViewingCurrentDay ? completedDayNumber + 1 : viewingDayNumber,
+        completedDays: completed
+      })
     } catch (err) {
       console.error('Error marking complete:', err)
     } finally {
@@ -234,7 +324,9 @@ export function DashboardPage() {
 
       {/* Full-screen celebration (major milestones, shown one at a time) */}
       {celebrationQueue.length > 0 && (
-        <CelebrationOverlay reward={celebrationQueue[0]} onDismiss={dismissCelebration} />
+        <Suspense fallback={null}>
+          <CelebrationOverlay reward={celebrationQueue[0]} onDismiss={dismissCelebration} />
+        </Suspense>
       )}
 
       {/* Header */}
@@ -388,7 +480,9 @@ export function DashboardPage() {
       <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
         {/* Calendar (toggleable) */}
         {showCalendar && (
-          <Calendar userDoc={userDoc} completedDaysData={completedDays} />
+          <Suspense fallback={<div className="card"><div className="animate-spin h-6 w-6 border-4 border-primary-600 border-t-transparent rounded-full mx-auto" /></div>}>
+            <Calendar userDoc={userDoc} completedDaysData={completedDays} />
+          </Suspense>
         )}
 
         {/* Reading streak */}

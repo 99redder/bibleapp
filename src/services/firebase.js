@@ -22,7 +22,7 @@ import {
   getDocs,
   writeBatch,
   Timestamp
-} from 'firebase/firestore'
+} from 'firebase/firestore/lite'
 
 import { computeStreakUpdate } from '../utils/streakHelpers'
 import { emptyShownMilestones } from '../utils/rewards'

@@ -15,7 +15,7 @@ A mobile-first React application that helps users read through the Bible on a cu
 - **State Management**: React Context (AuthContext, ThemeContext)
 - **Routing**: React Router v6 (HashRouter for GitHub Pages)
 - **Deployment**: GitHub Pages via GitHub Actions
-- **PWA**: vite-plugin-pwa with auto-update service worker
+- **PWA**: vite-plugin-pwa with prompt-based service worker updates and navigation preload
 - **Video Generation**: Remotion for creating Bible verse videos
 
 ## Live URLs
@@ -123,6 +123,14 @@ All routes use HashRouter (URLs contain `#`):
 - **Read Ahead**: Navigate to view/complete future readings
 - **Start Fresh**: Reset plan and go through onboarding again
 - Dark mode toggle in header
+- Repeat mobile launches use a small local cache of user/dashboard state so the last reading screen can render while Firebase refreshes in the background
+- Dashboard warms the current and next few days of selected Bible passages after initial load so nearby readings are faster/offline-friendly
+
+### Performance / PWA Notes
+- Route pages are lazy-loaded from `App.jsx` to keep the initial app chunk smaller
+- Dashboard-only optional UI, including Calendar and major CelebrationOverlay, is lazy-loaded
+- Firestore uses `firebase/firestore/lite` because the app uses one-shot reads/writes rather than realtime listeners
+- Service worker updates are prompt-based; users see an in-app refresh prompt instead of silent immediate takeover
 
 ### Dark Mode
 - System preference detection on first load

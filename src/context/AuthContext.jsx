@@ -10,6 +10,7 @@ import {
   createUserDocument,
   getUserDocument
 } from '../services/firebase'
+import { getCachedUserDoc, setCachedUserDoc, clearCachedUserDoc, clearCachedDashboard } from '../services/localCache'
 
 const AuthContext = createContext(null)
 
@@ -31,8 +32,19 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser)
-        const doc = await getUserDocument(firebaseUser.uid)
-        setUserDoc(doc)
+        const cachedDoc = getCachedUserDoc(firebaseUser.uid)
+        if (cachedDoc) {
+          setUserDoc(cachedDoc)
+          setLoading(false)
+        }
+
+        try {
+          const doc = await getUserDocument(firebaseUser.uid)
+          setUserDoc(doc)
+          if (doc) setCachedUserDoc(firebaseUser.uid, doc)
+        } catch (err) {
+          console.error('Error loading user document:', err)
+        }
       } else {
         setUser(null)
         setUserDoc(null)
@@ -49,6 +61,7 @@ export function AuthProvider({ children }) {
       const { user: firebaseUser } = await signUp(email, password)
       const doc = await createUserDocument(firebaseUser.uid, email)
       setUserDoc(doc)
+      setCachedUserDoc(firebaseUser.uid, doc)
       return firebaseUser
     } catch (err) {
       setError(getErrorMessage(err.code))
@@ -62,6 +75,7 @@ export function AuthProvider({ children }) {
       const { user: firebaseUser } = await logIn(email, password)
       const doc = await getUserDocument(firebaseUser.uid)
       setUserDoc(doc)
+      if (doc) setCachedUserDoc(firebaseUser.uid, doc)
       return firebaseUser
     } catch (err) {
       setError(getErrorMessage(err.code))
@@ -72,7 +86,10 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       setError(null)
+      const uid = user?.uid
       await logOut()
+      clearCachedUserDoc(uid)
+      clearCachedDashboard(uid)
     } catch (err) {
       setError(getErrorMessage(err.code))
       throw err
@@ -99,6 +116,7 @@ export function AuthProvider({ children }) {
         doc = await createUserDocument(firebaseUser.uid, firebaseUser.email)
       }
       setUserDoc(doc)
+      if (doc) setCachedUserDoc(firebaseUser.uid, doc)
       return firebaseUser
     } catch (err) {
       setError(getErrorMessage(err.code))
@@ -110,6 +128,7 @@ export function AuthProvider({ children }) {
     if (user) {
       const doc = await getUserDocument(user.uid)
       setUserDoc(doc)
+      if (doc) setCachedUserDoc(user.uid, doc)
     }
   }
 

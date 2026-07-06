@@ -6,14 +6,13 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
+      injectRegister: false,
       workbox: {
         // Clean up old caches on activate
         cleanupOutdatedCaches: true,
-        // Skip waiting - activate new service worker immediately
-        skipWaiting: true,
-        // Claim clients immediately
-        clientsClaim: true,
+        // Let the browser preload navigation requests while the service worker starts.
+        navigationPreload: true,
         // Cache strategies
         runtimeCaching: [
           {
