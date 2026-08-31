@@ -6,16 +6,39 @@ service cloud.firestore {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow write: if request.auth != null
         && request.auth.uid == userId
-        // Prevent unbounded completedDays growth from retries or repeated marking.
+        // A 120-month daily plan is about 3,653 readings. Keep a bounded list
+        // while allowing every supported plan to finish.
         && (!request.resource.data.keys().hasAny(['progress'])
           || (request.resource.data.progress is map
             && (!request.resource.data.progress.keys().hasAny(['completedDays'])
               || (request.resource.data.progress.completedDays is list
-                && request.resource.data.progress.completedDays.size() <= 400))));
+                && request.resource.data.progress.completedDays.size() <= 4000))));
 
       // Reading plan subcollection
       match /readingPlan/{dayId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Small, user-owned client diagnostics make intermittent write failures
+      // diagnosable after the device reconnects. Clients may only append.
+      match /clientErrors/{errorId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create: if request.auth != null
+          && request.auth.uid == userId
+          && request.resource.data.keys().hasOnly([
+            'operation', 'dayNumber', 'code', 'message', 'online',
+            'occurredAt', 'receivedAt', 'userAgent'
+          ])
+          && request.resource.data.operation is string
+          && request.resource.data.operation.size() <= 80
+          && request.resource.data.code is string
+          && request.resource.data.code.size() <= 100
+          && request.resource.data.message is string
+          && request.resource.data.message.size() <= 500
+          && request.resource.data.online is bool
+          && request.resource.data.userAgent is string
+          && request.resource.data.userAgent.size() <= 300;
+        allow update, delete: if false;
       }
     }
 

@@ -8,6 +8,8 @@ import { StreakCard } from '../components/dashboard/StreakCard'
 import { RewardToastStack } from '../components/dashboard/RewardToast'
 import { getReadingPlanDay, markDayComplete, getCompletedDays, resetReadingPlan, updateBibleVersion, updateShownMilestones } from '../services/firebase'
 import { getCachedDashboard, setCachedDashboard } from '../services/localCache'
+import { clearPendingCompletions, enqueueCompletion, getPendingCompletions, removePendingCompletion } from '../services/completionQueue'
+import { flushClientDiagnostics, recordClientDiagnostic } from '../services/clientDiagnostics'
 import { prefetchDayPassages } from '../services/bibleAPI'
 import { BIBLE_VERSIONS } from '../utils/bibleStructure'
 import { computeMetrics } from '../utils/progressMetrics'
@@ -21,6 +23,7 @@ export function DashboardPage() {
   const { darkMode, toggleDarkMode } = useTheme()
   const navigate = useNavigate()
   const readingSectionRef = useRef(null)
+  const syncingCompletionsRef = useRef(false)
 
   const [currentDayData, setCurrentDayData] = useState(null)
   const [viewingDayNumber, setViewingDayNumber] = useState(null)
@@ -28,6 +31,9 @@ export function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [markingComplete, setMarkingComplete] = useState(false)
   const [markCompleteError, setMarkCompleteError] = useState(null)
+  const [pendingCompletions, setPendingCompletions] = useState([])
+  const [completionSyncState, setCompletionSyncState] = useState('idle')
+  const [isOnline, setIsOnline] = useState(() => navigator.onLine)
   const [showCalendar, setShowCalendar] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
@@ -68,6 +74,7 @@ export function DashboardPage() {
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible' && user && userDoc?.onboardingComplete && currentDayData) {
+        syncPendingCompletions()
         loadDashboardData()
       }
     }
@@ -79,6 +86,29 @@ export function DashboardPage() {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [user, userDoc, currentDayData])
+
+  useEffect(() => {
+    if (!user) return
+    setPendingCompletions(getPendingCompletions(user.uid))
+
+    const handleOnline = () => {
+      setIsOnline(true)
+      syncPendingCompletions()
+    }
+    const handleOffline = () => {
+      setIsOnline(false)
+      setCompletionSyncState('offline')
+    }
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    if (navigator.onLine) syncPendingCompletions()
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [user?.uid, userDoc?.settings])
 
   const loadDashboardData = async () => {
     const currentDay = userDoc?.progress?.currentDay || 1
@@ -202,23 +232,119 @@ export function DashboardPage() {
     })
   }
 
+  const saveCompletionForLater = (dayNumber, completedAt, error = null) => {
+    try {
+      const queued = enqueueCompletion(user.uid, dayNumber, completedAt)
+      setPendingCompletions(queued)
+      setCurrentDayData(previous => previous?.dayNumber === dayNumber
+        ? { ...previous, pendingCompletion: true }
+        : previous)
+      setCompletionSyncState(navigator.onLine ? 'error' : 'offline')
+      setMarkCompleteError(null)
+      if (error) {
+        recordClientDiagnostic(user.uid, error, { operation: 'queue_mark_complete', dayNumber })
+      }
+      return true
+    } catch (queueError) {
+      console.error('Error saving completion for later:', queueError)
+      recordClientDiagnostic(user.uid, queueError, { operation: 'save_completion_queue', dayNumber })
+      setMarkCompleteError('We could not save this reading on this device. Keep the app open, reconnect, and try again.')
+      return false
+    }
+  }
+
+  const syncPendingCompletions = async () => {
+    if (!user || !navigator.onLine || syncingCompletionsRef.current) return
+
+    const queued = getPendingCompletions(user.uid)
+    setPendingCompletions(queued)
+    if (!queued.length) {
+      setCompletionSyncState('idle')
+      await flushClientDiagnostics(user.uid)
+      return
+    }
+
+    syncingCompletionsRef.current = true
+    setCompletionSyncState('syncing')
+    let latestProgress = userDoc?.progress || { currentDay: 1, completedDays: [] }
+    let syncError = null
+
+    try {
+      for (const entry of queued) {
+        try {
+          latestProgress = await markDayComplete(
+            user.uid,
+            entry.dayNumber,
+            latestProgress,
+            userDoc?.settings,
+            entry.completedAt
+          )
+          const remaining = removePendingCompletion(user.uid, entry.dayNumber)
+          setPendingCompletions(remaining)
+        } catch (err) {
+          syncError = err
+          recordClientDiagnostic(user.uid, err, {
+            operation: 'sync_pending_completion',
+            dayNumber: entry.dayNumber
+          })
+          break
+        }
+      }
+
+      if (!syncError) {
+        const [dayData, completed] = await Promise.all([
+          getReadingPlanDay(user.uid, latestProgress.currentDay || 1),
+          getCompletedDays(user.uid)
+        ])
+        setCurrentDayData(dayData)
+        setViewingDayNumber(latestProgress.currentDay || 1)
+        setCompletedDays(completed)
+        setCachedDashboard(user.uid, {
+          currentDayData: dayData,
+          viewingDayNumber: latestProgress.currentDay || 1,
+          completedDays: completed
+        })
+        await refreshUserDoc()
+        setCompletionSyncState('synced')
+      } else {
+        setCompletionSyncState(navigator.onLine ? 'error' : 'offline')
+      }
+    } catch (err) {
+      console.error('Error refreshing synced completions:', err)
+      recordClientDiagnostic(user.uid, err, { operation: 'refresh_synced_completions' })
+      setCompletionSyncState('error')
+    } finally {
+      syncingCompletionsRef.current = false
+      await flushClientDiagnostics(user.uid)
+    }
+  }
+
   const handleMarkComplete = async () => {
     if (!currentDayData) return
 
     let completionCommitted = false
+    const completedAt = new Date()
     setMarkingComplete(true)
     setMarkCompleteError(null)
+
+    if (!navigator.onLine) {
+      saveCompletionForLater(currentDayData.dayNumber, completedAt)
+      setMarkingComplete(false)
+      return
+    }
+
     try {
       const completedDayNumber = currentDayData.dayNumber
       const wasViewingCurrentDay = completedDayNumber === userDoc?.progress?.currentDay
       const progress = userDoc?.progress || { currentDay: 1, completedDays: [], lastReadDate: null }
       const priorShown = progress.shownMilestones
-      const newProgress = await markDayComplete(user.uid, completedDayNumber, progress, userDoc?.settings)
+      const newProgress = await markDayComplete(user.uid, completedDayNumber, progress, userDoc?.settings, completedAt)
       completionCommitted = true
+      setPendingCompletions(removePendingCompletion(user.uid, completedDayNumber))
 
       // Reflect the committed write immediately. Any later refresh failure must
       // not leave a successfully completed reading looking unfinished.
-      const completedDayData = { ...currentDayData, completed: true }
+      const completedDayData = { ...currentDayData, completed: true, pendingCompletion: false }
       setCurrentDayData(completedDayData)
       setCompletedDays(previous => previous.some(day => day.dayNumber === completedDayNumber)
         ? previous
@@ -266,10 +392,22 @@ export function DashboardPage() {
     } catch (err) {
       console.error('Error marking complete:', err)
       const errorCode = String(err?.code || '')
+      recordClientDiagnostic(user.uid, err, {
+        operation: completionCommitted ? 'refresh_after_mark_complete' : 'mark_complete',
+        dayNumber: currentDayData.dayNumber
+      })
       if (completionCommitted) {
         setMarkCompleteError('Your reading was marked complete, but the dashboard could not fully refresh. Try again to sync it.')
-      } else if (!navigator.onLine || errorCode.includes('unavailable')) {
-        setMarkCompleteError('You appear to be offline. Reconnect and try marking this reading again.')
+      } else if (!navigator.onLine || [
+        'unavailable',
+        'deadline-exceeded',
+        'aborted',
+        'cancelled',
+        'internal',
+        'resource-exhausted',
+        'unknown'
+      ].some(code => errorCode.includes(code))) {
+        saveCompletionForLater(currentDayData.dayNumber, completedAt, err)
       } else if (errorCode.includes('permission-denied') || errorCode.includes('unauthenticated')) {
         setMarkCompleteError('We could not verify your session. Check your connection, then try again.')
       } else {
@@ -293,6 +431,8 @@ export function DashboardPage() {
     setResetting(true)
     try {
       await resetReadingPlan(user.uid)
+      clearPendingCompletions(user.uid)
+      setPendingCompletions([])
       await refreshUserDoc()
       navigate('/onboarding')
     } catch (err) {
@@ -332,7 +472,8 @@ export function DashboardPage() {
   const longestStreak = userDoc?.progress?.longestStreak || 0
   const isViewingCurrentDay = viewingDayNumber === userDoc?.progress?.currentDay
   const isViewingCompletedDay = completedDays.some(d => d.dayNumber === viewingDayNumber)
-  const canMarkComplete = !!currentDayData && !isViewingCompletedDay
+  const isViewingPendingDay = pendingCompletions.some(entry => entry.dayNumber === viewingDayNumber)
+  const canMarkComplete = !!currentDayData && !isViewingCompletedDay && !isViewingPendingDay
   const needsBibleVersionMigration = userDoc?.settings?.bibleVersion === 'CPDV'
   const migrationVersionOptions = Object.entries(BIBLE_VERSIONS).map(([key, version]) => ({
     value: key,
@@ -500,6 +641,38 @@ export function DashboardPage() {
 
       {/* Main content */}
       <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
+        {(!isOnline || pendingCompletions.length > 0 || completionSyncState === 'syncing' || completionSyncState === 'synced') && (
+          <div
+            role="status"
+            className={`rounded-lg border p-3 text-sm ${completionSyncState === 'synced' && pendingCompletions.length === 0
+              ? 'border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-900/30 dark:text-green-200'
+              : 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-100'}`}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <p>
+                {!isOnline
+                  ? pendingCompletions.length > 0
+                    ? `${pendingCompletions.length} reading ${pendingCompletions.length === 1 ? 'is' : 'are'} saved on this device and will sync when you reconnect.`
+                    : 'You are offline. If you finish a reading, it will be saved on this device and synced later.'
+                  : completionSyncState === 'syncing'
+                    ? `Syncing ${pendingCompletions.length} saved ${pendingCompletions.length === 1 ? 'reading' : 'readings'}…`
+                    : pendingCompletions.length > 0
+                      ? `${pendingCompletions.length} saved ${pendingCompletions.length === 1 ? 'reading needs' : 'readings need'} to sync.`
+                      : 'All saved readings are synced.'}
+              </p>
+              {isOnline && pendingCompletions.length > 0 && completionSyncState !== 'syncing' && (
+                <button
+                  type="button"
+                  onClick={syncPendingCompletions}
+                  className="shrink-0 font-semibold underline underline-offset-2"
+                >
+                  Sync now
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Calendar (toggleable) */}
         {showCalendar && (
           <Suspense fallback={<div className="card"><div className="animate-spin h-6 w-6 border-4 border-primary-600 border-t-transparent rounded-full mx-auto" /></div>}>

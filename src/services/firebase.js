@@ -25,7 +25,7 @@ import {
   Timestamp
 } from 'firebase/firestore/lite'
 
-import { computeStreakUpdate } from '../utils/streakHelpers'
+import { computeStreakUpdate, toDateKey } from '../utils/streakHelpers'
 import { emptyShownMilestones } from '../utils/rewards'
 
 const firebaseConfig = {
@@ -148,9 +148,18 @@ export const getReadingPlanDay = async (uid, dayNumber) => {
   return daySnap.exists() ? daySnap.data() : null
 }
 
-export const markDayComplete = async (uid, dayNumber, userProgress, settings) => {
+function timestampMillis(value) {
+  if (!value) return 0
+  if (typeof value.toMillis === 'function') return value.toMillis()
+  if (typeof value.seconds === 'number') return value.seconds * 1000
+  return new Date(value).getTime() || 0
+}
+
+export const markDayComplete = async (uid, dayNumber, userProgress, settings, completedAt = new Date()) => {
   const dayRef = doc(db, 'users', uid, 'readingPlan', `day-${dayNumber}`)
   const userRef = doc(db, 'users', uid)
+  const requestedCompletionDate = completedAt instanceof Date ? completedAt : new Date(completedAt)
+  const requestedCompletionTimestamp = Timestamp.fromDate(requestedCompletionDate)
 
   return runTransaction(db, async (transaction) => {
     // Read the authoritative progress inside the transaction so rapid/retried
@@ -172,21 +181,35 @@ export const markDayComplete = async (uid, dayNumber, userProgress, settings) =>
       ? [...completedDays]
       : [...completedDays, dayNumber]
     const currentDay = Number(storedProgress.currentDay || 1)
-    const completedAt = Timestamp.now()
+    const storedDay = daySnap.data()
+    const completionTimestamp = storedDay.completedAt || requestedCompletionTimestamp
+    const occurrenceDate = new Date(timestampMillis(completionTimestamp))
+    const occurrenceKey = toDateKey(occurrenceDate)
 
     // Update the reading streak based on the user's local day this reading is logged.
-    const streak = computeStreakUpdate({
-      lastStreakDate: storedProgress.lastStreakDate || null,
-      currentStreak: storedProgress.currentStreak || 0,
-      longestStreak: storedProgress.longestStreak || 0,
-      today: new Date(),
-      includeWeekends: settings?.includeWeekends
-    })
+    const lastStreakDate = storedProgress.lastStreakDate || null
+    const streak = lastStreakDate && occurrenceKey < lastStreakDate
+      ? {
+          currentStreak: storedProgress.currentStreak || 0,
+          longestStreak: storedProgress.longestStreak || 0,
+          lastStreakDate
+        }
+      : computeStreakUpdate({
+          lastStreakDate,
+          currentStreak: storedProgress.currentStreak || 0,
+          longestStreak: storedProgress.longestStreak || 0,
+          today: occurrenceDate,
+          includeWeekends: settings?.includeWeekends
+        })
+
+    const lastReadDate = timestampMillis(storedProgress.lastReadDate) > timestampMillis(completionTimestamp)
+      ? storedProgress.lastReadDate
+      : completionTimestamp
 
     const newProgress = {
       currentDay: Math.max(currentDay, dayNumber + 1),
       completedDays: newCompletedDays,
-      lastReadDate: completedAt,
+      lastReadDate,
       currentStreak: streak.currentStreak,
       longestStreak: streak.longestStreak,
       lastStreakDate: streak.lastStreakDate,
@@ -196,11 +219,25 @@ export const markDayComplete = async (uid, dayNumber, userProgress, settings) =>
 
     transaction.update(dayRef, {
       completed: true,
-      completedAt
+      completedAt: completionTimestamp
     })
     transaction.set(userRef, { progress: newProgress }, { merge: true })
 
     return newProgress
+  })
+}
+
+export const saveClientDiagnostic = async (uid, diagnostic) => {
+  const diagnosticRef = doc(collection(db, 'users', uid, 'clientErrors'))
+  await setDoc(diagnosticRef, {
+    operation: diagnostic.operation,
+    dayNumber: diagnostic.dayNumber,
+    code: diagnostic.code,
+    message: diagnostic.message,
+    online: diagnostic.online,
+    occurredAt: Timestamp.fromDate(new Date(diagnostic.occurredAt)),
+    receivedAt: Timestamp.now(),
+    userAgent: diagnostic.userAgent
   })
 }
 

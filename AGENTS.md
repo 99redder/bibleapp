@@ -349,6 +349,11 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 ### 2026-08-31: Reliable Mark-as-Read Updates
 - Made the reading-day completion and user-progress update a single Firestore transaction so they either both succeed or both fail; transaction reads use authoritative stored progress to avoid retry/concurrency overwrites.
 - Added an accessible inline error with a retry action when Mark as Read fails, including clearer messages for offline/unavailable and authentication/permission failures.
+- Added a durable per-user completion queue in local storage. Offline/unavailable Mark as Read taps retain their original completion time, display a pending-sync status, and replay oldest-first when the browser reconnects or the dashboard opens.
+- Delayed completions preserve later `lastReadDate`/streak state and use idempotent transactions, preventing retries or retroactive syncs from double-counting streaks.
+- Added automatic startup/online reconciliation plus append-only client diagnostics in `users/{uid}/clientErrors`; diagnostics are retained locally until they can be uploaded.
+- Raised the Firestore `completedDays` bound from 400 to 4,000 so the supported 120-month daily plan can finish. Deployed the updated Firestore rules successfully.
+- Added `src/services/completionQueue.js` and `src/services/clientDiagnostics.js`.
 
 ### 2026-08-31: Mark-as-Read Incident Investigation
 - Investigated a report that tapping **Mark as Read** appeared to do nothing.
