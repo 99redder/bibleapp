@@ -346,6 +346,13 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 
 ## Session History
 
+### 2026-08-31: Mark-as-Read Incident Investigation
+- Investigated a report that tapping **Mark as Read** appeared to do nothing.
+- The completion handler catches Firebase/write or follow-up refresh failures and only logs them to the browser console; it exposes no inline error or retry message, so any transient failure is invisible to the user.
+- Cached dashboard data can remain interactive while Firestore is unavailable; Firestore is intentionally network-only, making an offline or rejected write the most likely incident path. No Firebase platform-wide Auth/App Check incident was listed for August 30, and the latest GitHub Pages deployment was successful.
+- A separate future limit remains in `firestore.rules`: user progress writes are rejected once `completedDays` would exceed 400 entries. This was not established as the cause of this incident.
+- No application code was changed during this diagnostic session.
+
 ### 2026-06-16: Encouragement / Rewards Features
 - Added streak tracking + milestone celebrations to the dashboard (mobile-first, modeled on familiar habit apps like Duolingo).
 - **Streak rules**: consecutive real-world days a reading is logged. Weekend-aware — if the user excluded weekends (`settings.includeWeekends === false`), missing Sat/Sun does NOT break the streak; if weekends are included, every calendar day must be read. Streak is credited once per real day (guarded by `lastStreakDate`).
