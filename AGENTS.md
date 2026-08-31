@@ -346,6 +346,10 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 
 ## Session History
 
+### 2026-08-31: Reliable Mark-as-Read Updates
+- Made the reading-day completion and user-progress update a single Firestore transaction so they either both succeed or both fail; transaction reads use authoritative stored progress to avoid retry/concurrency overwrites.
+- Added an accessible inline error with a retry action when Mark as Read fails, including clearer messages for offline/unavailable and authentication/permission failures.
+
 ### 2026-08-31: Mark-as-Read Incident Investigation
 - Investigated a report that tapping **Mark as Read** appeared to do nothing.
 - The completion handler catches Firebase/write or follow-up refresh failures and only logs them to the browser console; it exposes no inline error or retry message, so any transient failure is invisible to the user.

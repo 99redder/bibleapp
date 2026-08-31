@@ -21,6 +21,7 @@ import {
   where,
   getDocs,
   writeBatch,
+  runTransaction,
   Timestamp
 } from 'firebase/firestore/lite'
 
@@ -149,38 +150,58 @@ export const getReadingPlanDay = async (uid, dayNumber) => {
 
 export const markDayComplete = async (uid, dayNumber, userProgress, settings) => {
   const dayRef = doc(db, 'users', uid, 'readingPlan', `day-${dayNumber}`)
-  await updateDoc(dayRef, {
-    completed: true,
-    completedAt: Timestamp.now()
+  const userRef = doc(db, 'users', uid)
+
+  return runTransaction(db, async (transaction) => {
+    // Read the authoritative progress inside the transaction so rapid/retried
+    // taps cannot overwrite a completion recorded by another request.
+    const [daySnap, userSnap] = await Promise.all([
+      transaction.get(dayRef),
+      transaction.get(userRef)
+    ])
+
+    if (!daySnap.exists()) {
+      throw new Error(`Reading plan day ${dayNumber} does not exist`)
+    }
+
+    const storedProgress = userSnap.data()?.progress || userProgress || {}
+    const completedDays = Array.isArray(storedProgress.completedDays)
+      ? storedProgress.completedDays
+      : []
+    const newCompletedDays = completedDays.includes(dayNumber)
+      ? [...completedDays]
+      : [...completedDays, dayNumber]
+    const currentDay = Number(storedProgress.currentDay || 1)
+    const completedAt = Timestamp.now()
+
+    // Update the reading streak based on the user's local day this reading is logged.
+    const streak = computeStreakUpdate({
+      lastStreakDate: storedProgress.lastStreakDate || null,
+      currentStreak: storedProgress.currentStreak || 0,
+      longestStreak: storedProgress.longestStreak || 0,
+      today: new Date(),
+      includeWeekends: settings?.includeWeekends
+    })
+
+    const newProgress = {
+      currentDay: Math.max(currentDay, dayNumber + 1),
+      completedDays: newCompletedDays,
+      lastReadDate: completedAt,
+      currentStreak: streak.currentStreak,
+      longestStreak: streak.longestStreak,
+      lastStreakDate: streak.lastStreakDate,
+      // Preserve any milestones already celebrated (updated separately after detection).
+      shownMilestones: storedProgress.shownMilestones || emptyShownMilestones()
+    }
+
+    transaction.update(dayRef, {
+      completed: true,
+      completedAt
+    })
+    transaction.set(userRef, { progress: newProgress }, { merge: true })
+
+    return newProgress
   })
-
-  const newCompletedDays = userProgress.completedDays.includes(dayNumber)
-    ? [...userProgress.completedDays]
-    : [...userProgress.completedDays, dayNumber]
-  const currentDay = Number(userProgress.currentDay || 1)
-
-  // Update the reading streak based on the user's local day this reading is logged.
-  const streak = computeStreakUpdate({
-    lastStreakDate: userProgress.lastStreakDate || null,
-    currentStreak: userProgress.currentStreak || 0,
-    longestStreak: userProgress.longestStreak || 0,
-    today: new Date(),
-    includeWeekends: settings?.includeWeekends
-  })
-
-  const newProgress = {
-    currentDay: Math.max(currentDay, dayNumber + 1),
-    completedDays: newCompletedDays,
-    lastReadDate: Timestamp.now(),
-    currentStreak: streak.currentStreak,
-    longestStreak: streak.longestStreak,
-    lastStreakDate: streak.lastStreakDate,
-    // Preserve any milestones already celebrated (updated separately after detection).
-    shownMilestones: userProgress.shownMilestones || emptyShownMilestones()
-  }
-
-  await updateUserProgress(uid, newProgress)
-  return newProgress
 }
 
 // Persist which milestones have been celebrated (deep-merged into progress).

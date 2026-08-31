@@ -27,6 +27,7 @@ export function DashboardPage() {
   const [completedDays, setCompletedDays] = useState([])
   const [loading, setLoading] = useState(true)
   const [markingComplete, setMarkingComplete] = useState(false)
+  const [markCompleteError, setMarkCompleteError] = useState(null)
   const [showCalendar, setShowCalendar] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
@@ -204,13 +205,24 @@ export function DashboardPage() {
   const handleMarkComplete = async () => {
     if (!currentDayData) return
 
+    let completionCommitted = false
     setMarkingComplete(true)
+    setMarkCompleteError(null)
     try {
       const completedDayNumber = currentDayData.dayNumber
       const wasViewingCurrentDay = completedDayNumber === userDoc?.progress?.currentDay
       const progress = userDoc?.progress || { currentDay: 1, completedDays: [], lastReadDate: null }
       const priorShown = progress.shownMilestones
       const newProgress = await markDayComplete(user.uid, completedDayNumber, progress, userDoc?.settings)
+      completionCommitted = true
+
+      // Reflect the committed write immediately. Any later refresh failure must
+      // not leave a successfully completed reading looking unfinished.
+      const completedDayData = { ...currentDayData, completed: true }
+      setCurrentDayData(completedDayData)
+      setCompletedDays(previous => previous.some(day => day.dayNumber === completedDayNumber)
+        ? previous
+        : [...previous, completedDayData])
 
       // Detect any newly-earned milestones and surface celebrations / toasts.
       const metrics = computeMetrics({ settings: userDoc?.settings, progress: newProgress })
@@ -253,6 +265,16 @@ export function DashboardPage() {
       })
     } catch (err) {
       console.error('Error marking complete:', err)
+      const errorCode = String(err?.code || '')
+      if (completionCommitted) {
+        setMarkCompleteError('Your reading was marked complete, but the dashboard could not fully refresh. Try again to sync it.')
+      } else if (!navigator.onLine || errorCode.includes('unavailable')) {
+        setMarkCompleteError('You appear to be offline. Reconnect and try marking this reading again.')
+      } else if (errorCode.includes('permission-denied') || errorCode.includes('unauthenticated')) {
+        setMarkCompleteError('We could not verify your session. Check your connection, then try again.')
+      } else {
+        setMarkCompleteError('This reading was not marked complete. Please try again.')
+      }
     } finally {
       setMarkingComplete(false)
     }
@@ -581,6 +603,23 @@ export function DashboardPage() {
           onMarkComplete={canMarkComplete ? handleMarkComplete : null}
           loading={markingComplete}
         />
+
+        {markCompleteError && (
+          <div
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/30"
+          >
+            <p className="text-sm text-red-700 dark:text-red-300">{markCompleteError}</p>
+            <button
+              type="button"
+              onClick={handleMarkComplete}
+              disabled={markingComplete}
+              className="mt-2 text-sm font-semibold text-primary-700 hover:text-primary-800 disabled:opacity-50 dark:text-primary-300 dark:hover:text-primary-200"
+            >
+              Try again
+            </button>
+          </div>
+        )}
 
         {/* Read ahead prompt */}
         {isViewingCurrentDay && !markingComplete && currentDayData && (
