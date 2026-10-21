@@ -183,6 +183,7 @@ service cloud.firestore {
     durationMonths: number,        // 6, 12, 18, 24, or custom
     bibleVersion: "WEB",
     includeWeekends: boolean,
+    showTrivia: boolean,           // "Fun facts" verse trivia; undefined = pre-feature account (dashboard offers it once)
     emailDailyPortion: false       // not yet implemented
   },
   progress: {
@@ -339,6 +340,14 @@ Demo videos output to `/out/` folder: demo-intro.mp4, demo-onboarding.mp4, demo-
 
 ### Note
 Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands.
+
+## Fun Facts (Verse Trivia)
+- Data: `src/data/verseTrivia.json` — array of `{ id, book, chapter, verseStart|null, verseEnd|null, category, title, text, source: { label, url }, needsReview? }`. `verseStart: null` = chapter-level fact. Categories in `src/utils/triviaCategories.js`.
+- Content rules: verifiable, sourced, non-controversial trivia only (songs, films, art, literature, history, space, sports, mottos, Bible records, everyday phrases) — no doctrinal or interpretive analysis.
+- Validate after editing: `npm run validate:trivia` (checks book/chapter/verses against bundled KJV data, categories, unique ids, https sources).
+- Loading: `src/services/trivia.js` lazily imports the JSON as its own chunk (precached by the PWA) only when `settings.showTrivia` is on; never blocks passage loading. Psalm trivia is suppressed for Vulgate-numbered versions (`psalmNumbering: 'vulgate'` on DRA).
+- UI (`src/components/dashboard/Trivia.jsx`): small ✨ marker after a verse or chapter heading → dismissible bottom sheet (floating card on desktop); collapsed "Did you know?" recap above Mark as Read. Nothing opens automatically.
+- Setting: onboarding step (default on), dashboard settings menu toggle, and a one-time "New: fun facts" card for accounts without the setting.
 
 ## Session History
 

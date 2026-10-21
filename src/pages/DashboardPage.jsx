@@ -6,7 +6,8 @@ import { ReadingCard } from '../components/dashboard/ReadingCard'
 import { ProgressTracker } from '../components/dashboard/ProgressTracker'
 import { StreakCard } from '../components/dashboard/StreakCard'
 import { RewardToastStack } from '../components/dashboard/RewardToast'
-import { getReadingPlanDay, markDayComplete, getCompletedDays, resetReadingPlan, updateBibleVersion, updateShownMilestones } from '../services/firebase'
+import { getReadingPlanDay, markDayComplete, getCompletedDays, resetReadingPlan, updateBibleVersion, updateShownMilestones, updateTriviaSetting } from '../services/firebase'
+import { SparkleIcon } from '../components/ui/SparkleIcon'
 import { getCachedDashboard, setCachedDashboard } from '../services/localCache'
 import { clearPendingCompletions, enqueueCompletion, getPendingCompletions, removePendingCompletion } from '../services/completionQueue'
 import { flushClientDiagnostics, recordClientDiagnostic } from '../services/clientDiagnostics'
@@ -36,6 +37,7 @@ export function DashboardPage() {
   const [isOnline, setIsOnline] = useState(() => navigator.onLine)
   const [showCalendar, setShowCalendar] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [savingTrivia, setSavingTrivia] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [migrationBibleVersion, setMigrationBibleVersion] = useState('WEB')
@@ -457,6 +459,18 @@ export function DashboardPage() {
     }
   }
 
+  const handleSetTrivia = async (showTrivia) => {
+    setSavingTrivia(true)
+    try {
+      await updateTriviaSetting(user.uid, showTrivia)
+      await refreshUserDoc()
+    } catch (err) {
+      console.error('Error updating fun facts setting:', err)
+    } finally {
+      setSavingTrivia(false)
+    }
+  }
+
   const dismissCelebration = () => setCelebrationQueue(prev => prev.slice(1))
   const removeToast = (id) => setToasts(prev => prev.filter(t => t.id !== id))
 
@@ -474,6 +488,9 @@ export function DashboardPage() {
   const isViewingCompletedDay = completedDays.some(d => d.dayNumber === viewingDayNumber)
   const isViewingPendingDay = pendingCompletions.some(entry => entry.dayNumber === viewingDayNumber)
   const canMarkComplete = !!currentDayData && !isViewingCompletedDay && !isViewingPendingDay
+  const triviaEnabled = userDoc?.settings?.showTrivia === true
+  // Accounts created before fun facts existed have no setting yet; offer it once.
+  const showTriviaIntro = !!userDoc?.settings && userDoc.settings.showTrivia === undefined
   const currentBibleVersionKey = userDoc?.settings?.bibleVersion
   const needsBibleVersionMigration = !!currentBibleVersionKey && !BIBLE_VERSIONS[currentBibleVersionKey]
   const migrationVersionOptions = Object.entries(BIBLE_VERSIONS).map(([key, version]) => ({
@@ -571,7 +588,27 @@ export function DashboardPage() {
               </button>
               {/* Settings dropdown */}
               {showSettings && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20">
+                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20">
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={triviaEnabled}
+                    disabled={savingTrivia}
+                    onClick={() => handleSetTrivia(!triviaEnabled)}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between gap-2 disabled:opacity-60"
+                  >
+                    <span className="flex items-center gap-2">
+                      <SparkleIcon className="w-4 h-4 text-amber-500" />
+                      Fun facts
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${triviaEnabled ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                    >
+                      <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${triviaEnabled ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                    </span>
+                  </button>
+                  <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
                   <button
                     onClick={() => {
                       setShowResetConfirm(true)
@@ -770,10 +807,45 @@ export function DashboardPage() {
           </div>
         )}
 
+        {showTriviaIntro && (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/20 dark:bg-amber-500/10">
+            <div className="flex items-start gap-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-300">
+                <SparkleIcon className="h-4 w-4" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">New: fun facts while you read</p>
+                <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                  See short, optional trivia about songs, films, art, and history connected to the verses you read. Just tap the ✨ when you're curious. You can change this anytime in settings.
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleSetTrivia(true)}
+                    disabled={savingTrivia}
+                    className="rounded-lg bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50"
+                  >
+                    Turn on
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSetTrivia(false)}
+                    disabled={savingTrivia}
+                    className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-amber-100 dark:text-gray-300 dark:hover:bg-amber-500/10 disabled:opacity-50"
+                  >
+                    No thanks
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Reading card */}
         <ReadingCard
           dayData={currentDayData}
           bibleVersion={userDoc?.settings?.bibleVersion || 'WEB'}
+          showTrivia={triviaEnabled}
           onMarkComplete={canMarkComplete ? handleMarkComplete : null}
           loading={markingComplete}
         />

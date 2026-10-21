@@ -122,6 +122,11 @@
   50% { transform: scale(1.12) rotate(1deg); }
 }
 
+@keyframes sheetUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Respect users who prefer reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   .animate-\[fadeIn_0\.2s_ease-out\],
@@ -129,7 +134,8 @@
   .animate-\[badgePop_0\.5s_ease-out\],
   .animate-\[toastIn_0\.35s_ease-out\],
   .animate-\[toastOut_0\.35s_ease-in_forwards\],
-  .animate-\[flameFlicker_2\.4s_ease-in-out_infinite\] {
+  .animate-\[flameFlicker_2\.4s_ease-in-out_infinite\],
+  .animate-\[sheetUp_0\.25s_ease-out\] {
     animation: none !important;
   }
 }

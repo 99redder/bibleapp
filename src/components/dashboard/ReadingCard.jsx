@@ -1,15 +1,19 @@
-import { useState, useEffect, useRef } from 'react'
+import { Fragment, useState, useEffect, useMemo, useRef } from 'react'
 import { Button } from '../ui/Button'
+import { TriviaMarker, TriviaSheet, TriviaSummary } from './Trivia'
 import { fetchDayPassages, isBibleDataAvailable } from '../../services/bibleAPI'
+import { getChapterTrivia, loadTriviaIndex } from '../../services/trivia'
 import { formatPassageDescription } from '../../services/readingPlanGenerator'
 import { formatDate, timestampToDate } from '../../utils/dateHelpers'
 
-export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: markingComplete }) {
+export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkComplete, loading: markingComplete }) {
   const scriptureScrollRef = useRef(null)
   const [passages, setPassages] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [expanded, setExpanded] = useState(true)
+  const [triviaIndex, setTriviaIndex] = useState(null)
+  const [sheetEntries, setSheetEntries] = useState(null)
   const [lineSpacing, setLineSpacing] = useState(() => {
     try {
       return localStorage.getItem('scriptureLineSpacing') || 'double'
@@ -40,6 +44,43 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
       // ignore
     }
   }, [lineSpacing])
+
+  // Trivia loads alongside the passage and never blocks it; if it fails the
+  // reading simply shows without markers.
+  useEffect(() => {
+    if (!showTrivia || triviaIndex) return
+    let cancelled = false
+    loadTriviaIndex()
+      .then(index => { if (!cancelled) setTriviaIndex(index) })
+      .catch(err => console.warn('Fun facts unavailable:', err))
+    return () => { cancelled = true }
+  }, [showTrivia, triviaIndex])
+
+  useEffect(() => {
+    setSheetEntries(null)
+  }, [dayData?.dayNumber])
+
+  const activeTriviaIndex = showTrivia ? triviaIndex : null
+
+  const passageTrivia = useMemo(() => passages.map(passage => {
+    const entries = getChapterTrivia(activeTriviaIndex, bibleVersion, passage.abbrev, passage.chapter)
+    const byVerse = new Map()
+    for (const entry of entries) {
+      if (entry.verseStart == null) continue
+      if (!byVerse.has(entry.verseStart)) byVerse.set(entry.verseStart, [])
+      byVerse.get(entry.verseStart).push(entry)
+    }
+    return {
+      entries,
+      chapterLevel: entries.filter(entry => entry.verseStart == null),
+      byVerse
+    }
+  }), [passages, activeTriviaIndex, bibleVersion])
+
+  const readingTrivia = useMemo(
+    () => passageTrivia.flatMap(trivia => trivia.entries),
+    [passageTrivia]
+  )
 
   const loadPassages = async () => {
     setLoading(true)
@@ -143,18 +184,57 @@ export function ReadingCard({ dayData, bibleVersion, onMarkComplete, loading: ma
               </button>
             </div>
           ) : (
-            <div ref={scriptureScrollRef} className="max-h-96 overflow-y-auto">
-              {passages.map((passage, index) => (
-                <div key={index} className="mb-6 last:mb-0">
-                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">{passage.reference}</h3>
-                  <div className={`scripture-text whitespace-pre-wrap ${lineSpacing === 'single' ? 'leading-normal' : 'leading-loose'}`}>
-                    {passage.content}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <>
+              <div ref={scriptureScrollRef} className="max-h-96 overflow-y-auto">
+                {passages.map((passage, index) => {
+                  const trivia = passageTrivia[index]
+
+                  return (
+                    <div key={index} className="mb-6 last:mb-0">
+                      <h3 className="font-medium text-gray-900 dark:text-white mb-2">
+                        {passage.reference}
+                        {trivia?.chapterLevel.length > 0 && (
+                          <TriviaMarker
+                            label={`Fun fact about ${passage.reference}`}
+                            onClick={() => setSheetEntries(trivia.chapterLevel)}
+                          />
+                        )}
+                      </h3>
+                      <div className={`scripture-text whitespace-pre-wrap ${lineSpacing === 'single' ? 'leading-normal' : 'leading-loose'}`}>
+                        {passage.verses?.length
+                          ? passage.verses.map((verse, verseIndex) => {
+                            const verseTrivia = trivia?.byVerse.get(verse.verse)
+
+                            return (
+                              <Fragment key={verse.verse}>
+                                {verseIndex > 0 && '\n\n'}
+                                {verse.verse} {verse.text}
+                                {verseTrivia && (
+                                  <TriviaMarker
+                                    label={`Fun fact about ${passage.reference}:${verse.verse}`}
+                                    onClick={() => setSheetEntries(verseTrivia)}
+                                  />
+                                )}
+                              </Fragment>
+                            )
+                          })
+                          : passage.content}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {readingTrivia.length > 0 && (
+                <TriviaSummary key={dayData.dayNumber} entries={readingTrivia} />
+              )}
+            </>
           )}
         </div>
+      )}
+
+      {sheetEntries && (
+        <TriviaSheet entries={sheetEntries} onClose={() => setSheetEntries(null)} />
       )}
 
       {/* Mark complete button */}

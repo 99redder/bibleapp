@@ -171,7 +171,8 @@ export const BIBLE_VERSIONS = {
     key: 'DRA',
     name: 'Douay-Rheims 1899 American Edition',
     abbreviation: 'DRA',
-    source: 'local'
+    source: 'local',
+    psalmNumbering: 'vulgate'
   },
   RV: {
     key: 'RV',

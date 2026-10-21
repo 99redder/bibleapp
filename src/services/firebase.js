@@ -125,6 +125,13 @@ export const updateBibleVersion = async (uid, bibleVersion) => {
   })
 }
 
+export const updateTriviaSetting = async (uid, showTrivia) => {
+  const userRef = doc(db, 'users', uid)
+  await updateDoc(userRef, {
+    'settings.showTrivia': showTrivia
+  })
+}
+
 export const updateUserProgress = async (uid, progress) => {
   const userRef = doc(db, 'users', uid)
   await setDoc(userRef, { progress }, { merge: true })

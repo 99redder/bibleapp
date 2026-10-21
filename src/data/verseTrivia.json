@@ -1,0 +1,654 @@
+[
+  {
+    "id": "gen-1-1-apollo-8",
+    "book": "GEN", "chapter": 1, "verseStart": 1, "verseEnd": 10,
+    "category": "space",
+    "title": "Read from lunar orbit",
+    "text": "On Christmas Eve 1968, the Apollo 8 astronauts Bill Anders, Jim Lovell, and Frank Borman took turns reading Genesis 1:1–10 while orbiting the Moon. It was one of the most-watched broadcasts in history at the time.",
+    "source": { "label": "Wikipedia: Apollo 8", "url": "https://en.wikipedia.org/wiki/Apollo_8" }
+  },
+  {
+    "id": "gen-1-3-fiat-lux",
+    "book": "GEN", "chapter": 1, "verseStart": 3, "verseEnd": 3,
+    "category": "mottos",
+    "title": "“Fiat lux”",
+    "text": "“Let there be light” is “Fiat lux” in Latin — the motto of the University of California.",
+    "source": { "label": "Wikipedia: Fiat lux", "url": "https://en.wikipedia.org/wiki/Fiat_lux" }
+  },
+  {
+    "id": "gen-2-7-creation-of-adam",
+    "book": "GEN", "chapter": 2, "verseStart": 7, "verseEnd": 7,
+    "category": "art",
+    "title": "The Creation of Adam",
+    "text": "Michelangelo painted the creation of Adam on the ceiling of the Sistine Chapel around 1508–1512. The nearly touching hands of God and Adam are among the most reproduced images in art history.",
+    "source": { "label": "Wikipedia: The Creation of Adam", "url": "https://en.wikipedia.org/wiki/The_Creation_of_Adam" }
+  },
+  {
+    "id": "gen-4-9-brothers-keeper",
+    "book": "GEN", "chapter": 4, "verseStart": 9, "verseEnd": 9,
+    "category": "phrases",
+    "title": "“Am I my brother’s keeper?”",
+    "text": "Cain’s reply here gave English the everyday phrase “my brother’s keeper,” used for being responsible for someone else.",
+    "source": { "label": "Wikipedia: Cain and Abel", "url": "https://en.wikipedia.org/wiki/Cain_and_Abel" }
+  },
+  {
+    "id": "gen-4-16-east-of-eden",
+    "book": "GEN", "chapter": 4, "verseStart": 16, "verseEnd": 16,
+    "category": "literature",
+    "title": "East of Eden",
+    "text": "John Steinbeck took the title of his 1952 novel East of Eden from this verse. It was later made into the 1955 film starring James Dean.",
+    "source": { "label": "Wikipedia: East of Eden (novel)", "url": "https://en.wikipedia.org/wiki/East_of_Eden_(novel)" }
+  },
+  {
+    "id": "gen-5-27-methuselah",
+    "book": "GEN", "chapter": 5, "verseStart": 27, "verseEnd": 27,
+    "category": "records",
+    "title": "The oldest man in the Bible",
+    "text": "At 969 years, Methuselah has the longest lifespan recorded in the Bible. A Great Basin bristlecone pine in California — one of the oldest known living trees, over 4,800 years old — is nicknamed “Methuselah” after him.",
+    "source": { "label": "Wikipedia: Methuselah (tree)", "url": "https://en.wikipedia.org/wiki/Methuselah_(tree)" }
+  },
+  {
+    "id": "gen-37-3-technicolor-dreamcoat",
+    "book": "GEN", "chapter": 37, "verseStart": 3, "verseEnd": 3,
+    "category": "music",
+    "title": "Joseph and the Amazing Technicolor Dreamcoat",
+    "text": "Joseph’s coat inspired Andrew Lloyd Webber and Tim Rice’s musical, first performed in 1968 as a short cantata for a school in London. It went on to become one of the most-performed musicals in the world.",
+    "source": { "label": "Wikipedia: Joseph and the Amazing Technicolor Dreamcoat", "url": "https://en.wikipedia.org/wiki/Joseph_and_the_Amazing_Technicolor_Dreamcoat" }
+  },
+  {
+    "id": "exo-2-3-prince-of-egypt",
+    "book": "EXO", "chapter": 2, "verseStart": 3, "verseEnd": 3,
+    "category": "film",
+    "title": "The Prince of Egypt",
+    "text": "DreamWorks’ 1998 animated film opens with baby Moses being set afloat on the Nile in a basket. Its song “When You Believe” won the Academy Award for Best Original Song.",
+    "source": { "label": "Wikipedia: The Prince of Egypt", "url": "https://en.wikipedia.org/wiki/The_Prince_of_Egypt" }
+  },
+  {
+    "id": "exo-5-1-go-down-moses",
+    "book": "EXO", "chapter": 5, "verseStart": 1, "verseEnd": 1,
+    "category": "music",
+    "title": "“Let my people go”",
+    "text": "This line is the refrain of the spiritual “Go Down Moses,” famously recorded by Louis Armstrong in 1958 and sung by Paul Robeson.",
+    "source": { "label": "Wikipedia: Go Down Moses", "url": "https://en.wikipedia.org/wiki/Go_Down_Moses" }
+  },
+  {
+    "id": "exo-14-21-ten-commandments-film",
+    "book": "EXO", "chapter": 14, "verseStart": 21, "verseEnd": 21,
+    "category": "film",
+    "title": "Parting the Red Sea on film",
+    "text": "The parting of the sea in Cecil B. DeMille’s The Ten Commandments (1956), starring Charlton Heston, won the Academy Award for Best Special Effects.",
+    "source": { "label": "Wikipedia: The Ten Commandments (1956 film)", "url": "https://en.wikipedia.org/wiki/The_Ten_Commandments_(1956_film)" }
+  },
+  {
+    "id": "exo-25-10-raiders",
+    "book": "EXO", "chapter": 25, "verseStart": 10, "verseEnd": 22,
+    "category": "film",
+    "title": "Raiders of the Lost Ark",
+    "text": "The Ark of the Covenant described here is the treasure Indiana Jones races to find in Steven Spielberg’s 1981 film Raiders of the Lost Ark.",
+    "source": { "label": "Wikipedia: Raiders of the Lost Ark", "url": "https://en.wikipedia.org/wiki/Raiders_of_the_Lost_Ark" }
+  },
+  {
+    "id": "lev-25-10-liberty-bell",
+    "book": "LEV", "chapter": 25, "verseStart": 10, "verseEnd": 10,
+    "category": "history",
+    "title": "The Liberty Bell",
+    "text": "“Proclaim liberty throughout all the land unto all the inhabitants thereof” is inscribed on the Liberty Bell in Philadelphia, cast in 1752.",
+    "source": { "label": "Wikipedia: Liberty Bell", "url": "https://en.wikipedia.org/wiki/Liberty_Bell" }
+  },
+  {
+    "id": "num-6-24-ketef-hinnom",
+    "book": "NUM", "chapter": 6, "verseStart": 24, "verseEnd": 26,
+    "category": "history",
+    "title": "The oldest surviving Bible text",
+    "text": "Two tiny silver scrolls found at Ketef Hinnom in Jerusalem in 1979 contain this blessing. Dated to around 600 BC, they are the oldest known artifacts quoting a passage of the Hebrew Bible.",
+    "source": { "label": "Wikipedia: Ketef Hinnom scrolls", "url": "https://en.wikipedia.org/wiki/Ketef_Hinnom_scrolls" }
+  },
+  {
+    "id": "num-23-23-telegraph",
+    "book": "NUM", "chapter": 23, "verseStart": 23, "verseEnd": 23,
+    "category": "history",
+    "title": "The first telegraph message",
+    "text": "“What hath God wrought!” was the first official message Samuel Morse sent by telegraph, from Washington to Baltimore on May 24, 1844.",
+    "source": { "label": "Wikipedia: What hath God wrought", "url": "https://en.wikipedia.org/wiki/What_hath_God_wrought" }
+  },
+  {
+    "id": "deu-32-10-apple-of-eye",
+    "book": "DEU", "chapter": 32, "verseStart": 10, "verseEnd": 10,
+    "category": "phrases",
+    "title": "“The apple of his eye”",
+    "text": "This verse is one of the earliest uses of “the apple of his eye” in English Bibles — a phrase still used for someone deeply cherished.",
+    "source": { "label": "Wikipedia: Apple of my eye", "url": "https://en.wikipedia.org/wiki/Apple_of_my_eye" }
+  },
+  {
+    "id": "1sa-13-14-after-own-heart",
+    "book": "1SA", "chapter": 13, "verseStart": 14, "verseEnd": 14,
+    "category": "phrases",
+    "title": "“A man after his own heart”",
+    "text": "The everyday expression “a man after my own heart” comes from this description of David.",
+    "source": { "label": "Bible Gateway: 1 Samuel 13:14 (KJV)", "url": "https://www.biblegateway.com/passage/?search=1+Samuel+13%3A14&version=KJV" }
+  },
+  {
+    "id": "1sa-17-david-goliath",
+    "book": "1SA", "chapter": 17, "verseStart": null, "verseEnd": null,
+    "category": "literature",
+    "title": "David and Goliath",
+    "text": "This chapter made “David and Goliath” shorthand for any underdog story. Malcolm Gladwell used it as the title and framing of his 2013 bestseller.",
+    "source": { "label": "Wikipedia: David and Goliath (book)", "url": "https://en.wikipedia.org/wiki/David_and_Goliath_(book)" }
+  },
+  {
+    "id": "2sa-11-2-hallelujah",
+    "book": "2SA", "chapter": 11, "verseStart": 2, "verseEnd": 2,
+    "category": "music",
+    "title": "Leonard Cohen’s “Hallelujah”",
+    "text": "The line “you saw her bathing on the roof” in Leonard Cohen’s 1984 song “Hallelujah” refers to this verse. The song became famous through covers by Jeff Buckley and others.",
+    "source": { "label": "Wikipedia: Hallelujah (Leonard Cohen song)", "url": "https://en.wikipedia.org/wiki/Hallelujah_(Leonard_Cohen_song)" }
+  },
+  {
+    "id": "2sa-18-33-absalom",
+    "book": "2SA", "chapter": 18, "verseStart": 33, "verseEnd": 33,
+    "category": "literature",
+    "title": "Absalom, Absalom!",
+    "text": "William Faulkner titled his 1936 novel Absalom, Absalom! after David’s cry of grief in this verse.",
+    "source": { "label": "Wikipedia: Absalom, Absalom!", "url": "https://en.wikipedia.org/wiki/Absalom,_Absalom!" }
+  },
+  {
+    "id": "2ki-2-11-swing-low",
+    "book": "2KI", "chapter": 2, "verseStart": 11, "verseEnd": 11,
+    "category": "music",
+    "title": "“Swing Low, Sweet Chariot”",
+    "text": "Elijah being carried away by a chariot inspired the spiritual “Swing Low, Sweet Chariot.” Today it’s also the well-known anthem sung by England rugby fans.",
+    "source": { "label": "Wikipedia: Swing Low, Sweet Chariot", "url": "https://en.wikipedia.org/wiki/Swing_Low,_Sweet_Chariot" }
+  },
+  {
+    "id": "2ki-2-11-chariots-of-fire",
+    "book": "2KI", "chapter": 2, "verseStart": 11, "verseEnd": 11,
+    "category": "film",
+    "title": "Chariots of Fire",
+    "text": "The Best Picture–winning film Chariots of Fire (1981) takes its title from the hymn “Jerusalem” (“Bring me my chariot of fire!”), which echoes this verse.",
+    "source": { "label": "Wikipedia: Chariots of Fire", "url": "https://en.wikipedia.org/wiki/Chariots_of_Fire" }
+  },
+  {
+    "id": "2ch-7-14-reagan",
+    "book": "2CH", "chapter": 7, "verseStart": 14, "verseEnd": 14,
+    "category": "history",
+    "title": "An inaugural Bible",
+    "text": "At his 1981 inauguration, Ronald Reagan took the oath on his mother’s Bible, opened to this verse.",
+    "source": { "label": "Wikipedia: First inauguration of Ronald Reagan", "url": "https://en.wikipedia.org/wiki/First_inauguration_of_Ronald_Reagan" },
+    "needsReview": true
+  },
+  {
+    "id": "est-8-9-longest-verse",
+    "book": "EST", "chapter": 8, "verseStart": 9, "verseEnd": 9,
+    "category": "records",
+    "title": "The longest verse in the Bible",
+    "text": "In the King James Version, Esther 8:9 is the longest verse in the Bible, at about 90 words.",
+    "source": { "label": "Bible Gateway: Esther 8:9 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Esther+8%3A9&version=KJV" }
+  },
+  {
+    "id": "est-9-26-purim",
+    "book": "EST", "chapter": 9, "verseStart": 26, "verseEnd": 28,
+    "category": "history",
+    "title": "The origin of Purim",
+    "text": "The Jewish holiday of Purim, still celebrated every year with the reading of the book of Esther, is named here.",
+    "source": { "label": "Wikipedia: Purim", "url": "https://en.wikipedia.org/wiki/Purim" }
+  },
+  {
+    "id": "job-19-20-skin-of-teeth",
+    "book": "JOB", "chapter": 19, "verseStart": 20, "verseEnd": 20,
+    "category": "phrases",
+    "title": "“By the skin of my teeth”",
+    "text": "The phrase “by the skin of my teeth” comes from this verse. Thornton Wilder borrowed it for his Pulitzer Prize–winning play The Skin of Our Teeth (1942).",
+    "source": { "label": "Wikipedia: The Skin of Our Teeth", "url": "https://en.wikipedia.org/wiki/The_Skin_of_Our_Teeth" }
+  },
+  {
+    "id": "job-19-25-messiah",
+    "book": "JOB", "chapter": 19, "verseStart": 25, "verseEnd": 25,
+    "category": "music",
+    "title": "Handel’s Messiah",
+    "text": "“I know that my Redeemer liveth” opens Part III of Handel’s Messiah (1742), one of the best-known soprano arias ever written.",
+    "source": { "label": "Wikipedia: Structure of Handel's Messiah", "url": "https://en.wikipedia.org/wiki/Structure_of_Handel%27s_Messiah" }
+  },
+  {
+    "id": "psa-19-14-rivers-of-babylon",
+    "book": "PSA", "chapter": 19, "verseStart": 14, "verseEnd": 14,
+    "category": "music",
+    "title": "“Rivers of Babylon” (part two)",
+    "text": "“Let the words of our mouth and the meditation of our heart” is the second verse of the song “Rivers of Babylon,” which pairs this line with Psalm 137.",
+    "source": { "label": "Wikipedia: Rivers of Babylon", "url": "https://en.wikipedia.org/wiki/Rivers_of_Babylon" }
+  },
+  {
+    "id": "psa-23-4-september-11",
+    "book": "PSA", "chapter": 23, "verseStart": 4, "verseEnd": 4,
+    "category": "history",
+    "title": "A nation comforted",
+    "text": "On the evening of September 11, 2001, President George W. Bush quoted this verse in his address to the nation.",
+    "source": { "label": "Wikipedia: Psalm 23", "url": "https://en.wikipedia.org/wiki/Psalm_23" },
+    "needsReview": true
+  },
+  {
+    "id": "psa-27-1-oxford",
+    "book": "PSA", "chapter": 27, "verseStart": 1, "verseEnd": 1,
+    "category": "mottos",
+    "title": "Oxford’s motto",
+    "text": "The University of Oxford’s motto, “Dominus illuminatio mea” (“The Lord is my light”), is the opening of this Psalm in Latin.",
+    "source": { "label": "Wikipedia: Dominus illuminatio mea", "url": "https://en.wikipedia.org/wiki/Dominus_illuminatio_mea" }
+  },
+  {
+    "id": "psa-36-9-columbia",
+    "book": "PSA", "chapter": 36, "verseStart": 9, "verseEnd": 9,
+    "category": "mottos",
+    "title": "Columbia’s motto",
+    "text": "Columbia University’s motto, “In lumine Tuo videbimus lumen” (“In Thy light shall we see light”), comes from this verse.",
+    "source": { "label": "Wikipedia: Columbia University", "url": "https://en.wikipedia.org/wiki/Columbia_University" }
+  },
+  {
+    "id": "psa-40-u2",
+    "book": "PSA", "chapter": 40, "verseStart": 1, "verseEnd": 3,
+    "category": "music",
+    "title": "U2’s “40”",
+    "text": "U2’s song “40,” from their 1983 album War, sets the opening of Psalm 40 to music. The band often closed concerts with it.",
+    "source": { "label": "Wikipedia: 40 (song)", "url": "https://en.wikipedia.org/wiki/40_(song)" }
+  },
+  {
+    "id": "psa-46-1-mighty-fortress",
+    "book": "PSA", "chapter": 46, "verseStart": 1, "verseEnd": 1,
+    "category": "music",
+    "title": "“A Mighty Fortress Is Our God”",
+    "text": "Martin Luther’s hymn “A Mighty Fortress Is Our God” (around 1529) is based on Psalm 46.",
+    "source": { "label": "Wikipedia: A Mighty Fortress Is Our God", "url": "https://en.wikipedia.org/wiki/A_Mighty_Fortress_Is_Our_God" }
+  },
+  {
+    "id": "psa-90-1-o-god-our-help",
+    "book": "PSA", "chapter": 90, "verseStart": 1, "verseEnd": 1,
+    "category": "music",
+    "title": "“O God, Our Help in Ages Past”",
+    "text": "Isaac Watts’s 1719 hymn “O God, Our Help in Ages Past” is a paraphrase of Psalm 90.",
+    "source": { "label": "Wikipedia: O God, Our Help in Ages Past", "url": "https://en.wikipedia.org/wiki/O_God,_Our_Help_in_Ages_Past" }
+  },
+  {
+    "id": "psa-100-1-old-hundredth",
+    "book": "PSA", "chapter": 100, "verseStart": 1, "verseEnd": 1,
+    "category": "music",
+    "title": "The “Old Hundredth”",
+    "text": "One of the best-known hymn tunes in Western music is called “Old Hundredth” because it was first paired with a setting of Psalm 100.",
+    "source": { "label": "Wikipedia: Old 100th", "url": "https://en.wikipedia.org/wiki/Old_100th" }
+  },
+  {
+    "id": "psa-117-shortest-chapter",
+    "book": "PSA", "chapter": 117, "verseStart": null, "verseEnd": null,
+    "category": "records",
+    "title": "The shortest chapter in the Bible",
+    "text": "With just two verses, Psalm 117 is the shortest chapter in the Bible.",
+    "source": { "label": "Wikipedia: Psalm 117", "url": "https://en.wikipedia.org/wiki/Psalm_117" }
+  },
+  {
+    "id": "psa-119-longest-chapter",
+    "book": "PSA", "chapter": 119, "verseStart": null, "verseEnd": null,
+    "category": "records",
+    "title": "The longest chapter in the Bible",
+    "text": "Psalm 119 is the longest chapter in the Bible, with 176 verses. It’s an acrostic: 22 sections of 8 verses, one for each letter of the Hebrew alphabet.",
+    "source": { "label": "Wikipedia: Psalm 119", "url": "https://en.wikipedia.org/wiki/Psalm_119" }
+  },
+  {
+    "id": "psa-137-1-rivers-of-babylon",
+    "book": "PSA", "chapter": 137, "verseStart": 1, "verseEnd": 1,
+    "category": "music",
+    "title": "“Rivers of Babylon”",
+    "text": "This verse is the basis of “Rivers of Babylon,” first recorded by the Jamaican group The Melodians in 1970. Boney M.’s 1978 cover became one of the best-selling singles in UK history.",
+    "source": { "label": "Wikipedia: Rivers of Babylon", "url": "https://en.wikipedia.org/wiki/Rivers_of_Babylon" }
+  },
+  {
+    "id": "ecc-1-5-sun-also-rises",
+    "book": "ECC", "chapter": 1, "verseStart": 5, "verseEnd": 5,
+    "category": "literature",
+    "title": "The Sun Also Rises",
+    "text": "Ernest Hemingway took the title of his 1926 novel The Sun Also Rises from this verse, and opened the book with a quotation from this chapter.",
+    "source": { "label": "Wikipedia: The Sun Also Rises", "url": "https://en.wikipedia.org/wiki/The_Sun_Also_Rises" }
+  },
+  {
+    "id": "ecc-1-9-nothing-new",
+    "book": "ECC", "chapter": 1, "verseStart": 9, "verseEnd": 9,
+    "category": "phrases",
+    "title": "“Nothing new under the sun”",
+    "text": "The saying “there’s nothing new under the sun” comes straight from this verse.",
+    "source": { "label": "Bible Gateway: Ecclesiastes 1:9 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Ecclesiastes+1%3A9&version=KJV" }
+  },
+  {
+    "id": "ecc-3-1-turn-turn-turn",
+    "book": "ECC", "chapter": 3, "verseStart": 1, "verseEnd": 8,
+    "category": "music",
+    "title": "“Turn! Turn! Turn!”",
+    "text": "Pete Seeger set these verses to music in the late 1950s, keeping the words almost exactly as written. The Byrds’ 1965 recording reached No. 1 on the Billboard Hot 100.",
+    "source": { "label": "Wikipedia: Turn! Turn! Turn!", "url": "https://en.wikipedia.org/wiki/Turn!_Turn!_Turn!" }
+  },
+  {
+    "id": "ecc-8-15-eat-drink-merry",
+    "book": "ECC", "chapter": 8, "verseStart": 15, "verseEnd": 15,
+    "category": "phrases",
+    "title": "“Eat, drink, and be merry”",
+    "text": "The familiar phrase “eat, drink, and be merry” traces back to this verse.",
+    "source": { "label": "Bible Gateway: Ecclesiastes 8:15 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Ecclesiastes+8%3A15&version=KJV" }
+  },
+  {
+    "id": "ecc-10-1-fly-in-ointment",
+    "book": "ECC", "chapter": 10, "verseStart": 1, "verseEnd": 1,
+    "category": "phrases",
+    "title": "“A fly in the ointment”",
+    "text": "The idiom “a fly in the ointment” — a small flaw that spoils something — grew out of this verse about dead flies spoiling perfume.",
+    "source": { "label": "Bible Gateway: Ecclesiastes 10:1 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Ecclesiastes+10%3A1&version=KJV" }
+  },
+  {
+    "id": "sng-2-15-little-foxes",
+    "book": "SNG", "chapter": 2, "verseStart": 15, "verseEnd": 15,
+    "category": "literature",
+    "title": "The Little Foxes",
+    "text": "Lillian Hellman’s 1939 play The Little Foxes takes its title from this verse. The 1941 film version starred Bette Davis.",
+    "source": { "label": "Wikipedia: The Little Foxes", "url": "https://en.wikipedia.org/wiki/The_Little_Foxes" }
+  },
+  {
+    "id": "isa-1-great-isaiah-scroll",
+    "book": "ISA", "chapter": 1, "verseStart": null, "verseEnd": null,
+    "category": "history",
+    "title": "The Great Isaiah Scroll",
+    "text": "Found among the Dead Sea Scrolls in 1947, the Great Isaiah Scroll contains the entire book of Isaiah. It is about 1,000 years older than the oldest Hebrew manuscripts of Isaiah known before then.",
+    "source": { "label": "Wikipedia: Isaiah scroll", "url": "https://en.wikipedia.org/wiki/Isaiah_scroll" }
+  },
+  {
+    "id": "isa-2-4-swords-plowshares",
+    "book": "ISA", "chapter": 2, "verseStart": 4, "verseEnd": 4,
+    "category": "history",
+    "title": "Swords into plowshares",
+    "text": "A bronze statue called “Let Us Beat Swords into Plowshares,” by sculptor Evgeny Vuchetich, stands in the garden of the United Nations headquarters in New York. It was a gift from the Soviet Union in 1959.",
+    "source": { "label": "Wikipedia: Let Us Beat Swords into Plowshares", "url": "https://en.wikipedia.org/wiki/Let_Us_Beat_Swords_into_Plowshares" }
+  },
+  {
+    "id": "isa-9-6-messiah",
+    "book": "ISA", "chapter": 9, "verseStart": 6, "verseEnd": 6,
+    "category": "music",
+    "title": "“For unto us a child is born”",
+    "text": "This verse is sung word-for-word as one of the most famous choruses in Handel’s Messiah (1742).",
+    "source": { "label": "Wikipedia: Structure of Handel's Messiah", "url": "https://en.wikipedia.org/wiki/Structure_of_Handel%27s_Messiah" }
+  },
+  {
+    "id": "isa-40-1-comfort-ye",
+    "book": "ISA", "chapter": 40, "verseStart": 1, "verseEnd": 1,
+    "category": "music",
+    "title": "How Messiah begins",
+    "text": "The first words sung in Handel’s Messiah are “Comfort ye, comfort ye my people,” from this verse.",
+    "source": { "label": "Wikipedia: Structure of Handel's Messiah", "url": "https://en.wikipedia.org/wiki/Structure_of_Handel%27s_Messiah" }
+  },
+  {
+    "id": "isa-40-4-i-have-a-dream",
+    "book": "ISA", "chapter": 40, "verseStart": 4, "verseEnd": 5,
+    "category": "history",
+    "title": "“I Have a Dream”",
+    "text": "In his 1963 “I Have a Dream” speech, Martin Luther King Jr. quoted these verses: “every valley shall be exalted, and every hill and mountain shall be made low.”",
+    "source": { "label": "Wikipedia: I Have a Dream", "url": "https://en.wikipedia.org/wiki/I_Have_a_Dream" }
+  },
+  {
+    "id": "isa-40-15-drop-in-bucket",
+    "book": "ISA", "chapter": 40, "verseStart": 15, "verseEnd": 15,
+    "category": "phrases",
+    "title": "“A drop in the bucket”",
+    "text": "“A drop of a bucket” in this verse is the source of the everyday idiom “a drop in the bucket.”",
+    "source": { "label": "Bible Gateway: Isaiah 40:15 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Isaiah+40%3A15&version=KJV" }
+  },
+  {
+    "id": "isa-40-31-eric-liddell",
+    "book": "ISA", "chapter": 40, "verseStart": 31, "verseEnd": 31,
+    "category": "film",
+    "title": "Eric Liddell in Chariots of Fire",
+    "text": "In Chariots of Fire (1981), Olympic runner Eric Liddell reads from Isaiah 40, ending with “they shall run, and not be weary,” on the Sunday he chose not to race.",
+    "source": { "label": "Wikipedia: Chariots of Fire", "url": "https://en.wikipedia.org/wiki/Chariots_of_Fire" },
+    "needsReview": true
+  },
+  {
+    "id": "jer-13-23-leopard-spots",
+    "book": "JER", "chapter": 13, "verseStart": 23, "verseEnd": 23,
+    "category": "phrases",
+    "title": "Can a leopard change its spots?",
+    "text": "The saying “a leopard can’t change its spots” comes from this verse.",
+    "source": { "label": "Bible Gateway: Jeremiah 13:23 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Jeremiah+13%3A23&version=KJV" }
+  },
+  {
+    "id": "lam-3-22-great-is-thy-faithfulness",
+    "book": "LAM", "chapter": 3, "verseStart": 22, "verseEnd": 23,
+    "category": "music",
+    "title": "“Great Is Thy Faithfulness”",
+    "text": "Thomas Chisholm’s 1923 hymn “Great Is Thy Faithfulness,” set to music by William Runyan, was inspired by these verses.",
+    "source": { "label": "Wikipedia: Great Is Thy Faithfulness", "url": "https://en.wikipedia.org/wiki/Great_Is_Thy_Faithfulness" }
+  },
+  {
+    "id": "dan-2-33-feet-of-clay",
+    "book": "DAN", "chapter": 2, "verseStart": 33, "verseEnd": 33,
+    "category": "phrases",
+    "title": "“Feet of clay”",
+    "text": "The statue in Nebuchadnezzar’s dream, with feet of iron and clay, gave us the phrase “feet of clay” for a hidden weakness in someone admired.",
+    "source": { "label": "Bible Gateway: Daniel 2:33 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Daniel+2%3A33&version=KJV" }
+  },
+  {
+    "id": "dan-5-5-writing-on-wall",
+    "book": "DAN", "chapter": 5, "verseStart": 5, "verseEnd": 5,
+    "category": "art",
+    "title": "The writing on the wall",
+    "text": "This scene gave us the idiom “the writing is on the wall.” Rembrandt painted it as Belshazzar’s Feast (around 1635), now in the National Gallery, London.",
+    "source": { "label": "Wikipedia: Belshazzar's Feast (Rembrandt)", "url": "https://en.wikipedia.org/wiki/Belshazzar%27s_Feast_(Rembrandt)" }
+  },
+  {
+    "id": "amo-5-24-civil-rights-memorial",
+    "book": "AMO", "chapter": 5, "verseStart": 24, "verseEnd": 24,
+    "category": "history",
+    "title": "“Let justice roll down like waters”",
+    "text": "Martin Luther King Jr. quoted this verse in his “I Have a Dream” speech. It is also inscribed on the Civil Rights Memorial in Montgomery, Alabama, designed by Maya Lin.",
+    "source": { "label": "Wikipedia: Civil Rights Memorial", "url": "https://en.wikipedia.org/wiki/Civil_Rights_Memorial" }
+  },
+  {
+    "id": "jon-1-moby-dick",
+    "book": "JON", "chapter": 1, "verseStart": null, "verseEnd": null,
+    "category": "literature",
+    "title": "Jonah in Moby-Dick",
+    "text": "In Herman Melville’s Moby-Dick (1851), Father Mapple preaches a famous sermon on the story of Jonah to the whalers of New Bedford before the voyage begins.",
+    "source": { "label": "Wikipedia: Moby-Dick", "url": "https://en.wikipedia.org/wiki/Moby-Dick" }
+  },
+  {
+    "id": "jon-1-veggietales",
+    "book": "JON", "chapter": 1, "verseStart": null, "verseEnd": null,
+    "category": "film",
+    "title": "Jonah: A VeggieTales Movie",
+    "text": "The book of Jonah was the basis for Jonah: A VeggieTales Movie (2002), the first full-length theatrical VeggieTales film.",
+    "source": { "label": "Wikipedia: Jonah: A VeggieTales Movie", "url": "https://en.wikipedia.org/wiki/Jonah:_A_VeggieTales_Movie" }
+  },
+  {
+    "id": "mic-6-8-carter",
+    "book": "MIC", "chapter": 6, "verseStart": 8, "verseEnd": 8,
+    "category": "history",
+    "title": "An inaugural address",
+    "text": "President Jimmy Carter quoted this verse in his 1977 inaugural address.",
+    "source": { "label": "Wikipedia: Inauguration of Jimmy Carter", "url": "https://en.wikipedia.org/wiki/Inauguration_of_Jimmy_Carter" }
+  },
+  {
+    "id": "mat-5-13-salt-of-earth",
+    "book": "MAT", "chapter": 5, "verseStart": 13, "verseEnd": 13,
+    "category": "phrases",
+    "title": "“The salt of the earth”",
+    "text": "Calling a good, honest person “the salt of the earth” comes from this verse.",
+    "source": { "label": "Bible Gateway: Matthew 5:13 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Matthew+5%3A13&version=KJV" }
+  },
+  {
+    "id": "mat-5-14-city-on-a-hill",
+    "book": "MAT", "chapter": 5, "verseStart": 14, "verseEnd": 14,
+    "category": "history",
+    "title": "“A city upon a hill”",
+    "text": "John Winthrop used this image in a 1630 sermon to the Massachusetts Bay colonists. Presidents John F. Kennedy and Ronald Reagan both famously echoed it — Reagan as a “shining city upon a hill.”",
+    "source": { "label": "Wikipedia: City upon a Hill", "url": "https://en.wikipedia.org/wiki/City_upon_a_Hill" }
+  },
+  {
+    "id": "mat-5-39-other-cheek",
+    "book": "MAT", "chapter": 5, "verseStart": 39, "verseEnd": 39,
+    "category": "phrases",
+    "title": "“Turn the other cheek”",
+    "text": "The everyday expression “turn the other cheek” comes from this verse.",
+    "source": { "label": "Bible Gateway: Matthew 5:39 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Matthew+5%3A39&version=KJV" }
+  },
+  {
+    "id": "mat-5-41-extra-mile",
+    "book": "MAT", "chapter": 5, "verseStart": 41, "verseEnd": 41,
+    "category": "phrases",
+    "title": "“Go the extra mile”",
+    "text": "“Going the extra mile” — doing more than asked — comes from this verse.",
+    "source": { "label": "Bible Gateway: Matthew 5:41 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Matthew+5%3A41&version=KJV" }
+  },
+  {
+    "id": "mat-6-28-lilies-of-the-field",
+    "book": "MAT", "chapter": 6, "verseStart": 28, "verseEnd": 28,
+    "category": "film",
+    "title": "Lilies of the Field",
+    "text": "The 1963 film Lilies of the Field takes its title from this verse. Its star, Sidney Poitier, became the first Black actor to win the Academy Award for Best Actor.",
+    "source": { "label": "Wikipedia: Lilies of the Field (1963 film)", "url": "https://en.wikipedia.org/wiki/Lilies_of_the_Field_(1963_film)" }
+  },
+  {
+    "id": "mat-7-15-sheeps-clothing",
+    "book": "MAT", "chapter": 7, "verseStart": 15, "verseEnd": 15,
+    "category": "phrases",
+    "title": "“A wolf in sheep’s clothing”",
+    "text": "The phrase “a wolf in sheep’s clothing” comes from this verse.",
+    "source": { "label": "Bible Gateway: Matthew 7:15 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Matthew+7%3A15&version=KJV" }
+  },
+  {
+    "id": "mat-15-14-blind-leading-blind",
+    "book": "MAT", "chapter": 15, "verseStart": 14, "verseEnd": 14,
+    "category": "art",
+    "title": "The Blind Leading the Blind",
+    "text": "This verse inspired the phrase “the blind leading the blind” and Pieter Bruegel the Elder’s 1568 painting of the same name, now in Naples.",
+    "source": { "label": "Wikipedia: The Blind Leading the Blind", "url": "https://en.wikipedia.org/wiki/The_Blind_Leading_the_Blind" }
+  },
+  {
+    "id": "mat-26-21-last-supper",
+    "book": "MAT", "chapter": 26, "verseStart": 21, "verseEnd": 21,
+    "category": "art",
+    "title": "The Last Supper",
+    "text": "Leonardo da Vinci’s The Last Supper (1495–1498), painted on a wall in Milan, captures the disciples’ reactions to the words in this verse.",
+    "source": { "label": "Wikipedia: The Last Supper (Leonardo)", "url": "https://en.wikipedia.org/wiki/The_Last_Supper_(Leonardo)" }
+  },
+  {
+    "id": "mrk-3-25-house-divided",
+    "book": "MRK", "chapter": 3, "verseStart": 25, "verseEnd": 25,
+    "category": "history",
+    "title": "Lincoln’s “House Divided” speech",
+    "text": "Abraham Lincoln drew on this verse in his 1858 “House Divided” speech: “A house divided against itself cannot stand.”",
+    "source": { "label": "Wikipedia: Lincoln's House Divided Speech", "url": "https://en.wikipedia.org/wiki/Lincoln%27s_House_Divided_Speech" }
+  },
+  {
+    "id": "luk-2-8-charlie-brown",
+    "book": "LUK", "chapter": 2, "verseStart": 8, "verseEnd": 14,
+    "category": "film",
+    "title": "A Charlie Brown Christmas",
+    "text": "In A Charlie Brown Christmas (1965), Linus steps into the spotlight and recites these verses to explain what Christmas is all about.",
+    "source": { "label": "Wikipedia: A Charlie Brown Christmas", "url": "https://en.wikipedia.org/wiki/A_Charlie_Brown_Christmas" }
+  },
+  {
+    "id": "luk-10-33-good-samaritan-law",
+    "book": "LUK", "chapter": 10, "verseStart": 33, "verseEnd": 35,
+    "category": "history",
+    "title": "Good Samaritan laws",
+    "text": "“Good Samaritan laws,” which protect people who give reasonable help to someone in an emergency, are named after this story.",
+    "source": { "label": "Wikipedia: Good Samaritan law", "url": "https://en.wikipedia.org/wiki/Good_Samaritan_law" }
+  },
+  {
+    "id": "luk-15-20-prodigal-son",
+    "book": "LUK", "chapter": 15, "verseStart": 20, "verseEnd": 20,
+    "category": "art",
+    "title": "The Return of the Prodigal Son",
+    "text": "Rembrandt’s The Return of the Prodigal Son (around 1669), one of his last major paintings, shows the father’s embrace in this verse. It hangs in the Hermitage Museum.",
+    "source": { "label": "Wikipedia: The Return of the Prodigal Son (Rembrandt)", "url": "https://en.wikipedia.org/wiki/The_Return_of_the_Prodigal_Son_(Rembrandt)" }
+  },
+  {
+    "id": "jhn-3-16-tebow",
+    "book": "JHN", "chapter": 3, "verseStart": 16, "verseEnd": 16,
+    "category": "sports",
+    "title": "The “3:16 game”",
+    "text": "Tim Tebow wore “John 3:16” on his eye black in the 2009 college football championship. Three years later, in an NFL playoff win, he threw for exactly 316 yards.",
+    "source": { "label": "Wikipedia: Tim Tebow", "url": "https://en.wikipedia.org/wiki/Tim_Tebow" }
+  },
+  {
+    "id": "jhn-11-35-shortest-verse",
+    "book": "JHN", "chapter": 11, "verseStart": 35, "verseEnd": 35,
+    "category": "records",
+    "title": "The shortest verse",
+    "text": "“Jesus wept” is the shortest verse in most English Bibles, including the King James Version.",
+    "source": { "label": "Wikipedia: Jesus wept", "url": "https://en.wikipedia.org/wiki/Jesus_wept" }
+  },
+  {
+    "id": "jhn-15-5-aldrin",
+    "book": "JHN", "chapter": 15, "verseStart": 5, "verseEnd": 5,
+    "category": "space",
+    "title": "Read on the Moon",
+    "text": "After landing on the Moon in July 1969, Apollo 11 astronaut Buzz Aldrin privately read this verse inside the lunar module.",
+    "source": { "label": "Wikipedia: Buzz Aldrin", "url": "https://en.wikipedia.org/wiki/Buzz_Aldrin" }
+  },
+  {
+    "id": "rom-12-royal-wedding",
+    "book": "ROM", "chapter": 12, "verseStart": 1, "verseEnd": 2,
+    "category": "history",
+    "title": "A royal wedding reading",
+    "text": "James Middleton read from Romans 12 at the 2011 wedding of his sister Catherine to Prince William at Westminster Abbey.",
+    "source": { "label": "Wikipedia: Wedding of Prince William and Catherine Middleton", "url": "https://en.wikipedia.org/wiki/Wedding_of_Prince_William_and_Catherine_Middleton" }
+  },
+  {
+    "id": "rom-13-1-powers-that-be",
+    "book": "ROM", "chapter": 13, "verseStart": 1, "verseEnd": 1,
+    "category": "phrases",
+    "title": "“The powers that be”",
+    "text": "The phrase “the powers that be,” meaning those in charge, comes from this verse in the King James Version.",
+    "source": { "label": "Bible Gateway: Romans 13:1 (KJV)", "url": "https://www.biblegateway.com/passage/?search=Romans+13%3A1&version=KJV" }
+  },
+  {
+    "id": "php-4-13-curry",
+    "book": "PHP", "chapter": 4, "verseStart": 13, "verseEnd": 13,
+    "category": "sports",
+    "title": "On Stephen Curry’s shoes",
+    "text": "NBA star Stephen Curry has long written this verse — “I can do all things…” — on his basketball shoes.",
+    "source": { "label": "Wikipedia: Stephen Curry", "url": "https://en.wikipedia.org/wiki/Stephen_Curry" },
+    "needsReview": true
+  },
+  {
+    "id": "1th-1-3-labour-of-love",
+    "book": "1TH", "chapter": 1, "verseStart": 3, "verseEnd": 3,
+    "category": "phrases",
+    "title": "“A labour of love”",
+    "text": "Calling something done for its own sake “a labor of love” comes from this verse.",
+    "source": { "label": "Bible Gateway: 1 Thessalonians 1:3 (KJV)", "url": "https://www.biblegateway.com/passage/?search=1+Thessalonians+1%3A3&version=KJV" }
+  },
+  {
+    "id": "1ti-6-12-good-fight",
+    "book": "1TI", "chapter": 6, "verseStart": 12, "verseEnd": 12,
+    "category": "phrases",
+    "title": "“Fight the good fight”",
+    "text": "The expression “fight the good fight” comes from this verse, and gave its name to a well-known hymn.",
+    "source": { "label": "Bible Gateway: 1 Timothy 6:12 (KJV)", "url": "https://www.biblegateway.com/passage/?search=1+Timothy+6%3A12&version=KJV" }
+  },
+  {
+    "id": "rev-6-1-man-comes-around",
+    "book": "REV", "chapter": 6, "verseStart": 1, "verseEnd": 2,
+    "category": "music",
+    "title": "Johnny Cash, “The Man Comes Around”",
+    "text": "Johnny Cash opens his 2002 song “The Man Comes Around” by reciting these verses — one of the last songs he wrote.",
+    "source": { "label": "Wikipedia: The Man Comes Around (song)", "url": "https://en.wikipedia.org/wiki/The_Man_Comes_Around_(song)" }
+  },
+  {
+    "id": "rev-14-19-grapes-of-wrath",
+    "book": "REV", "chapter": 14, "verseStart": 19, "verseEnd": 20,
+    "category": "literature",
+    "title": "The Grapes of Wrath",
+    "text": "The “winepress of the wrath of God” here inspired a line in “The Battle Hymn of the Republic” (“where the grapes of wrath are stored”), which in turn gave John Steinbeck the title for his 1939 novel.",
+    "source": { "label": "Wikipedia: The Grapes of Wrath", "url": "https://en.wikipedia.org/wiki/The_Grapes_of_Wrath" }
+  },
+  {
+    "id": "rev-19-6-hallelujah-chorus",
+    "book": "REV", "chapter": 19, "verseStart": 6, "verseEnd": 6,
+    "category": "music",
+    "title": "The Hallelujah Chorus",
+    "text": "“For the Lord God omnipotent reigneth” is sung in the Hallelujah Chorus of Handel’s Messiah. By tradition, audiences often stand when it begins.",
+    "source": { "label": "Wikipedia: Structure of Handel's Messiah", "url": "https://en.wikipedia.org/wiki/Structure_of_Handel%27s_Messiah" }
+  }
+]

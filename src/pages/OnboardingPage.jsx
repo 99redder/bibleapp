@@ -17,6 +17,7 @@ const STEPS = [
   { id: 'testament', title: 'Which testament(s)?' },
   { id: 'version', title: 'Bible version' },
   { id: 'weekends', title: 'Include weekends?' },
+  { id: 'trivia', title: 'Fun facts along the way?' },
   { id: 'confirm', title: 'Review your plan' }
 ]
 
@@ -37,6 +38,7 @@ export function OnboardingPage() {
   const [testament, setTestament] = useState('BOTH')
   const [bibleVersion, setBibleVersion] = useState('WEB')
   const [includeWeekends, setIncludeWeekends] = useState(true)
+  const [showTrivia, setShowTrivia] = useState(true)
 
   // Calculate months until end of year from start date
   const getMonthsUntilEndOfYear = () => {
@@ -117,6 +119,7 @@ export function OnboardingPage() {
         testament: testament,
         bibleVersion,
         includeWeekends,
+        showTrivia,
         emailDailyPortion: false
       }
 
@@ -296,6 +299,35 @@ export function OnboardingPage() {
       case 5:
         return (
           <div className="space-y-4">
+            <p className="text-gray-600 dark:text-gray-400">
+              As you read, we can point out short, optional fun facts about certain verses — songs,
+              films, art, and history they've inspired. They never interrupt your reading; just tap
+              the ✨ when you're curious.
+            </p>
+            <Toggle
+              label="Show fun facts"
+              description={
+                showTrivia
+                  ? "You'll see a ✨ next to verses that have a fun fact"
+                  : 'Fun facts stay hidden — you can turn them on later in settings'
+              }
+              checked={showTrivia}
+              onChange={setShowTrivia}
+            />
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm dark:border-amber-500/20 dark:bg-amber-500/10">
+              <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">
+                For example
+              </p>
+              <p className="mt-1 text-gray-700 dark:text-gray-300">
+                Ecclesiastes 3:1–8 became the lyrics of “Turn! Turn! Turn!” — a No. 1 hit for The Byrds in 1965.
+              </p>
+            </div>
+          </div>
+        )
+
+      case 6:
+        return (
+          <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               Here's a summary of your reading plan:
             </p>
@@ -324,6 +356,12 @@ export function OnboardingPage() {
                 <span className="text-gray-600 dark:text-gray-400">Reading Days</span>
                 <span className="font-medium text-gray-900 dark:text-white">
                   {includeWeekends ? 'Every day' : 'Weekdays only'}
+                </span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                <span className="text-gray-600 dark:text-gray-400">Fun facts</span>
+                <span className="font-medium text-gray-900 dark:text-white">
+                  {showTrivia ? 'On' : 'Off'}
                 </span>
               </div>
             </div>

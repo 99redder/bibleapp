@@ -26,7 +26,10 @@ async function fetchLocalPassage(version, bookAbbrev, chapter) {
     return {
       reference: data.reference,
       content: formatVerses(data.verses),
-      copyright: data.copyright
+      copyright: data.copyright,
+      abbrev: data.abbrev || bookAbbrev,
+      chapter: data.chapter || chapter,
+      verses: data.verses || []
     }
   } catch (error) {
     console.error('Error fetching passage:', error)
