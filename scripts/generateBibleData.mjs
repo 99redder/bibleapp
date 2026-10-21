@@ -72,8 +72,28 @@ const SOURCES = [
     abbreviation: 'DRA',
     url: 'https://ebible.org/Scriptures/engDRA_usfm.zip',
     copyright: 'Douay-Rheims 1899 American Edition, Public Domain. Source: https://ebible.org/Scriptures/engDRA_usfm.zip'
+  },
+  {
+    key: 'RV',
+    name: 'Revised Version 1885',
+    abbreviation: 'RV',
+    url: 'https://ebible.org/Scriptures/eng-rv_usfm.zip',
+    copyright: 'English Revised Version (1885), Public Domain. Source: https://ebible.org/Scriptures/eng-rv_usfm.zip'
+  },
+  {
+    key: 'T4T',
+    name: 'Translation for Translators',
+    abbreviation: 'T4T',
+    url: 'https://ebible.org/Scriptures/eng-t4t_usfm.zip',
+    copyright: 'Translation for Translators, © 2008–2017 Ellis W. Deibler, Jr. Licensed under CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Source: https://ebible.org/Scriptures/eng-t4t_usfm.zip'
   }
 ]
+
+// Optionally limit generation to specific version keys, e.g. GENERATE_ONLY=RV,T4T
+const GENERATE_ONLY = (process.env.GENERATE_ONLY || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean)
 
 function ensureDir(path) {
   mkdirSync(path, { recursive: true })
@@ -259,5 +279,8 @@ rmSync(TMP_DIR, { recursive: true, force: true })
 ensureDir(OUT_ROOT)
 
 for (const source of SOURCES) {
+  if (GENERATE_ONLY.length && !GENERATE_ONLY.includes(source.key)) {
+    continue
+  }
   writeSourceData(source)
 }

@@ -182,17 +182,15 @@ export const BIBLE_VERSIONS = {
   },
   RV: {
     key: 'RV',
-    id: '40072c4a5aba4022-01',
     name: 'Revised Version 1885',
     abbreviation: 'RV',
-    source: 'api'
+    source: 'local'
   },
   T4T: {
     key: 'T4T',
-    id: '66c22495370cdfc0-01',
     name: 'Translation for Translators',
     abbreviation: 'T4T',
-    source: 'api'
+    source: 'local'
   }
 }
 
