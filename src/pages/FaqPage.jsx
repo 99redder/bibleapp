@@ -1,0 +1,156 @@
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import { LogoBadge } from '../components/ui/BrandLogo'
+
+// Screenshots live in public/faq. They were captured at 2x on a 390px-wide
+// phone from the real screens with sample data, so the sizes below are pixels.
+function Screenshot({ src, alt, width, height }) {
+  return (
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      loading="lazy"
+      className="mx-auto block h-auto w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700"
+    />
+  )
+}
+
+// Written for older readers: plain words, every answer visible without tapping.
+const QUESTIONS = [
+  {
+    question: 'Does this cost any money?',
+    answer: (
+      <p>
+        No. Bible Reading Plan is completely free, and it will stay that way. There's no subscription, no in-app
+        purchases, no ads, and you never need a credit card.
+      </p>
+    )
+  },
+  {
+    question: "Why don't you have the NIV?",
+    answer: (
+      <>
+        <p>
+          The NIV (New International Version) is owned by a publisher, and its license doesn't allow it to be built
+          into a free app like this one. All 11 translations in Bible Reading Plan are free for anyone to share, which
+          is why we can include them.
+        </p>
+        <p>
+          If you like the NIV, try the <strong>Berean Standard Bible (BSB)</strong> or the{' '}
+          <strong>World English Bible (WEB)</strong>. Both are written in clear, modern English. You can switch
+          translations anytime with Change plan.
+        </p>
+      </>
+    )
+  },
+  {
+    question: "What's the longest time I can choose for my plan?",
+    answer: (
+      <>
+        <p>
+          <strong>Up to 10 years (120 months).</strong>
+        </p>
+        <p>
+          When you set up your plan, pick 6, 12, 18, or 24 months, choose to finish by the end of the year, or tap{' '}
+          <strong>Custom duration</strong> and enter any number of months from 1 to 120. The longer your plan, the
+          shorter each day's reading. A 10-year plan is about 9 verses a day.
+        </p>
+        <Screenshot
+          src="/faq/plan-length.webp"
+          alt="The Reading timeline step with Custom duration chosen and 120 months entered, showing about 9 verses per day"
+          width={756}
+          height={1528}
+        />
+        <p>Need more time later? Change plan lets you add up to 3 more years at a time.</p>
+      </>
+    )
+  },
+  {
+    question: 'Can I change my plan after I make one?',
+    answer: (
+      <>
+        <p>
+          Yes, anytime. On the main screen, tap the <strong>gear button</strong> at the top, then tap{' '}
+          <strong>Change plan</strong>.
+        </p>
+        <Screenshot
+          src="/faq/change-plan-menu.webp"
+          alt="The gear button at the top right is circled, and the menu under it has Change plan circled"
+          width={780}
+          height={666}
+        />
+        <p>
+          You can switch your Bible translation, give yourself more or less time, include or skip weekends, or read
+          just the Old or New Testament. Before you save, you'll see your new daily reading and finish date.
+        </p>
+        <Screenshot
+          src="/faq/change-plan.webp"
+          alt="The Change your plan screen with a new timeframe chosen and a preview of the new schedule and finish date"
+          width={780}
+          height={1718}
+        />
+        <p>The readings you've already finished, your streak, and your calendar are all kept.</p>
+      </>
+    )
+  },
+  {
+    question: "How will I know if I'm ahead or behind?",
+    answer: (
+      <>
+        <p>
+          Look at the <strong>Your Progress</strong> box on the main screen. It tells you whether you're on track, or
+          how many days ahead or behind you are.
+        </p>
+        <Screenshot
+          src="/faq/progress.webp"
+          alt="The Your Progress box showing 3 days ahead, Day 64 of 365"
+          width={756}
+          height={620}
+        />
+        <p>
+          To see each day, tap the <strong>calendar button</strong> at the top of the main screen. Green days are days
+          you read, and red days are days you missed.
+        </p>
+        <Screenshot
+          src="/faq/calendar.webp"
+          alt="The calendar with green circles on days that were read and a red circle on a missed day"
+          width={756}
+          height={922}
+        />
+      </>
+    )
+  }
+]
+
+export function FaqPage() {
+  const { user } = useAuth()
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white px-4 py-8 dark:from-gray-900 dark:to-gray-950">
+      <div className="mx-auto max-w-lg">
+        <Link
+          to={user ? '/dashboard' : '/'}
+          className="text-base text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+        >
+          &larr; Back
+        </Link>
+
+        <header className="mt-6 text-center">
+          <LogoBadge className="mb-5" />
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Frequently Asked Questions</h1>
+        </header>
+
+        <div className="mt-8 space-y-6">
+          {QUESTIONS.map(({ question, answer }) => (
+            <section key={question} className="card">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{question}</h2>
+              <div className="mt-3 space-y-4 text-base leading-relaxed text-gray-700 dark:text-gray-300">{answer}</div>
+            </section>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}

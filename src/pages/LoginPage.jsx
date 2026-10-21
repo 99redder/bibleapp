@@ -213,6 +213,10 @@ export function LoginPage() {
             <Link to="/terms" className="hover:text-primary-600 dark:hover:text-primary-400">
               Terms of Service
             </Link>
+            {' · '}
+            <Link to="/faq" className="hover:text-primary-600 dark:hover:text-primary-400">
+              FAQ
+            </Link>
           </p>
         </div>
       </div>

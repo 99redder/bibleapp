@@ -293,6 +293,10 @@ export function LandingPage() {
             Terms of Service
           </Link>
           {' · '}
+          <Link to="/faq" className="hover:text-primary-400 transition-colors">
+            FAQ
+          </Link>
+          {' · '}
           <Link to="/login" className="hover:text-primary-400 transition-colors">
             Sign In
           </Link>

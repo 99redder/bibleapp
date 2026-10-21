@@ -133,6 +133,10 @@ export function NotFoundPage() {
           <Link to="/terms" className="hover:text-primary-400 transition-colors">
             Terms of Service
           </Link>
+          {' · '}
+          <Link to="/faq" className="hover:text-primary-400 transition-colors">
+            FAQ
+          </Link>
         </p>
       </footer>
 

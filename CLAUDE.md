@@ -91,6 +91,7 @@ All routes use HashRouter (URLs contain `#`):
 - `/privacy` — PrivacyPolicyPage (public)
 - `/terms` — TermsOfServicePage (public)
 - `/install` — InstallPage (public): device-detected, step-by-step "install the app" guide
+- `/faq` — FaqPage (public): plain-language Q&A for older readers (cost, why no NIV, longest plan, changing a plan, ahead/behind), with screenshots in `public/faq/`. Linked from every footer and the dashboard gear menu ("Help & FAQ")
 - `/onboarding` — OnboardingPage (auth required; skips to dashboard if already complete)
 - `/dashboard` — DashboardPage (auth required)
 - `*` wildcard — redirects to dashboard or onboarding based on auth/onboarding state
@@ -130,7 +131,7 @@ All routes use HashRouter (URLs contain `#`):
 ### Dark Mode
 - System preference detection on first load
 - Manual toggle in header
-- Preference saved to localStorage key `theme`
+- Preference saved to localStorage key `darkMode` (JSON boolean)
 - Implemented by toggling `dark` class on `<html>` element
 - Full dark mode support across all pages via Tailwind `dark:` variants
 
@@ -267,7 +268,8 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - **Custom domain**: Configured with CNAME file in `/public/CNAME` (value: `biblereadingplan.app`). Deploys use GitHub Actions, so the live custom domain is the repo's Settings → Pages value; the CNAME file just mirrors it
 - **Storage key prefix**: localStorage keys start with `biblePlanner` (from the old name). Keep it: renaming would orphan readings queued offline in `completionQueue` before they sync.
 - **Firebase setDoc with merge:true**: Used throughout to handle cases where the user document may not exist yet
-- **Dark mode**: Stored in localStorage key `theme`; `dark` class applied to `<html>` element
+- **Dark mode**: Stored in localStorage key `darkMode`; `dark` class applied to `<html>` element
+- **FAQ screenshots** (`public/faq/*.webp`): captured at 2x on a 390px-wide phone from the real screens rendered with mock data (auth and `services/firebase` aliased to fakes in a throwaway Vite config), via headless Chrome. Retake them when those screens change; the image sizes are hard-coded in `FaqPage.jsx`.
 - **Bible text**: All translations are generated chapter JSON under `public/bibles` and load locally (offline-capable after caching). There is no runtime Bible API — the former API.Bible proxy / Firebase `bibleApi` function was removed on 2026-10-21.
 - **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse YYYY-MM-DD strings as local time. `new Date("YYYY-MM-DD")` parses as UTC, causing off-by-one timezone bugs.
 - **Local Time day boundary**: "Which calendar day a reading counts toward" (streaks, calendar completed/missed dots, schedule pace) is determined in the user's own local timezone — the day rolls over at the user's local midnight. Helper in `dateHelpers.js`: `toCivilDateKey(date)` returns the local YYYY-MM-DD key for a Date (used to key completed-day lookups and streak day comparisons).
