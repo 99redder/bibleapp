@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { LogoBadge } from '../components/ui/BrandLogo'
 import { useInstallState } from '../hooks/useInstallState'
 import { promptInstall } from '../services/installPrompt'
+import { isLegacyHost } from '../utils/browserDetection'
 import { INSTALL_GUIDES, browserGuideForPlatform, guideForPlatform } from '../utils/installGuides'
 
 const APP_URL = 'https://biblereadingplan.app'
@@ -128,6 +129,30 @@ const FAQS = [
   }
 ]
 
+// On the old domain, installing would just reinstall the old app, so explain
+// how to move to the new one instead.
+function MoveCard({ standalone }) {
+  return (
+    <div className="card mt-8">
+      <p className="text-lg font-semibold text-gray-900 dark:text-white">Bible Reading Plan has moved</p>
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+        {standalone ? 'This is the old app.' : 'This is the old address.'} Your plan and progress are saved to your
+        account, so nothing is lost when you switch.
+      </p>
+      <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-gray-700 dark:text-gray-200">
+        <li>
+          Open Safari (iPhone) or Chrome (Android) yourself and go to <strong>biblereadingplan.app</strong>. Links
+          opened from inside this app can land in a small viewer that can't install apps.
+        </li>
+        <li>Sign in with the same account.</li>
+        <li>Add it to your home screen: on iPhone tap Share, then Add to Home Screen; on Android tap Install app.</li>
+        <li>Delete this old app from your home screen.</li>
+      </ol>
+      <CopyLinkButton />
+    </div>
+  )
+}
+
 export function InstallPage() {
   const { user } = useAuth()
   const { platform, standalone, canPrompt, installed } = useInstallState()
@@ -159,7 +184,9 @@ export function InstallPage() {
           </p>
         </header>
 
-        {standalone || installed ? (
+        {isLegacyHost() ? (
+          <MoveCard standalone={standalone} />
+        ) : standalone || installed ? (
           <div className="card mt-8 text-center">
             <p className="text-lg font-semibold text-gray-900 dark:text-white">
               {standalone ? "You're using the installed app 🎉" : 'Installed! 🎉'}

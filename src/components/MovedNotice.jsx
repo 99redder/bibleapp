@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { isLegacyHost } from '../utils/browserDetection'
 
 const NEW_SITE_URL = 'https://biblereadingplan.app/'
@@ -10,19 +11,27 @@ export function MovedNotice() {
 
   return (
     <div className="bg-primary-700 px-4 py-3 text-white">
-      <div className="mx-auto flex max-w-3xl flex-wrap items-center gap-x-4 gap-y-2">
-        <p className="min-w-0 flex-1 text-sm">
+      <div className="mx-auto flex max-w-3xl flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+        <p className="text-sm sm:flex-1">
           <span className="font-semibold">We've moved to biblereadingplan.app.</span>{' '}
-          Open the new site, sign in, and add it to your home screen. Your plan and progress come with you.
+          Your plan and progress come with you.
         </p>
-        <a
-          href={NEW_SITE_URL}
-          target="_blank"
-          rel="noopener"
-          className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-sm font-semibold text-primary-700 hover:bg-primary-50"
-        >
-          Open new site
-        </a>
+        <div className="flex shrink-0 gap-2">
+          <Link
+            to="/install"
+            className="rounded-lg bg-white px-3 py-1.5 text-sm font-semibold text-primary-700 hover:bg-primary-50"
+          >
+            How to switch
+          </Link>
+          <a
+            href={NEW_SITE_URL}
+            target="_blank"
+            rel="noopener"
+            className="rounded-lg px-3 py-1.5 text-sm font-semibold text-white ring-1 ring-white/60 hover:bg-primary-600"
+          >
+            Open new site
+          </a>
+        </div>
       </div>
     </div>
   )
