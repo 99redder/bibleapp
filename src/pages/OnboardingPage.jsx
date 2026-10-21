@@ -9,7 +9,7 @@ import { Toggle } from '../components/ui/Toggle'
 import { generateReadingPlan } from '../services/readingPlanGenerator'
 import { updateUserSettings, saveReadingPlan, Timestamp } from '../services/firebase'
 import { BIBLE_VERSIONS, TESTAMENTS, getTestamentChapterCount } from '../utils/bibleStructure'
-import { getTomorrow, formatDate } from '../utils/dateHelpers'
+import { getTomorrow, formatDate, getTotalReadingDays } from '../utils/dateHelpers'
 
 const STEPS = [
   { id: 'start-date', title: 'When do you want to start?' },
@@ -131,6 +131,14 @@ export function OnboardingPage() {
         includeWeekends
       })
 
+      // A plan longer than one chapter a day spaces its readings out; record
+      // that so pace, streaks, and the calendar know about the rest days.
+      const spanDays = getTotalReadingDays(actualDuration, includeWeekends)
+      if (plan.length < spanDays) {
+        settings.totalDays = plan.length
+        settings.paceAnchor = { date: settings.startDate, dayNumber: 1, dayCount: plan.length, spanDays }
+      }
+
       // Save settings and plan to Firestore
       await updateUserSettings(user.uid, settings)
       await saveReadingPlan(user.uid, plan)
@@ -151,6 +159,14 @@ export function OnboardingPage() {
   const monthsUntilEndOfYear = getMonthsUntilEndOfYear()
   const chaptersPerDayEndOfYear = Math.ceil(totalChapters / (monthsUntilEndOfYear * 30))
 
+  // Readable pace for a timeframe; slower than a chapter a day reads as per week.
+  const describePace = (months) => {
+    const perDay = totalChapters / (months * 30)
+    if (perDay >= 1) return `About ${Math.ceil(perDay)} chapters per day`
+    const perWeek = Math.max(1, Math.round(perDay * 7))
+    return `About ${perWeek} chapter${perWeek === 1 ? '' : 's'} per week`
+  }
+
   const testamentOptions = [
     { value: 'BOTH', label: 'Full Bible', description: 'Old and New Testament - 1,189 chapters' },
     { value: 'OT', label: 'Old Testament only', description: 'Genesis through Malachi - 929 chapters' },
@@ -158,10 +174,10 @@ export function OnboardingPage() {
   ]
 
   const durationOptions = [
-    { value: '6', label: '6 months', description: `About ${Math.ceil(totalChapters / (6 * 30))} chapters per day` },
-    { value: '12', label: '12 months', description: `About ${Math.ceil(totalChapters / (12 * 30))} chapters per day` },
-    { value: '18', label: '18 months', description: `About ${Math.ceil(totalChapters / (18 * 30))} chapters per day` },
-    { value: '24', label: '24 months', description: `About ${Math.ceil(totalChapters / (24 * 30))} chapters per day` },
+    { value: '6', label: '6 months', description: describePace(6) },
+    { value: '12', label: '12 months', description: describePace(12) },
+    { value: '18', label: '18 months', description: describePace(18) },
+    { value: '24', label: '24 months', description: describePace(24) },
     { value: 'end-of-year', label: `Finish by end of year`, description: `${monthsUntilEndOfYear} months - about ${chaptersPerDayEndOfYear} chapters per day` },
     { value: 'custom', label: 'Custom duration', description: 'Choose your own timeline' }
   ]
@@ -222,7 +238,7 @@ export function OnboardingPage() {
                 />
                 {customMonths && parseInt(customMonths) > 0 && (
                   <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                    About {Math.ceil(totalChapters / (parseInt(customMonths) * 30))} chapters per day
+                    {describePace(parseInt(customMonths))}
                   </p>
                 )}
               </div>

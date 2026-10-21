@@ -1,5 +1,6 @@
 import { getAllChapters } from '../utils/bibleStructure'
 import { addReadingDays, calculateReadingDays, getTotalReadingDays, toCivilDateKey } from '../utils/dateHelpers'
+import { spacedOffset } from '../utils/planSchedule'
 
 // Pure scheduling logic for changing a plan mid-way ("live switch"). Kept free
 // of Firebase so it can be reasoned about and tested on its own.
@@ -49,11 +50,13 @@ export function readingDaysForTimeframe(timeframe, startDate, includeWeekends) {
 /**
  * Rebuild a plan: completed days are kept as history (renumbered 1..k in their
  * original order), and every chapter of `testament` not yet read is spread over
- * `readingDays` new days starting on `startDate`.
+ * `readingDays` reading days starting on `startDate`. If that's more days than
+ * chapters left, each reading is one chapter and readings are spaced evenly
+ * across the whole timeframe, with rest days in between.
  *
  * @returns {{ days: Array, history: Array, newDays: Array, totalDays: number,
  *   readChapterCount: number, remainingChapterCount: number, readingDays: number,
- *   chaptersPerDay: { min: number, max: number }, finishDate: Date|null }}
+ *   spanDays: number, chaptersPerDay: { min: number, max: number }, finishDate: Date|null }}
  */
 export function buildReschedule({ planDays, testament, includeWeekends, readingDays, startDate }) {
   const completed = planDays
@@ -67,10 +70,11 @@ export function buildReschedule({ planDays, testament, includeWeekends, readingD
   })
 
   const remaining = getAllChapters(testament || 'BOTH').filter(passage => !readKeys.has(chapterKey(passage)))
-  // Never schedule empty days: with fewer chapters than days, read one a day and finish early.
-  const dayCount = remaining.length === 0
-    ? 0
-    : Math.min(remaining.length, Math.max(1, Math.round(readingDays) || 1))
+  const requestedDays = Math.max(1, Math.round(readingDays) || 1)
+  // Never schedule empty days: with fewer chapters than days, each reading is
+  // one chapter and the readings are spaced out over the requested timeframe.
+  const dayCount = remaining.length === 0 ? 0 : Math.min(remaining.length, requestedDays)
+  const spanDays = dayCount === 0 ? 0 : Math.max(dayCount, requestedDays)
 
   const baseChapters = dayCount ? Math.floor(remaining.length / dayCount) : 0
   const extraChapters = remaining.length - baseChapters * dayCount
@@ -79,7 +83,8 @@ export function buildReschedule({ planDays, testament, includeWeekends, readingD
   let chapterIndex = 0
   for (let i = 0; i < dayCount; i++) {
     const count = baseChapters + (i < extraChapters ? 1 : 0)
-    const scheduledDate = i === 0 ? new Date(startDate) : addReadingDays(startDate, i, includeWeekends)
+    const offset = spacedOffset(i, dayCount, spanDays)
+    const scheduledDate = offset === 0 ? new Date(startDate) : addReadingDays(startDate, offset, includeWeekends)
     newDays.push({
       dayNumber: history.length + i + 1,
       scheduledDate,
@@ -98,6 +103,7 @@ export function buildReschedule({ planDays, testament, includeWeekends, readingD
     readChapterCount: readKeys.size,
     remainingChapterCount: remaining.length,
     readingDays: dayCount,
+    spanDays,
     chaptersPerDay: {
       min: baseChapters,
       max: baseChapters + (extraChapters > 0 ? 1 : 0)

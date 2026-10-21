@@ -26,6 +26,7 @@ import {
 } from 'firebase/firestore/lite'
 
 import { computeStreakUpdate, toDateKey } from '../utils/streakHelpers'
+import { isScheduledReadingDay } from '../utils/planSchedule'
 import { emptyShownMilestones } from '../utils/rewards'
 
 const firebaseConfig = {
@@ -241,7 +242,8 @@ export const markDayComplete = async (uid, dayNumber, userProgress, settings, co
           currentStreak: storedProgress.currentStreak || 0,
           longestStreak: storedProgress.longestStreak || 0,
           today: occurrenceDate,
-          includeWeekends: settings?.includeWeekends
+          includeWeekends: settings?.includeWeekends,
+          isActiveDay: (date) => isScheduledReadingDay(settings, date)
         })
 
     const lastReadDate = timestampMillis(storedProgress.lastReadDate) > timestampMillis(completionTimestamp)

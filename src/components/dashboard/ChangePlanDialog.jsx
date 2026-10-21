@@ -20,10 +20,23 @@ const TESTAMENT_OPTIONS = [
 ]
 
 const MONTH_CHOICES = [3, 6, 9, 12, 18, 24]
+const EXTEND_CHOICES = [
+  { months: 3, label: '3 months' },
+  { months: 6, label: '6 months' },
+  { months: 12, label: '1 year' },
+  { months: 24, label: '2 years' },
+  { months: 36, label: '3 years' }
+]
 const HEAVY_PACE_CHAPTERS = 10
 
 const plural = (count, word) => `${count.toLocaleString()} ${word}${count === 1 ? '' : 's'}`
 const compactDate = (date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+
+function addMonths(date, months) {
+  const result = new Date(date)
+  result.setMonth(result.getMonth() + months)
+  return result
+}
 
 function CheckIcon() {
   return (
@@ -86,12 +99,18 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
   const customMonthsValue = parseInt(customMonths, 10)
   const customInvalid = timeframe === 'custom' && !(customMonthsValue >= 1 && customMonthsValue <= 120)
 
+  // "Add N months" extends the current finish date (or today, if that's already passed).
+  const extendFrom = currentFinishDate && currentFinishDate > today ? currentFinishDate : today
+
   const timeframeSpec = useMemo(() => {
     if (timeframe === 'keep') return { type: 'keep', finishDate: currentFinishDate }
+    if (timeframe.startsWith('extend-')) {
+      return { type: 'until', date: addMonths(extendFrom, Number(timeframe.slice('extend-'.length))) }
+    }
     if (timeframe === 'end-of-year') return { type: 'until', date: new Date(today.getFullYear(), 11, 31) }
     if (timeframe === 'custom') return { type: 'months', months: customMonthsValue || 0 }
     return { type: 'months', months: Number(timeframe) }
-  }, [timeframe, currentFinishDate, today, customMonthsValue])
+  }, [timeframe, currentFinishDate, extendFrom, today, customMonthsValue])
 
   const versionChanged = bibleVersion !== currentVersion
   const scheduleChanged = timeframe !== 'keep' || testament !== currentTestament || includeWeekends !== currentWeekends
@@ -117,14 +136,28 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
   const canSave = !saving && !blockedReason && !customInvalid && !nothingLeft &&
     (scheduleChanged ? !!preview : versionChanged)
 
-  const timeframeOptions = [
+  const timeframeGroups = [
     {
-      value: 'keep',
-      label: currentFinishDate ? `Keep my finish date (${compactDate(currentFinishDate)})` : 'Keep my current finish date'
+      label: 'Keep or add time',
+      options: [
+        {
+          value: 'keep',
+          label: currentFinishDate ? `Keep my finish date (${compactDate(currentFinishDate)})` : 'Keep my current finish date'
+        },
+        ...EXTEND_CHOICES.map(({ months, label }) => ({
+          value: `extend-${months}`,
+          label: `Add ${label} (finish ${compactDate(addMonths(extendFrom, months))})`
+        }))
+      ]
     },
-    ...MONTH_CHOICES.map(months => ({ value: String(months), label: `Finish in ${months} months from today` })),
-    { value: 'end-of-year', label: `Finish by the end of ${today.getFullYear()}` },
-    { value: 'custom', label: 'Custom number of months' }
+    {
+      label: 'Set a new timeframe from today',
+      options: [
+        ...MONTH_CHOICES.map(months => ({ value: String(months), label: `Finish in ${months} months from today` })),
+        { value: 'end-of-year', label: `Finish by the end of ${today.getFullYear()}` },
+        { value: 'custom', label: 'Custom number of months' }
+      ]
+    }
   ]
 
   const handleSave = async () => {
@@ -140,7 +173,12 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
           testament,
           includeWeekends,
           totalDays: preview.totalDays,
-          paceAnchor: { date: Timestamp.fromDate(startDate), dayNumber: historyCount + 1 }
+          paceAnchor: {
+            date: Timestamp.fromDate(startDate),
+            dayNumber: historyCount + 1,
+            dayCount: preview.newDays.length,
+            spanDays: preview.spanDays
+          }
         }
         const progress = userDoc.progress || {}
 
@@ -170,10 +208,16 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
     }
   }
 
+  const isSpaced = preview && preview.spanDays > preview.readingDays
+  const chaptersPerWeek = isSpaced
+    ? Math.max(1, Math.round((preview.readingDays / preview.spanDays) * (includeWeekends ? 7 : 5)))
+    : 0
   const paceLabel = preview && (
-    preview.chaptersPerDay.min === preview.chaptersPerDay.max
-      ? plural(preview.chaptersPerDay.max, 'chapter')
-      : `${preview.chaptersPerDay.min}–${preview.chaptersPerDay.max} chapters`
+    isSpaced
+      ? `About ${plural(chaptersPerWeek, 'chapter')} a week`
+      : preview.chaptersPerDay.min === preview.chaptersPerDay.max
+        ? `${plural(preview.chaptersPerDay.max, 'chapter')} a day`
+        : `${preview.chaptersPerDay.min}–${preview.chaptersPerDay.max} chapters a day`
   )
   const firstNewDay = preview?.newDays[0]
 
@@ -226,13 +270,25 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
             />
 
             <div className="space-y-2">
-              <Select
-                label="Timeframe"
-                name="change-timeframe"
-                value={timeframe}
-                onChange={(e) => setTimeframe(e.target.value)}
-                options={timeframeOptions}
-              />
+              <div className="space-y-1">
+                <label htmlFor="change-timeframe" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Timeframe
+                </label>
+                <select
+                  id="change-timeframe"
+                  value={timeframe}
+                  onChange={(e) => setTimeframe(e.target.value)}
+                  className="input bg-white dark:bg-gray-800"
+                >
+                  {timeframeGroups.map(group => (
+                    <optgroup key={group.label} label={group.label}>
+                      {group.options.map(option => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
               {timeframe === 'custom' && (
                 <Input
                   label="Months from today"

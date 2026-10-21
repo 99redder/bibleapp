@@ -1,5 +1,5 @@
 import { getToday } from './dateHelpers'
-import { getExpectedDay, getPlanTotalDays } from './planSchedule'
+import { getExpectedDay, getPlanTotalDays, isScheduledReadingDay } from './planSchedule'
 import { displayStreak } from './streakHelpers'
 
 /**
@@ -34,7 +34,8 @@ export function computeMetrics(userDoc, today = getToday()) {
     lastStreakDate: progress.lastStreakDate || null,
     currentStreak: progress.currentStreak || 0,
     today,
-    includeWeekends
+    includeWeekends,
+    isActiveDay: (date) => isScheduledReadingDay(settings, date)
   })
 
   return { percent, daysAhead, streak, totalDays, completedCount }

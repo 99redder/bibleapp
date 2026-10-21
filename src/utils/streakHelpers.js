@@ -29,17 +29,19 @@ function isActiveDay(date, includeWeekends) {
 
 // Count the number of "active" reading days strictly between two date keys
 // (exclusive of both endpoints). Used to decide whether the streak continues
-// (0 missed active days) or breaks (>= 1 missed active day).
-export function countMissedActiveDays(fromKey, toKey, includeWeekends) {
+// (0 missed active days) or breaks (>= 1 missed active day). `isActive`, when
+// given, decides which days count (e.g. skipping a spaced plan's rest days).
+export function countMissedActiveDays(fromKey, toKey, includeWeekends, isActive) {
   const start = dateKeyToDate(fromKey)
   const end = dateKeyToDate(toKey)
+  const countsAsActive = isActive || ((date) => isActiveDay(date, includeWeekends))
 
   let missed = 0
   const d = new Date(start)
   d.setDate(d.getDate() + 1) // start the day after the last credited day
 
   while (d < end) {
-    if (isActiveDay(d, includeWeekends)) {
+    if (countsAsActive(d)) {
       missed++
     }
     d.setDate(d.getDate() + 1)
@@ -57,6 +59,7 @@ export function countMissedActiveDays(fromKey, toKey, includeWeekends) {
  * @param {number} params.longestStreak - existing longest streak
  * @param {Date} params.today - the real-world day the reading was logged
  * @param {boolean} params.includeWeekends - whether the plan includes weekends
+ * @param {Function} [params.isActiveDay] - optional (date) => boolean overriding which days count
  * @returns {{ currentStreak: number, longestStreak: number, lastStreakDate: string, alreadyCounted: boolean }}
  */
 export function computeStreakUpdate({
@@ -64,7 +67,8 @@ export function computeStreakUpdate({
   currentStreak = 0,
   longestStreak = 0,
   today,
-  includeWeekends
+  includeWeekends,
+  isActiveDay
 }) {
   const todayKey = toDateKey(today)
 
@@ -82,7 +86,7 @@ export function computeStreakUpdate({
   if (!lastStreakDate) {
     newStreak = 1
   } else {
-    const missed = countMissedActiveDays(lastStreakDate, todayKey, includeWeekends)
+    const missed = countMissedActiveDays(lastStreakDate, todayKey, includeWeekends, isActiveDay)
     newStreak = missed === 0 ? currentStreak + 1 : 1
   }
 
@@ -102,7 +106,7 @@ export function computeStreakUpdate({
  *
  * @returns {number} the streak value to display
  */
-export function displayStreak({ lastStreakDate, currentStreak = 0, today, includeWeekends }) {
+export function displayStreak({ lastStreakDate, currentStreak = 0, today, includeWeekends, isActiveDay }) {
   if (!lastStreakDate || !currentStreak) return 0
 
   const todayKey = toDateKey(today)
@@ -110,6 +114,6 @@ export function displayStreak({ lastStreakDate, currentStreak = 0, today, includ
 
   // Missed active days between the last credited day and today (exclusive of
   // today, since today is still "in progress" and can be completed).
-  const missed = countMissedActiveDays(lastStreakDate, todayKey, includeWeekends)
+  const missed = countMissedActiveDays(lastStreakDate, todayKey, includeWeekends, isActiveDay)
   return missed === 0 ? currentStreak : 0
 }

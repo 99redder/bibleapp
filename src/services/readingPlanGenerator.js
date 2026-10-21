@@ -1,5 +1,6 @@
 import { getAllChapters } from '../utils/bibleStructure'
 import { getTotalReadingDays, addReadingDays } from '../utils/dateHelpers'
+import { spacedOffset } from '../utils/planSchedule'
 import { Timestamp } from './firebase'
 
 /**
@@ -17,8 +18,10 @@ export function generateReadingPlan(settings) {
   // Get chapters filtered by testament selection
   const allChapters = getAllChapters(testament || 'BOTH')
 
-  // Calculate total reading days
-  const totalDays = getTotalReadingDays(durationMonths, includeWeekends)
+  // Calculate reading days in the timeframe. Plans longer than one chapter a day
+  // have one chapter per reading, spaced evenly across the timeframe.
+  const spanDays = getTotalReadingDays(durationMonths, includeWeekends)
+  const totalDays = Math.min(spanDays, allChapters.length)
 
   // Calculate chapters per day
   const chaptersPerDay = allChapters.length / totalDays
@@ -44,9 +47,10 @@ export function generateReadingPlan(settings) {
     }
 
     // Calculate the scheduled date for this reading
-    const scheduledDate = day === 1
+    const offset = spacedOffset(day - 1, totalDays, spanDays)
+    const scheduledDate = offset === 0
       ? new Date(startDate)
-      : addReadingDays(startDate, day - 1, includeWeekends)
+      : addReadingDays(startDate, offset, includeWeekends)
 
     readingPlan.push({
       dayNumber: day,

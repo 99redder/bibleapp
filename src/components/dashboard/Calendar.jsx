@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react'
 import { timestampToDate, toCivilDateKey, getToday } from '../../utils/dateHelpers'
+import { isScheduledReadingDay } from '../../utils/planSchedule'
 
 export function Calendar({ userDoc, completedDaysData }) {
   const [currentMonth, setCurrentMonth] = useState(new Date())
@@ -49,6 +50,8 @@ export function Calendar({ userDoc, completedDaysData }) {
       const isCompleted = completedDates.has(currentKey)
       const isPast = current < today && !isToday
       const isBeforeStart = startDate && current < startDate
+      // Excluded weekends and a spaced plan's rest days are never "missed".
+      const isReadingDay = isScheduledReadingDay(userDoc?.settings, current)
 
       days.push({
         date: new Date(current),
@@ -57,14 +60,15 @@ export function Calendar({ userDoc, completedDaysData }) {
         isToday,
         isCompleted,
         isPast,
-        isBeforeStart
+        isBeforeStart,
+        isReadingDay
       })
 
       current.setDate(current.getDate() + 1)
     }
 
     return days
-  }, [currentMonth, completedDates, startDate])
+  }, [currentMonth, completedDates, startDate, userDoc?.settings])
 
   const goToPrevMonth = () => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))
@@ -134,7 +138,7 @@ export function Calendar({ userDoc, completedDaysData }) {
               ${!day.isCurrentMonth ? 'text-gray-300 dark:text-gray-600' : 'text-gray-900 dark:text-gray-100'}
               ${day.isToday ? 'ring-2 ring-primary-500' : ''}
               ${day.isCompleted ? 'bg-green-500 text-white' : ''}
-              ${day.isPast && !day.isCompleted && !day.isBeforeStart && day.isCurrentMonth
+              ${day.isPast && !day.isCompleted && !day.isBeforeStart && day.isReadingDay && day.isCurrentMonth
                 ? 'bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400' : ''}
               ${day.isBeforeStart ? 'text-gray-300 dark:text-gray-600' : ''}
             `}
