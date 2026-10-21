@@ -96,6 +96,37 @@ const QUESTIONS = [
     )
   },
   {
+    question: 'How do I start over?',
+    answer: (
+      <>
+        <p>
+          If you only want a different pace, translation, or timeline, use <strong>Change plan</strong> instead. It
+          keeps everything you've already read.
+        </p>
+        <p>
+          To begin a brand-new plan from the very beginning, tap the <strong>gear button</strong> at the top of the
+          main screen, then tap <strong>Start Fresh</strong>.
+        </p>
+        <Screenshot
+          src="/faq/start-over-menu.webp"
+          alt="The gear button at the top right is circled, and the menu under it has Start Fresh circled"
+          width={780}
+          height={666}
+        />
+        <p>
+          You'll be asked to confirm. Start Fresh deletes your current plan and all your progress, including your
+          streak and calendar, and it can't be undone. Then you'll set up a new plan.
+        </p>
+        <Screenshot
+          src="/faq/start-over-confirm.webp"
+          alt="The Start Fresh confirmation, warning that it deletes your current plan and all progress, with Cancel and Start Fresh buttons"
+          width={716}
+          height={444}
+        />
+      </>
+    )
+  },
+  {
     question: "How will I know if I'm ahead or behind?",
     answer: (
       <>
@@ -118,6 +149,44 @@ const QUESTIONS = [
           alt="The calendar with green circles on days that were read and a red circle on a missed day"
           width={756}
           height={922}
+        />
+      </>
+    )
+  },
+  {
+    question: 'What are the fun facts?',
+    answer: (
+      <>
+        <p>
+          Fun facts are short, true stories about how the passage you're reading shows up in the wider world: songs,
+          movies, art, history, sports, space, and everyday sayings. Each one tells you where the information came
+          from. They're just for fun and don't explain or interpret the Bible.
+        </p>
+        <p>
+          When a chapter or verse has a fun fact, you'll see a small <strong>sparkle button</strong> next to it. Tap
+          it to read the fact.
+        </p>
+        <Screenshot
+          src="/faq/fun-facts-marker.webp"
+          alt="Today's reading with a small sparkle button circled next to the 1 Samuel 17 heading"
+          width={756}
+          height={760}
+        />
+        <Screenshot
+          src="/faq/fun-facts-sheet.webp"
+          alt="A fun fact titled David and Goliath, with its source and a Back to reading button"
+          width={780}
+          height={640}
+        />
+        <p>
+          Fun facts never pop up on their own, so they won't interrupt your reading. To turn them on or off, tap the{' '}
+          <strong>gear button</strong> at the top of the main screen, then tap the <strong>Fun facts</strong> switch.
+        </p>
+        <Screenshot
+          src="/faq/fun-facts-toggle.webp"
+          alt="The gear button and the Fun facts switch in the menu are circled"
+          width={780}
+          height={666}
         />
       </>
     )
