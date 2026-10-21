@@ -35,9 +35,9 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'Bible Reading Plan',
-        short_name: 'Bible Plan',
-        description: 'A personalized Bible reading plan app',
+        name: 'Bible Planner App',
+        short_name: 'Bible Planner',
+        description: 'Build a personalized plan to read through the Bible — your translation, your timeline, free forever.',
         theme_color: '#4f46e5',
         background_color: '#f9fafb',
         display: 'standalone',

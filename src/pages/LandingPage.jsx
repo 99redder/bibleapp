@@ -135,7 +135,7 @@ export function LandingPage() {
               Sign In
             </Link>
           </div>
-          <p className="mt-4 text-sm text-gray-500 dark:text-gray-500">Free to use. No credit card required.</p>
+          <p className="mt-4 text-sm text-gray-500 dark:text-gray-500">Free forever — no subscription, no in-app purchases, no credit card.</p>
         </section>
 
         {/* ── Features ── */}
@@ -245,7 +245,7 @@ export function LandingPage() {
                 'Calendar view shows completed and missed days',
                 'Works on any phone — no app download required',
                 'Dark mode for evening reading',
-                'Free to use, no subscription needed',
+                'Free forever — no subscription or in-app purchases, ever',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
                   <CheckIcon className="w-5 h-5 text-primary-600 dark:text-primary-400 flex-shrink-0 mt-0.5" />
