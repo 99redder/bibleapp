@@ -86,7 +86,7 @@ export function LandingPage() {
             </button>
             <Link
               to="/login"
-              className="whitespace-nowrap text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-1.5 sm:px-3 py-1.5"
+              className="hidden sm:inline whitespace-nowrap text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-1.5"
             >
               Sign In
             </Link>

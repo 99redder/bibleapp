@@ -6,7 +6,7 @@ import { useInstallState } from '../hooks/useInstallState'
 import { promptInstall } from '../services/installPrompt'
 import { INSTALL_GUIDES, browserGuideForPlatform, guideForPlatform } from '../utils/installGuides'
 
-const APP_URL = 'https://www.bibleplannerapp.com'
+const APP_URL = 'https://biblereadingplan.app'
 
 const ICON_PATHS = {
   share: (
@@ -116,7 +116,7 @@ const BENEFITS = [
 const FAQS = [
   {
     question: 'Is this safe?',
-    answer: 'Yes. Bible Planner is a web app from www.bibleplannerapp.com, made by Eastern Shore AI, LLC. Installing adds it to your home screen so it opens full-screen; it runs with the same protections as any website, and you can remove it anytime.'
+    answer: 'Yes. Bible Reading Plan is a web app from biblereadingplan.app, made by Eastern Shore AI, LLC. Installing adds it to your home screen so it opens full-screen; it runs with the same protections as any website, and you can remove it anytime.'
   },
   {
     question: "Why isn't it in the App Store or Google Play?",
@@ -124,7 +124,7 @@ const FAQS = [
   },
   {
     question: 'How do I remove it?',
-    answer: 'Press and hold the Bible Planner icon and choose Remove App or Uninstall — just like any other app. Your reading plan stays saved to your account.'
+    answer: 'Press and hold the Bible Reading Plan icon and choose Remove App or Uninstall — just like any other app. Your reading plan stays saved to your account.'
   }
 ]
 
@@ -153,7 +153,7 @@ export function InstallPage() {
 
         <header className="mt-6 text-center">
           <LogoBadge className="mb-5" />
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Install Bible Planner</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Install Bible Reading Plan</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-300">
             Put your daily reading one tap away. The app opens full-screen, loads fast, and works offline.
           </p>
@@ -166,21 +166,21 @@ export function InstallPage() {
             </p>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
               {standalone
-                ? "You're all set — Bible Planner is on your device."
-                : 'Open Bible Planner from your home screen or app list.'}
+                ? "You're all set — Bible Reading Plan is on your device."
+                : 'Open Bible Reading Plan from your home screen or app list.'}
             </p>
           </div>
         ) : (
           <>
             {canPrompt && guide.oneTap && (
               <div className="card mt-8 text-center ring-1 ring-primary-200 dark:ring-primary-500/30">
-                <p className="font-semibold text-gray-900 dark:text-white">Your browser can install Bible Planner in one tap.</p>
+                <p className="font-semibold text-gray-900 dark:text-white">Your browser can install Bible Reading Plan in one tap.</p>
                 <button
                   type="button"
                   onClick={handleInstall}
                   className="mt-4 w-full rounded-lg bg-primary-600 py-3 font-semibold text-white shadow-md hover:bg-primary-700"
                 >
-                  Install Bible Planner
+                  Install Bible Reading Plan
                 </button>
                 {promptOutcome === 'dismissed' && (
                   <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">

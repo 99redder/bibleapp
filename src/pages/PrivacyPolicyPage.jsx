@@ -26,7 +26,7 @@ export function PrivacyPolicyPage() {
               Introduction
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Bible Planner App (the "Service") is operated by Eastern Shore AI, LLC
+              Bible Reading Plan (the "Service") is operated by Eastern Shore AI, LLC
               ("we," "our," or "us"), a limited liability company organized in the State of
               Maryland, USA. We are committed to protecting your privacy. This Privacy Policy
               explains how we collect, use, and safeguard your information when you use our

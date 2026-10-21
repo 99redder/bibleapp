@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useInstallState } from '../../hooks/useInstallState'
 import { promptInstall } from '../../services/installPrompt'
+import { isLegacyHost } from '../../utils/browserDetection'
 
 const DISMISSED_KEY = 'installBannerDismissed'
 
@@ -18,7 +19,8 @@ export function InstallBanner() {
     }
   })
 
-  if (standalone || installed || dismissed) return null
+  // On the old domain, MovedNotice points people to install from the new one.
+  if (standalone || installed || dismissed || isLegacyHost()) return null
 
   const handleDismiss = () => {
     setDismissed(true)

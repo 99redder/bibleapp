@@ -19,18 +19,19 @@ A mobile-first React application that helps users read through the Bible on a cu
 - **Video Generation**: Remotion for creating Bible verse videos
 
 ## Live URLs
-**Primary (Custom Domain)**: https://www.bibleplannerapp.com
+**Primary (Custom Domain)**: https://biblereadingplan.app
 **Fallback (GitHub Pages)**: https://99redder.github.io/bibleapp/
 
 **Notes**:
-- Custom domain: www.bibleplannerapp.com
-- HTTPS active via Let's Encrypt (domain set up 2026-01-24)
+- Custom domain: biblereadingplan.app (Cloudflare DNS, proxied, SSL mode Full → GitHub Pages)
+- HTTPS is served by Cloudflare. GitHub can't issue its own certificate behind the proxy, so its "Enforce HTTPS" stays off; Cloudflare "Always Use HTTPS" covers it
+- Old domains (www.)bibleplannerapp.com and bibleplanapp.com run the `cloudflare/legacy-domain-worker.js` Worker: page loads 301 to biblereadingplan.app, everything else is proxied so apps installed from the old domain keep working and updating
 - Repository was renamed from "BibleApp" to "bibleapp"
 
 ## Project Structure
 ```
 /public
-  CNAME                      - Custom domain: www.bibleplannerapp.com
+  CNAME                      - Custom domain: biblereadingplan.app
   /bibles                    - Generated local Bible chapter JSON files
   favicon.svg / .png         - Favicons
   apple-touch-icon.png       - iOS home screen icon
@@ -106,7 +107,7 @@ All routes use HashRouter (URLs contain `#`):
 ### Firebase Console Setup for OAuth
 1. Go to Firebase Console → Authentication → Sign-in method
 2. Enable Google provider
-3. Add your domain(s) to Authorized domains (e.g., `www.bibleplannerapp.com`)
+3. Add your domain(s) to Authorized domains (`biblereadingplan.app`; keep `www.bibleplannerapp.com` too while installed apps still run there)
 
 ### Onboarding Survey (5 Steps)
 1. **Start Date** - When to begin the reading plan (validates: no past dates, today OK)
@@ -264,7 +265,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 
 ## Important Notes
 - **HashRouter**: URLs use `#` (e.g., `/#/dashboard`). Required for GitHub Pages static hosting since there's no server-side routing.
-- **Custom domain**: Configured with CNAME file in `/public/CNAME` (value: `www.bibleplannerapp.com`)
+- **Custom domain**: Configured with CNAME file in `/public/CNAME` (value: `biblereadingplan.app`). Deploys use GitHub Actions, so the live custom domain is the repo's Settings → Pages value; the CNAME file just mirrors it
 - **Firebase setDoc with merge:true**: Used throughout to handle cases where the user document may not exist yet
 - **Dark mode**: Stored in localStorage key `theme`; `dark` class applied to `<html>` element
 - **Bible text**: Most translations use generated chapter JSON from `public/bibles`; select API-backed translations use the Firebase `bibleApi` proxy
@@ -281,7 +282,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - Dev server port: 3000
 
 ## PWA Configuration
-- Service worker auto-updates (registerType: 'autoUpdate')
+- Service worker updates on prompt (registerType: 'prompt'): a new version downloads in the background and a "Refresh" toast applies it
 - Local Bible chapter JSON cached for offline-friendly reading
 - Firebase requests are network-only (auth and Firestore must be fresh)
 - Manifest configured for standalone display, portrait orientation
@@ -299,7 +300,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - **Font**: Extends with `serif` family (Georgia) for scripture text
 
 ## UI/Branding
-- App name: "Bible Planner" / "Bible Reading Plan"
+- App name: "Bible Reading Plan" everywhere (renamed from "Bible Planner" / "Bible Planner App" on 2026-10-21)
 - Tagline: "Read through the Bible on your own schedule"
 - Bible icon: SVG book with text lines, white on primary-600 background, rounded corners
 - Login and Signup pages display the icon, app name, and tagline

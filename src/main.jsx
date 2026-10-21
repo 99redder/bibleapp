@@ -11,7 +11,7 @@ initInstallPrompt()
 
 registerSW({
   onNeedRefresh(updateSW) {
-    window.dispatchEvent(new CustomEvent('bible-planner-update-ready', {
+    window.dispatchEvent(new CustomEvent('bible-reading-plan-update-ready', {
       detail: { updateSW }
     }))
   },

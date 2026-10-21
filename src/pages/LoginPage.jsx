@@ -75,7 +75,7 @@ export function LoginPage() {
         {/* Logo and App Info */}
         <div className="text-center mb-8">
           <LogoBadge className="mb-5" />
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Bible Planner App</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Bible Reading Plan</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-300">
             Build your own plan to read through the Bible
           </p>

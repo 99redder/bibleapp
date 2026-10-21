@@ -45,7 +45,7 @@ export function NotFoundPage() {
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <BookIcon className="w-5 h-5 text-white" />
             </div>
-            <span className="text-base font-bold text-gray-900 dark:text-white">Bible Planner App</span>
+            <span className="text-base font-bold text-gray-900 dark:text-white">Bible Reading Plan</span>
           </Link>
           <button
             onClick={toggleDarkMode}
@@ -112,7 +112,7 @@ export function NotFoundPage() {
           <div className="w-7 h-7 bg-primary-600 rounded-lg flex items-center justify-center">
             <BookIcon className="w-4 h-4 text-white" />
           </div>
-          <span className="text-white font-semibold text-sm">Bible Planner App</span>
+          <span className="text-white font-semibold text-sm">Bible Reading Plan</span>
         </div>
         <p className="text-xs text-gray-500 mb-3">
           Website created and maintained by{' '}

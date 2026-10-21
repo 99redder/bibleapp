@@ -1,0 +1,12 @@
+# Old-domain redirect/proxy Worker. Deploy with `wrangler deploy` from this folder.
+name = "legacy-domain-redirect"
+main = "legacy-domain-worker.js"
+compatibility_date = "2025-09-01"
+workers_dev = false
+
+routes = [
+  { pattern = "bibleplannerapp.com/*", zone_name = "bibleplannerapp.com" },
+  { pattern = "www.bibleplannerapp.com/*", zone_name = "bibleplannerapp.com" },
+  { pattern = "bibleplanapp.com/*", zone_name = "bibleplanapp.com" },
+  { pattern = "www.bibleplanapp.com/*", zone_name = "bibleplanapp.com" },
+]

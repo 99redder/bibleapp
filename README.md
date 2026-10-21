@@ -1,8 +1,8 @@
-# Bible Planner App
+# Bible Reading Plan
 
 A mobile-first React PWA that guides users through reading the entire Bible on a personalized schedule. Users create an account, set up a reading plan (6–24 months, start date), and get daily chapter assignments with progress tracking.
 
-**Live site**: https://www.bibleplannerapp.com
+**Live site**: https://biblereadingplan.app
 **Repo**: https://github.com/99redder/bibleapp
 **Built by**: [Eastern Shore AI, LLC](https://www.easternshore.ai)
 
@@ -29,7 +29,7 @@ React 18 + Vite 4 + Tailwind CSS
 ├── Firebase Auth (email/password + Google OAuth)
 ├── Firestore (user data, reading plans, progress)
 ├── Local public-domain Bible JSON + API.Bible proxy for select translations
-└── GitHub Pages (hosting via custom domain www.bibleplannerapp.com)
+└── GitHub Pages (hosting via custom domain biblereadingplan.app)
 ```
 
 **Routing**: HashRouter (required for GitHub Pages static hosting — all URLs contain `#`).

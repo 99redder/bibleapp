@@ -921,7 +921,7 @@ export function DashboardPage() {
           <button
             onClick={async () => {
               const shareData = {
-                title: 'Bible Planner App',
+                title: 'Bible Reading Plan',
                 text: 'Join me in reading through the Bible! This app helps you create a personalized reading plan.',
                 url: window.location.origin + window.location.pathname
               }

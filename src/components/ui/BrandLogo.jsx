@@ -42,7 +42,7 @@ export function LogoBadge({ className = '' }) {
   )
 }
 
-// Badge + "BIBLE PLANNER" wordmark, for page headers and footers. `onDark`
+// Badge + "BIBLE READING PLAN" wordmark, for page headers and footers. `onDark`
 // keeps the text light on surfaces that are dark in both themes.
 export function BrandLockup({ className = '', tagline = true, onDark = false }) {
   return (
@@ -51,12 +51,12 @@ export function BrandLockup({ className = '', tagline = true, onDark = false }) 
         <BrandMark className="h-7 w-7 text-white sm:h-8 sm:w-8" />
       </span>
       <span className="leading-none">
-        <span className={`block whitespace-nowrap font-display text-[15px] font-bold tracking-[0.04em] sm:text-lg sm:tracking-[0.06em] ${onDark ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
-          Bible Planner
+        <span className={`block whitespace-nowrap font-display text-[14px] font-bold tracking-[0.03em] sm:text-lg sm:tracking-[0.06em] ${onDark ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
+          Bible Reading Plan
         </span>
         {tagline && (
           <span className={`mt-1 block whitespace-nowrap text-[8px] font-bold uppercase tracking-[0.2em] sm:text-[10px] sm:tracking-[0.26em] ${onDark ? 'text-amber-400' : 'text-amber-600 dark:text-amber-400'}`}>
-            Daily reading plan
+            On your own schedule
           </span>
         )}
       </span>

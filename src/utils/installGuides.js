@@ -17,13 +17,13 @@ export const INSTALL_GUIDES = {
       },
       {
         title: 'Tap “Add”',
-        detail: 'Keep the name “Bible Planner”. If you see “Open as Web App”, leave it switched on.',
+        detail: 'Keep the name “Bible Reading Plan”. If you see “Open as Web App”, leave it switched on.',
         hint: { icon: 'confirm', label: 'Add' }
       },
       {
         title: 'Open it from your Home Screen',
-        detail: 'Tap the new Bible Planner icon. Sign in once — the app keeps its own sign-in, separate from Safari.',
-        hint: { icon: 'app', label: 'Bible Planner' }
+        detail: 'Tap the new Bible Reading Plan icon. Sign in once — the app keeps its own sign-in, separate from Safari.',
+        hint: { icon: 'app', label: 'Bible Reading Plan' }
       }
     ]
   },
@@ -38,18 +38,18 @@ export const INSTALL_GUIDES = {
       },
       {
         title: 'Choose “Add to Home Screen”',
-        detail: "Scroll down to find it. If you don't see it, open www.bibleplannerapp.com in Safari and use the Safari steps instead.",
+        detail: "Scroll down to find it. If you don't see it, open biblereadingplan.app in Safari and use the Safari steps instead.",
         hint: { icon: 'add', label: 'Add to Home Screen' }
       },
       {
         title: 'Tap “Add”',
-        detail: 'Keep the name “Bible Planner”.',
+        detail: 'Keep the name “Bible Reading Plan”.',
         hint: { icon: 'confirm', label: 'Add' }
       },
       {
         title: 'Open it from your Home Screen',
-        detail: 'Tap the new Bible Planner icon and sign in once — the app keeps its own sign-in.',
-        hint: { icon: 'app', label: 'Bible Planner' }
+        detail: 'Tap the new Bible Reading Plan icon and sign in once — the app keeps its own sign-in.',
+        hint: { icon: 'app', label: 'Bible Reading Plan' }
       }
     ]
   },
@@ -70,13 +70,13 @@ export const INSTALL_GUIDES = {
       },
       {
         title: 'Tap “Install”',
-        detail: 'Confirm, and Chrome adds Bible Planner to your home screen.',
+        detail: 'Confirm, and Chrome adds Bible Reading Plan to your home screen.',
         hint: { icon: 'confirm', label: 'Install' }
       },
       {
         title: 'Open it from your home screen',
-        detail: "Tap the Bible Planner icon. You'll also find it in your app drawer.",
-        hint: { icon: 'app', label: 'Bible Planner' }
+        detail: "Tap the Bible Reading Plan icon. You'll also find it in your app drawer.",
+        hint: { icon: 'app', label: 'Bible Reading Plan' }
       }
     ]
   },
@@ -97,13 +97,13 @@ export const INSTALL_GUIDES = {
       },
       {
         title: 'Tap “Add”',
-        detail: 'Bible Planner is added to your home screen.',
+        detail: 'Bible Reading Plan is added to your home screen.',
         hint: { icon: 'confirm', label: 'Add' }
       },
       {
         title: 'Open it from your home screen',
-        detail: 'Tap the Bible Planner icon to start reading.',
-        hint: { icon: 'app', label: 'Bible Planner' }
+        detail: 'Tap the Bible Reading Plan icon to start reading.',
+        hint: { icon: 'app', label: 'Bible Reading Plan' }
       }
     ]
   },
@@ -123,13 +123,13 @@ export const INSTALL_GUIDES = {
       },
       {
         title: 'Tap “Add”',
-        detail: 'Bible Planner is added to your home screen.',
+        detail: 'Bible Reading Plan is added to your home screen.',
         hint: { icon: 'confirm', label: 'Add' }
       },
       {
         title: 'Open it from your home screen',
-        detail: 'Tap the Bible Planner icon to start reading.',
-        hint: { icon: 'app', label: 'Bible Planner' }
+        detail: 'Tap the Bible Reading Plan icon to start reading.',
+        hint: { icon: 'app', label: 'Bible Reading Plan' }
       }
     ]
   },
@@ -141,7 +141,7 @@ export const INSTALL_GUIDES = {
       {
         title: 'Click the install icon in the address bar',
         detail: 'At the right end of the address bar, look for a small screen with a down arrow.',
-        hint: { icon: 'install', label: 'Install Bible Planner' }
+        hint: { icon: 'install', label: 'Install Bible Reading Plan' }
       },
       {
         title: 'No icon? Use the browser menu',
@@ -150,13 +150,13 @@ export const INSTALL_GUIDES = {
       },
       {
         title: 'Click “Install”',
-        detail: 'Bible Planner opens in its own window.',
+        detail: 'Bible Reading Plan opens in its own window.',
         hint: { icon: 'confirm', label: 'Install' }
       },
       {
         title: 'Open it like any other app',
-        detail: 'Find Bible Planner in your Dock, taskbar, Start menu, or Applications folder.',
-        hint: { icon: 'app', label: 'Bible Planner' }
+        detail: 'Find Bible Reading Plan in your Dock, taskbar, Start menu, or Applications folder.',
+        hint: { icon: 'app', label: 'Bible Reading Plan' }
       }
     ]
   },
@@ -171,13 +171,13 @@ export const INSTALL_GUIDES = {
       },
       {
         title: 'Click “Add”',
-        detail: 'Keep the name “Bible Planner”.',
+        detail: 'Keep the name “Bible Reading Plan”.',
         hint: { icon: 'confirm', label: 'Add' }
       },
       {
         title: 'Open it from your Dock',
-        detail: 'Bible Planner opens in its own window. Sign in once — the app keeps its own sign-in.',
-        hint: { icon: 'app', label: 'Bible Planner' }
+        detail: 'Bible Reading Plan opens in its own window. Sign in once — the app keeps its own sign-in.',
+        hint: { icon: 'app', label: 'Bible Reading Plan' }
       }
     ]
   },
@@ -188,7 +188,7 @@ export const INSTALL_GUIDES = {
     steps: [
       {
         title: "Firefox on computers can't install apps",
-        detail: 'Open www.bibleplannerapp.com in Chrome, Edge, or Safari to install it — or install it on your phone instead.',
+        detail: 'Open biblereadingplan.app in Chrome, Edge, or Safari to install it — or install it on your phone instead.',
         hint: { icon: 'browser', label: 'Open in another browser' },
         action: 'copy-link'
       }
@@ -206,13 +206,13 @@ export const INSTALL_GUIDES = {
       {
         title: 'Or copy the link',
         detail: 'Then paste it into Safari (iPhone) or Chrome (Android).',
-        hint: { icon: 'browser', label: 'www.bibleplannerapp.com' },
+        hint: { icon: 'browser', label: 'biblereadingplan.app' },
         action: 'copy-link'
       },
       {
         title: 'Then follow the steps for your browser',
         detail: 'Once the page is open in your browser, come back to this guide for the next steps.',
-        hint: { icon: 'app', label: 'Bible Planner' },
+        hint: { icon: 'app', label: 'Bible Reading Plan' },
         action: 'switch-to-browser'
       }
     ]

@@ -26,7 +26,7 @@ export function TermsOfServicePage() {
               Agreement to Terms
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
-              By accessing or using Bible Planner App (the "Service"), operated by
+              By accessing or using Bible Reading Plan (the "Service"), operated by
               Eastern Shore AI, LLC ("we," "our," or "us"), you agree to be bound by these
               Terms of Service. If you do not agree to these terms, please do not use the
               Service.
@@ -38,7 +38,7 @@ export function TermsOfServicePage() {
               Description of Service
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
-              Bible Planner App is a free web application that helps users create and follow
+              Bible Reading Plan is a free web application that helps users create and follow
               personalized Bible reading plans. The Service allows you to set reading goals,
               track your progress, and read Bible passages from various translations.
             </p>

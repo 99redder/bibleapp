@@ -35,8 +35,8 @@ export default defineConfig({
         ]
       },
       manifest: {
-        name: 'Bible Planner App',
-        short_name: 'Bible Planner',
+        name: 'Bible Reading Plan',
+        short_name: 'Bible Reading Plan',
         description: 'Build a personalized plan to read through the Bible — your translation, your timeline, free forever.',
         id: '/',
         lang: 'en',

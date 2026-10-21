@@ -67,6 +67,16 @@ export function isStandaloneApp() {
   return window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true
 }
 
+const LEGACY_HOSTS = ['bibleplannerapp.com', 'www.bibleplannerapp.com']
+
+/**
+ * True when running on the old domain. Apps installed from there keep working
+ * (Cloudflare proxies it to biblereadingplan.app) but should move to the new domain.
+ */
+export function isLegacyHost() {
+  return LEGACY_HOSTS.includes(window.location.hostname)
+}
+
 /**
  * Which set of install instructions fits this device and browser.
  * @returns {'ios-safari'|'ios-other'|'ios-inapp'|'android-chrome'|'android-samsung'|'android-firefox'|'android-other'|'android-inapp'|'desktop-chromium'|'desktop-safari'|'desktop-firefox'|'desktop-other'}

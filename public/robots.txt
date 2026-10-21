@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.bibleplannerapp.com/sitemap.xml
+Sitemap: https://biblereadingplan.app/sitemap.xml

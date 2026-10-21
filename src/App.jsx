@@ -3,6 +3,7 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { MovedNotice } from './components/MovedNotice'
 
 const LandingPage = lazy(() => import('./pages/LandingPage').then(module => ({ default: module.LandingPage })))
 const LoginPage = lazy(() => import('./pages/LoginPage').then(module => ({ default: module.LoginPage })))
@@ -27,8 +28,8 @@ function UpdatePrompt() {
 
   useEffect(() => {
     const handleUpdate = (event) => setUpdateSW(() => event.detail.updateSW)
-    window.addEventListener('bible-planner-update-ready', handleUpdate)
-    return () => window.removeEventListener('bible-planner-update-ready', handleUpdate)
+    window.addEventListener('bible-reading-plan-update-ready', handleUpdate)
+    return () => window.removeEventListener('bible-reading-plan-update-ready', handleUpdate)
   }, [])
 
   if (!updateSW) return null
@@ -130,6 +131,7 @@ function App() {
     <ThemeProvider>
       <HashRouter>
         <AuthProvider>
+          <MovedNotice />
           <AppRoutes />
           <UpdatePrompt />
         </AuthProvider>

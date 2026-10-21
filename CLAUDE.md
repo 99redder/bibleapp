@@ -15,22 +15,23 @@ A mobile-first React application that helps users read through the Bible on a cu
 - **State Management**: React Context (AuthContext, ThemeContext)
 - **Routing**: React Router v6 (HashRouter for GitHub Pages)
 - **Deployment**: GitHub Pages via GitHub Actions
-- **PWA**: vite-plugin-pwa with auto-update service worker
+- **PWA**: vite-plugin-pwa with prompt-to-update service worker
 - **Video Generation**: Remotion for creating Bible verse videos
 
 ## Live URLs
-**Primary (Custom Domain)**: https://www.bibleplannerapp.com
+**Primary (Custom Domain)**: https://biblereadingplan.app
 **Fallback (GitHub Pages)**: https://99redder.github.io/bibleapp/
 
 **Notes**:
-- Custom domain: www.bibleplannerapp.com
-- HTTPS active via Let's Encrypt (domain set up 2026-01-24)
+- Custom domain: biblereadingplan.app (Cloudflare DNS, proxied, SSL mode Full → GitHub Pages)
+- HTTPS is served by Cloudflare. GitHub can't issue its own certificate behind the proxy, so its "Enforce HTTPS" stays off; Cloudflare "Always Use HTTPS" covers it
+- Old domains (www.)bibleplannerapp.com and bibleplanapp.com run the `cloudflare/legacy-domain-worker.js` Worker: page loads 301 to biblereadingplan.app, everything else is proxied so apps installed from the old domain keep working and updating
 - Repository was renamed from "BibleApp" to "bibleapp"
 
 ## Project Structure
 ```
 /public
-  CNAME                      - Custom domain: www.bibleplannerapp.com
+  CNAME                      - Custom domain: biblereadingplan.app
   /bibles                    - Generated local Bible chapter JSON files
   favicon.svg / .png         - Favicons
   apple-touch-icon.png       - iOS home screen icon
@@ -107,7 +108,7 @@ All routes use HashRouter (URLs contain `#`):
 ### Firebase Console Setup for OAuth
 1. Go to Firebase Console → Authentication → Sign-in method
 2. Enable Google provider
-3. Add your domain(s) to Authorized domains (e.g., `www.bibleplannerapp.com`)
+3. Add your domain(s) to Authorized domains (`biblereadingplan.app`; keep `www.bibleplannerapp.com` too while installed apps still run there)
 
 ### Onboarding Survey (5 Steps)
 1. **Start Date** - When to begin the reading plan (validates: no past dates, today OK)
@@ -262,7 +263,8 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 
 ## Important Notes
 - **HashRouter**: URLs use `#` (e.g., `/#/dashboard`). Required for GitHub Pages static hosting since there's no server-side routing.
-- **Custom domain**: Configured with CNAME file in `/public/CNAME` (value: `www.bibleplannerapp.com`)
+- **Custom domain**: Configured with CNAME file in `/public/CNAME` (value: `biblereadingplan.app`). Deploys use GitHub Actions, so the live custom domain is the repo's Settings → Pages value; the CNAME file just mirrors it
+- **Storage key prefix**: localStorage keys start with `biblePlanner` (from the old name). Keep it: renaming would orphan readings queued offline in `completionQueue` before they sync.
 - **Firebase setDoc with merge:true**: Used throughout to handle cases where the user document may not exist yet
 - **Dark mode**: Stored in localStorage key `theme`; `dark` class applied to `<html>` element
 - **Bible text**: All translations are generated chapter JSON under `public/bibles` and load locally (offline-capable after caching). There is no runtime Bible API — the former API.Bible proxy / Firebase `bibleApi` function was removed on 2026-10-21.
@@ -280,7 +282,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - Dev server port: 3000
 
 ## PWA Configuration
-- Service worker auto-updates (registerType: 'autoUpdate')
+- Service worker updates on prompt (registerType: 'prompt'): a new version downloads in the background and a "Refresh" toast applies it
 - Local Bible chapter JSON cached for offline-friendly reading
 - Firebase requests are network-only (auth and Firestore must be fresh)
 - Manifest configured for standalone display, portrait orientation
@@ -305,10 +307,10 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - **Font**: Extends with `serif` family (Georgia) for scripture text
 
 ## UI/Branding
-- App name: "Bible Planner" / "Bible Reading Plan"
+- App name: "Bible Reading Plan" everywhere (renamed from "Bible Planner" / "Bible Planner App" on 2026-10-21)
 - Tagline: "Read through the Bible on your own schedule"
 - Logo: open book with a gold cross rising from its spine (`BrandMark` in `src/components/ui/BrandLogo.jsx`), on a sky→indigo gradient badge (`LogoBadge` for large, `BrandLockup` = badge + wordmark for headers/footers). App icons, favicon, and maskable icon use the same artwork.
-- Wordmark font: Cinzel 700, self-hosted via `@fontsource/cinzel` (imported in `main.jsx`; Tailwind `font-display`). "BIBLE PLANNER" with a small gold "Daily reading plan" tagline.
+- Wordmark font: Cinzel 700, self-hosted via `@fontsource/cinzel` (imported in `main.jsx`; Tailwind `font-display`). "BIBLE READING PLAN" with a small gold "On your own schedule" tagline (the header hides its "Sign In" link below `sm` so the longer name fits).
 - Login and Signup pages display the icon, app name, and tagline
 - Footer credit: "Website created and maintained by Eastern Shore AI, LLC" (links to easternshore.ai)
 - Footer links: Privacy Policy, Terms of Service
@@ -370,12 +372,18 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 
 ## Session History
 
+### 2026-10-21: Rename to "Bible Reading Plan" + biblereadingplan.app
+- **Name**: "Bible Reading Plan" everywhere users see it (manifest, meta/SEO, wordmark, install guides, legal pages). Internal storage keys keep the `biblePlanner` prefix (see Important Notes).
+- **Domain**: new primary domain biblereadingplan.app (Cloudflare Registrar, proxied, SSL mode Full → GitHub Pages). The old www.bibleplannerapp.com had been proxied too, which is why GitHub's certificate renewal failed (`bad_authz`).
+- **Old domains**: bibleplannerapp.com (+www) and bibleplanapp.com (was a Squarespace "Coming Soon" page) run `cloudflare/legacy-domain-worker.js` (deploy: `cd cloudflare && wrangler deploy`). Page loads 301 to the new domain; service worker, assets, and Bible JSON are proxied, so apps installed from the old domain keep updating. On the old host the app shows `MovedNotice` (open the new site, sign in once, reinstall) and hides `InstallBanner`. Firebase Auth authorized domains and the App Check reCAPTCHA key must keep listing the old domain while those apps exist.
+- **Security review**: Firestore App Check is enforced (Authentication is still in monitoring mode). Deleted the orphaned `bibleApi` Cloud Function, its `BIBLE_API_KEY` secret, and the stale `VITE_BIBLE_API_KEY` / `VITE_BIBLE_PROXY_BASE` GitHub secrets. The project is on Blaze with a $5/month budget that only sends alerts (50/90/100%). Google's enforced spend caps can't cover Firestore or Auth, so none are set.
+
 ### 2026-10-21: Branding, SEO, Legal, and Fully-Offline Bible
 - **Google OAuth app name**: Changed the Google sign-in consent "App name" (Google Cloud → Auth Platform → Branding) from "Bible Reading Plan" to "Bible Planner App" and re-submitted branding verification. Note: the Firebase/GCP project `bibleapp-f097a` is under the **redonx99@gmail.com** account (Chrome account index `/u/1/`); the default `/u/0/` account is MFA-blocked.
 - **SEO + copy**: Rewrote `index.html` meta (title/description/keywords/OG/Twitter/JSON-LD), LandingPage, and login/signup copy to convey the full value prop (build a customizable plan — translation, timeline, weekends — read in-app, track ahead/behind, resume where you left off, free forever with no in-app purchases).
 - **Branding/logo**: New shared `src/components/ui/BrandLogo.jsx` (open book + amber bookmark). Redesigned login/signup with gradient logo badge, background glow, and value chips. Regenerated favicon, Apple touch, and PWA icons (`gen-icons.mjs` run ad hoc via `sharp`) and updated the PWA manifest name to "Bible Planner App".
 - **Legal**: Refreshed Privacy Policy + Terms — named Eastern Shore AI, LLC as operator under Maryland law, disclosed Google reCAPTCHA (App Check) and PWA offline caching, added minimum-age + severability clauses.
-- **Fully-offline Bible / API removed**: Bundled RV and T4T as static JSON and **removed the API.Bible proxy entirely** — deleted `functions/` (the `bibleApi` Cloud Function), the `functions` block in `firebase.json`, the API code path in `bibleAPI.js`, and `getPassageId`. Dropped FBV. All 11 translations now load locally. The dashboard version-migration prompt was generalized to catch any removed version (e.g., FBV/CPDV → fall back / re-pick). **Firebase cleanup still required manually**: delete the deployed `bibleApi` function and the `BIBLE_API_KEY` secret (see below).
+- **Fully-offline Bible / API removed**: Bundled RV and T4T as static JSON and **removed the API.Bible proxy entirely** — deleted `functions/` (the `bibleApi` Cloud Function), the `functions` block in `firebase.json`, the API code path in `bibleAPI.js`, and `getPassageId`. Dropped FBV. All 11 translations now load locally. The dashboard version-migration prompt was generalized to catch any removed version (e.g., FBV/CPDV → fall back / re-pick). Firebase cleanup (deleting the deployed `bibleApi` function and its `BIBLE_API_KEY` secret) was finished later the same day.
 
 ### 2026-06-16: Encouragement / Rewards Features
 - Added streak tracking + milestone celebrations to the dashboard (mobile-first, modeled on familiar habit apps like Duolingo).
