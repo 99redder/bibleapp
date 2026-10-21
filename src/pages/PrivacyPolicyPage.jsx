@@ -18,7 +18,7 @@ export function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-            Last updated: January 25, 2026
+            Last updated: October 21, 2026
           </p>
 
           <section className="mb-8">
@@ -26,9 +26,11 @@ export function PrivacyPolicyPage() {
               Introduction
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Bible Planner App ("we," "our," or "us") is committed to protecting your privacy.
-              This Privacy Policy explains how we collect, use, and safeguard your information
-              when you use our Bible reading plan application.
+              Bible Planner App (the "Service") is operated by Eastern Shore AI, LLC
+              ("we," "our," or "us"), a limited liability company organized in the State of
+              Maryland, USA. We are committed to protecting your privacy. This Privacy Policy
+              explains how we collect, use, and safeguard your information when you use our
+              Bible reading plan application.
             </p>
           </section>
 
@@ -105,6 +107,7 @@ export function PrivacyPolicyPage() {
             <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
               <li><strong>Google Firebase</strong> - Authentication and data storage</li>
               <li><strong>Google Sign-In</strong> - Optional authentication method</li>
+              <li><strong>Google reCAPTCHA (App Check)</strong> - Protects the Service from abuse and automated access. reCAPTCHA v3 runs in the background and may collect device and usage information, subject to Google's own Privacy Policy and Terms.</li>
             </ul>
             <p className="text-gray-700 dark:text-gray-300">
               These services have their own privacy policies governing their use of data.
@@ -124,16 +127,26 @@ export function PrivacyPolicyPage() {
               <li>Delete your account and associated data</li>
               <li>Reset your reading plan at any time</li>
             </ul>
+            <p className="text-gray-700 dark:text-gray-300">
+              To exercise any of these rights, or to request deletion of your account and
+              associated data, contact us at the email address below.
+            </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
               Cookies and Local Storage
             </h2>
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
+              We use your browser's local storage to save preferences such as your dark mode
+              setting. As a Progressive Web App, we also cache Bible passages and your reading
+              plan on your device so the app works offline, and we temporarily store reading
+              completions on your device to sync them when you reconnect.
+            </p>
             <p className="text-gray-700 dark:text-gray-300">
-              We use local storage to save your dark mode preference. Firebase may use
-              cookies for authentication purposes. We do not use tracking cookies or
-              analytics that identify individual users.
+              Firebase and Google reCAPTCHA may set cookies for authentication and abuse
+              prevention. We do not use tracking cookies or advertising analytics that
+              identify individual users.
             </p>
           </section>
 

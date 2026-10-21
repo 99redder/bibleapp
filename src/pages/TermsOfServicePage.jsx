@@ -18,7 +18,7 @@ export function TermsOfServicePage() {
             Terms of Service
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-            Last updated: January 25, 2026
+            Last updated: October 21, 2026
           </p>
 
           <section className="mb-8">
@@ -26,9 +26,10 @@ export function TermsOfServicePage() {
               Agreement to Terms
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
-              By accessing or using Bible Planner App ("the Service"), you agree to be bound
-              by these Terms of Service. If you do not agree to these terms, please do not
-              use the Service.
+              By accessing or using Bible Planner App (the "Service"), operated by
+              Eastern Shore AI, LLC ("we," "our," or "us"), you agree to be bound by these
+              Terms of Service. If you do not agree to these terms, please do not use the
+              Service.
             </p>
           </section>
 
@@ -48,7 +49,8 @@ export function TermsOfServicePage() {
               User Accounts
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              To use the Service, you must create an account. You agree to:
+              To use the Service, you must create an account and be at least 13 years old.
+              You agree to:
             </p>
             <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
               <li>Provide accurate and complete information</li>
@@ -94,7 +96,7 @@ export function TermsOfServicePage() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
               The Service, including its original content, features, and functionality
-              (excluding Bible text), is owned by Bible Planner App and is protected by
+              (excluding Bible text), is owned by Eastern Shore AI, LLC and is protected by
               copyright and other intellectual property laws. You may not copy, modify,
               distribute, or create derivative works without our permission.
             </p>
@@ -129,7 +131,7 @@ export function TermsOfServicePage() {
               Limitation of Liability
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, BIBLE PLANNER APP SHALL NOT BE LIABLE
+              TO THE MAXIMUM EXTENT PERMITTED BY LAW, EASTERN SHORE AI, LLC SHALL NOT BE LIABLE
               FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES
               ARISING FROM YOUR USE OF THE SERVICE, EVEN IF WE HAVE BEEN ADVISED OF THE
               POSSIBILITY OF SUCH DAMAGES.
@@ -164,7 +166,20 @@ export function TermsOfServicePage() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
               These Terms shall be governed by and construed in accordance with the laws of
-              the United States, without regard to conflict of law principles.
+              the State of Maryland, United States, without regard to its conflict of law
+              principles.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              Severability and Entire Agreement
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300">
+              If any provision of these Terms is found to be unenforceable, the remaining
+              provisions will continue in full force and effect. These Terms, together with
+              our Privacy Policy, constitute the entire agreement between you and
+              Eastern Shore AI, LLC regarding the Service.
             </p>
           </section>
 
