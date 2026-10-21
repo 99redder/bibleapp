@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
-import { BIBLE_BOOKS } from '../src/utils/bibleStructure.js'
+import { BIBLE_BOOKS, BOOK_NAMES_ES } from '../src/utils/bibleStructure.js'
 
 const TMP_DIR = join(process.cwd(), '.tmp', 'bible-sources')
 const OUT_ROOT = join(process.cwd(), 'public', 'bibles')
@@ -86,6 +86,31 @@ const SOURCES = [
     abbreviation: 'T4T',
     url: 'https://ebible.org/Scriptures/eng-t4t_usfm.zip',
     copyright: 'Translation for Translators, © 2008–2017 Ellis W. Deibler, Jr. Licensed under CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Source: https://ebible.org/Scriptures/eng-t4t_usfm.zip'
+  },
+  // Spanish sources get Spanish book names in their chapter files.
+  {
+    key: 'RVR1909',
+    name: 'Reina-Valera 1909',
+    abbreviation: 'RVR1909',
+    language: 'es',
+    url: 'https://ebible.org/Scriptures/spaRV1909_usfm.zip',
+    copyright: 'Santa Biblia, Reina-Valera 1909. Dominio público (Public Domain). Source: https://ebible.org/Scriptures/spaRV1909_usfm.zip'
+  },
+  {
+    key: 'BLM',
+    name: 'Santa Biblia libre para el mundo',
+    abbreviation: 'BLM',
+    language: 'es',
+    url: 'https://ebible.org/Scriptures/spablm_usfm.zip',
+    copyright: 'Santa Biblia libre para el mundo, by David Williams & Michael Paul Johnson. Dominio público (Public Domain). Source: https://ebible.org/Scriptures/spablm_usfm.zip'
+  },
+  {
+    key: 'VBL',
+    name: 'Versión Biblia Libre',
+    abbreviation: 'VBL',
+    language: 'es',
+    url: 'https://ebible.org/Scriptures/spavbl_usfm.zip',
+    copyright: 'Versión Biblia Libre, © 2018–2020 Jonathan Gallagher y Shelly Barrios de Avila. Licensed under CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Source: https://ebible.org/Scriptures/spavbl_usfm.zip'
   }
 ]
 
@@ -222,6 +247,7 @@ function writeSourceData(source) {
     key: source.key,
     name: source.name,
     abbreviation: source.abbreviation,
+    language: source.language || 'en',
     sourceUrl: source.url,
     copyright: source.copyright,
     books: []
@@ -240,9 +266,10 @@ function writeSourceData(source) {
     const chapters = parseBook(filePath)
     const bookDir = join(outDir, book.abbrev)
     ensureDir(bookDir)
+    const bookName = source.language === 'es' ? BOOK_NAMES_ES[book.abbrev] : book.name
 
     manifest.books.push({
-      name: book.name,
+      name: bookName,
       abbrev: book.abbrev,
       chapters: book.chapters
     })
@@ -255,10 +282,10 @@ function writeSourceData(source) {
 
       const payload = {
         version: source.key,
-        book: book.name,
+        book: bookName,
         abbrev: book.abbrev,
         chapter,
-        reference: `${book.name} ${chapter}`,
+        reference: `${bookName} ${chapter}`,
         verses,
         copyright: source.copyright
       }

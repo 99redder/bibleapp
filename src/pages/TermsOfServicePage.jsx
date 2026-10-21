@@ -81,8 +81,9 @@ export function TermsOfServicePage() {
               Bible Content
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
-              Bible text is provided from public domain translations included locally
-              with the Service.
+              Bible text comes from public domain and openly licensed translations included
+              with the Service. Openly licensed translations are credited where their text
+              appears.
             </p>
             <p className="text-gray-700 dark:text-gray-300">
               We do not claim ownership of the Bible text content. All Scripture quotations

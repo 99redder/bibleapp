@@ -1,0 +1,342 @@
+{
+  "key": "RVR1909",
+  "name": "Reina-Valera 1909",
+  "abbreviation": "RVR1909",
+  "language": "es",
+  "sourceUrl": "https://ebible.org/Scriptures/spaRV1909_usfm.zip",
+  "copyright": "Santa Biblia, Reina-Valera 1909. Dominio público (Public Domain). Source: https://ebible.org/Scriptures/spaRV1909_usfm.zip",
+  "books": [
+    {
+      "name": "Génesis",
+      "abbrev": "GEN",
+      "chapters": 50
+    },
+    {
+      "name": "Éxodo",
+      "abbrev": "EXO",
+      "chapters": 40
+    },
+    {
+      "name": "Levítico",
+      "abbrev": "LEV",
+      "chapters": 27
+    },
+    {
+      "name": "Números",
+      "abbrev": "NUM",
+      "chapters": 36
+    },
+    {
+      "name": "Deuteronomio",
+      "abbrev": "DEU",
+      "chapters": 34
+    },
+    {
+      "name": "Josué",
+      "abbrev": "JOS",
+      "chapters": 24
+    },
+    {
+      "name": "Jueces",
+      "abbrev": "JDG",
+      "chapters": 21
+    },
+    {
+      "name": "Rut",
+      "abbrev": "RUT",
+      "chapters": 4
+    },
+    {
+      "name": "1 Samuel",
+      "abbrev": "1SA",
+      "chapters": 31
+    },
+    {
+      "name": "2 Samuel",
+      "abbrev": "2SA",
+      "chapters": 24
+    },
+    {
+      "name": "1 Reyes",
+      "abbrev": "1KI",
+      "chapters": 22
+    },
+    {
+      "name": "2 Reyes",
+      "abbrev": "2KI",
+      "chapters": 25
+    },
+    {
+      "name": "1 Crónicas",
+      "abbrev": "1CH",
+      "chapters": 29
+    },
+    {
+      "name": "2 Crónicas",
+      "abbrev": "2CH",
+      "chapters": 36
+    },
+    {
+      "name": "Esdras",
+      "abbrev": "EZR",
+      "chapters": 10
+    },
+    {
+      "name": "Nehemías",
+      "abbrev": "NEH",
+      "chapters": 13
+    },
+    {
+      "name": "Ester",
+      "abbrev": "EST",
+      "chapters": 10
+    },
+    {
+      "name": "Job",
+      "abbrev": "JOB",
+      "chapters": 42
+    },
+    {
+      "name": "Salmos",
+      "abbrev": "PSA",
+      "chapters": 150
+    },
+    {
+      "name": "Proverbios",
+      "abbrev": "PRO",
+      "chapters": 31
+    },
+    {
+      "name": "Eclesiastés",
+      "abbrev": "ECC",
+      "chapters": 12
+    },
+    {
+      "name": "Cantares",
+      "abbrev": "SNG",
+      "chapters": 8
+    },
+    {
+      "name": "Isaías",
+      "abbrev": "ISA",
+      "chapters": 66
+    },
+    {
+      "name": "Jeremías",
+      "abbrev": "JER",
+      "chapters": 52
+    },
+    {
+      "name": "Lamentaciones",
+      "abbrev": "LAM",
+      "chapters": 5
+    },
+    {
+      "name": "Ezequiel",
+      "abbrev": "EZK",
+      "chapters": 48
+    },
+    {
+      "name": "Daniel",
+      "abbrev": "DAN",
+      "chapters": 12
+    },
+    {
+      "name": "Oseas",
+      "abbrev": "HOS",
+      "chapters": 14
+    },
+    {
+      "name": "Joel",
+      "abbrev": "JOL",
+      "chapters": 3
+    },
+    {
+      "name": "Amós",
+      "abbrev": "AMO",
+      "chapters": 9
+    },
+    {
+      "name": "Abdías",
+      "abbrev": "OBA",
+      "chapters": 1
+    },
+    {
+      "name": "Jonás",
+      "abbrev": "JON",
+      "chapters": 4
+    },
+    {
+      "name": "Miqueas",
+      "abbrev": "MIC",
+      "chapters": 7
+    },
+    {
+      "name": "Nahúm",
+      "abbrev": "NAH",
+      "chapters": 3
+    },
+    {
+      "name": "Habacuc",
+      "abbrev": "HAB",
+      "chapters": 3
+    },
+    {
+      "name": "Sofonías",
+      "abbrev": "ZEP",
+      "chapters": 3
+    },
+    {
+      "name": "Hageo",
+      "abbrev": "HAG",
+      "chapters": 2
+    },
+    {
+      "name": "Zacarías",
+      "abbrev": "ZEC",
+      "chapters": 14
+    },
+    {
+      "name": "Malaquías",
+      "abbrev": "MAL",
+      "chapters": 4
+    },
+    {
+      "name": "Mateo",
+      "abbrev": "MAT",
+      "chapters": 28
+    },
+    {
+      "name": "Marcos",
+      "abbrev": "MRK",
+      "chapters": 16
+    },
+    {
+      "name": "Lucas",
+      "abbrev": "LUK",
+      "chapters": 24
+    },
+    {
+      "name": "Juan",
+      "abbrev": "JHN",
+      "chapters": 21
+    },
+    {
+      "name": "Hechos",
+      "abbrev": "ACT",
+      "chapters": 28
+    },
+    {
+      "name": "Romanos",
+      "abbrev": "ROM",
+      "chapters": 16
+    },
+    {
+      "name": "1 Corintios",
+      "abbrev": "1CO",
+      "chapters": 16
+    },
+    {
+      "name": "2 Corintios",
+      "abbrev": "2CO",
+      "chapters": 13
+    },
+    {
+      "name": "Gálatas",
+      "abbrev": "GAL",
+      "chapters": 6
+    },
+    {
+      "name": "Efesios",
+      "abbrev": "EPH",
+      "chapters": 6
+    },
+    {
+      "name": "Filipenses",
+      "abbrev": "PHP",
+      "chapters": 4
+    },
+    {
+      "name": "Colosenses",
+      "abbrev": "COL",
+      "chapters": 4
+    },
+    {
+      "name": "1 Tesalonicenses",
+      "abbrev": "1TH",
+      "chapters": 5
+    },
+    {
+      "name": "2 Tesalonicenses",
+      "abbrev": "2TH",
+      "chapters": 3
+    },
+    {
+      "name": "1 Timoteo",
+      "abbrev": "1TI",
+      "chapters": 6
+    },
+    {
+      "name": "2 Timoteo",
+      "abbrev": "2TI",
+      "chapters": 4
+    },
+    {
+      "name": "Tito",
+      "abbrev": "TIT",
+      "chapters": 3
+    },
+    {
+      "name": "Filemón",
+      "abbrev": "PHM",
+      "chapters": 1
+    },
+    {
+      "name": "Hebreos",
+      "abbrev": "HEB",
+      "chapters": 13
+    },
+    {
+      "name": "Santiago",
+      "abbrev": "JAS",
+      "chapters": 5
+    },
+    {
+      "name": "1 Pedro",
+      "abbrev": "1PE",
+      "chapters": 5
+    },
+    {
+      "name": "2 Pedro",
+      "abbrev": "2PE",
+      "chapters": 3
+    },
+    {
+      "name": "1 Juan",
+      "abbrev": "1JN",
+      "chapters": 5
+    },
+    {
+      "name": "2 Juan",
+      "abbrev": "2JN",
+      "chapters": 1
+    },
+    {
+      "name": "3 Juan",
+      "abbrev": "3JN",
+      "chapters": 1
+    },
+    {
+      "name": "Judas",
+      "abbrev": "JUD",
+      "chapters": 1
+    },
+    {
+      "name": "Apocalipsis",
+      "abbrev": "REV",
+      "chapters": 22
+    }
+  ],
+  "chapterCount": 1189,
+  "verseCount": 31084
+}

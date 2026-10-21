@@ -5,6 +5,7 @@ import { fetchDayPassages, isBibleDataAvailable } from '../../services/bibleAPI'
 import { getChapterTrivia, loadTriviaIndex } from '../../services/trivia'
 import { formatPassageDescription } from '../../services/readingPlanGenerator'
 import { formatDate, timestampToDate } from '../../utils/dateHelpers'
+import { BIBLE_VERSIONS } from '../../utils/bibleStructure'
 
 export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkComplete, loading: markingComplete }) {
   const scriptureScrollRef = useRef(null)
@@ -113,6 +114,7 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
 
   const scheduledDate = timestampToDate(dayData.scheduledDate)
   const passageTitle = formatPassageDescription(dayData.passages)
+  const credit = BIBLE_VERSIONS[bibleVersion]?.credit
 
   return (
     <div className="card">
@@ -229,6 +231,20 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
                   )
                 })}
               </div>
+
+              {credit && (
+                <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+                  {credit.text} ·{' '}
+                  <a
+                    href={credit.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-gray-700 dark:hover:text-gray-300"
+                  >
+                    {credit.license}
+                  </a>
+                </p>
+              )}
 
               {readingTrivia.length > 0 && (
                 <TriviaSummary key={dayData.dayNumber} entries={readingTrivia} />
