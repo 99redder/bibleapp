@@ -474,10 +474,11 @@ export function DashboardPage() {
   const isViewingCompletedDay = completedDays.some(d => d.dayNumber === viewingDayNumber)
   const isViewingPendingDay = pendingCompletions.some(entry => entry.dayNumber === viewingDayNumber)
   const canMarkComplete = !!currentDayData && !isViewingCompletedDay && !isViewingPendingDay
-  const needsBibleVersionMigration = userDoc?.settings?.bibleVersion === 'CPDV'
+  const currentBibleVersionKey = userDoc?.settings?.bibleVersion
+  const needsBibleVersionMigration = !!currentBibleVersionKey && !BIBLE_VERSIONS[currentBibleVersionKey]
   const migrationVersionOptions = Object.entries(BIBLE_VERSIONS).map(([key, version]) => ({
     value: key,
-    label: `${version.name} (${version.abbreviation})${version.source === 'api' ? ' - API' : ''}`
+    label: `${version.name} (${version.abbreviation})`
   }))
 
   return (
@@ -693,7 +694,7 @@ export function DashboardPage() {
           <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-100">
             <div className="font-semibold">Choose a new Bible version</div>
             <p className="mt-1">
-              Catholic Public Domain Version is no longer available through the current Bible API key. Your reading plan and progress are safe; only the translation needs to be updated.
+              The Bible version you previously selected is no longer available. Your reading plan and progress are safe; only the translation needs to be updated.
             </p>
             <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto]">
               <select

@@ -224,7 +224,10 @@ service cloud.firestore {
 - DARBY: Darby Translation, public domain, generated from `https://ebible.org/Scriptures/engDBY_usfm.zip`
 - WBT: Webster's Bible Translation, public domain, generated from `https://ebible.org/Scriptures/engwebster_usfm.zip`
 - DRA: Douay-Rheims 1899 American Edition, public domain, generated from `https://ebible.org/Scriptures/engDRA_usfm.zip`
-- Regenerate static chapter JSON with `npm run generate:bible`
+- RV: English Revised Version 1885, public domain, generated from `https://ebible.org/Scriptures/eng-rv_usfm.zip`
+- T4T: Translation for Translators, CC BY-SA 4.0 (© Ellis W. Deibler, Jr.), generated from `https://ebible.org/Scriptures/eng-t4t_usfm.zip`
+- FBV was removed (its only open eBible source covers the New Testament and Psalms only, so it can't back a whole-Bible plan)
+- Regenerate static chapter JSON with `npm run generate:bible` (or a subset: `GENERATE_ONLY=RV,T4T npm run generate:bible`)
 
 ## Development Commands
 ```bash
@@ -259,7 +262,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - **Custom domain**: Configured with CNAME file in `/public/CNAME` (value: `www.bibleplannerapp.com`)
 - **Firebase setDoc with merge:true**: Used throughout to handle cases where the user document may not exist yet
 - **Dark mode**: Stored in localStorage key `theme`; `dark` class applied to `<html>` element
-- **Bible text**: Most translations use generated chapter JSON from `public/bibles`; select API-backed translations use the Firebase `bibleApi` proxy
+- **Bible text**: All translations are generated chapter JSON under `public/bibles` and load locally (offline-capable after caching). There is no runtime Bible API — the former API.Bible proxy / Firebase `bibleApi` function was removed on 2026-10-21.
 - **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse YYYY-MM-DD strings as local time. `new Date("YYYY-MM-DD")` parses as UTC, causing off-by-one timezone bugs.
 - **Local Time day boundary**: "Which calendar day a reading counts toward" (streaks, calendar completed/missed dots, schedule pace) is determined in the user's own local timezone — the day rolls over at the user's local midnight. Helper in `dateHelpers.js`: `toCivilDateKey(date)` returns the local YYYY-MM-DD key for a Date (used to key completed-day lookups and streak day comparisons).
 - **In-app browser detection**: `browserDetection.js` detects Facebook/Instagram browsers; Google OAuth is hidden when in-app browser is detected
@@ -270,7 +273,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - PWA manifest `start_url` and `scope` set to `/`
 - Local Bible chapter JSON cached for offline-friendly reading
 - Firebase is NetworkOnly (no caching)
-- `VITE_BIBLE_PROXY_BASE` must be set in GitHub Secrets so API-backed translations work on GitHub Pages
+- All Bible text is bundled locally; no Bible API proxy or `VITE_BIBLE_PROXY_BASE` is required
 - Dev server port: 3000
 
 ## PWA Configuration
@@ -338,6 +341,13 @@ Demo videos output to `/out/` folder: demo-intro.mp4, demo-onboarding.mp4, demo-
 Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands.
 
 ## Session History
+
+### 2026-10-21: Branding, SEO, Legal, and Fully-Offline Bible
+- **Google OAuth app name**: Changed the Google sign-in consent "App name" (Google Cloud → Auth Platform → Branding) from "Bible Reading Plan" to "Bible Planner App" and re-submitted branding verification. Note: the Firebase/GCP project `bibleapp-f097a` is under the **redonx99@gmail.com** account (Chrome account index `/u/1/`); the default `/u/0/` account is MFA-blocked.
+- **SEO + copy**: Rewrote `index.html` meta (title/description/keywords/OG/Twitter/JSON-LD), LandingPage, and login/signup copy to convey the full value prop (build a customizable plan — translation, timeline, weekends — read in-app, track ahead/behind, resume where you left off, free forever with no in-app purchases).
+- **Branding/logo**: New shared `src/components/ui/BrandLogo.jsx` (open book + amber bookmark). Redesigned login/signup with gradient logo badge, background glow, and value chips. Regenerated favicon, Apple touch, and PWA icons (`gen-icons.mjs` run ad hoc via `sharp`) and updated the PWA manifest name to "Bible Planner App".
+- **Legal**: Refreshed Privacy Policy + Terms — named Eastern Shore AI, LLC as operator under Maryland law, disclosed Google reCAPTCHA (App Check) and PWA offline caching, added minimum-age + severability clauses.
+- **Fully-offline Bible / API removed**: Bundled RV and T4T as static JSON and **removed the API.Bible proxy entirely** — deleted `functions/` (the `bibleApi` Cloud Function), the `functions` block in `firebase.json`, the API code path in `bibleAPI.js`, and `getPassageId`. Dropped FBV. All 11 translations now load locally. The dashboard version-migration prompt was generalized to catch any removed version (e.g., FBV/CPDV → fall back / re-pick). **Firebase cleanup still required manually**: delete the deployed `bibleApi` function and the `BIBLE_API_KEY` secret (see below).
 
 ### 2026-06-16: Encouragement / Rewards Features
 - Added streak tracking + milestone celebrations to the dashboard (mobile-first, modeled on familiar habit apps like Duolingo).

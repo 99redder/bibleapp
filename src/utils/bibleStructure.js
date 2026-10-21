@@ -173,13 +173,6 @@ export const BIBLE_VERSIONS = {
     abbreviation: 'DRA',
     source: 'local'
   },
-  FBV: {
-    key: 'FBV',
-    id: '65eec8e0b60e656b-01',
-    name: 'Free Bible Version',
-    abbreviation: 'FBV',
-    source: 'api'
-  },
   RV: {
     key: 'RV',
     name: 'Revised Version 1885',
@@ -192,8 +185,4 @@ export const BIBLE_VERSIONS = {
     abbreviation: 'T4T',
     source: 'local'
   }
-}
-
-export function getPassageId(abbrev, chapter) {
-  return `${abbrev}.${chapter}`
 }
