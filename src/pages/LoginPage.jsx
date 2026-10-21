@@ -80,7 +80,7 @@ export function LoginPage() {
             Build your own plan to read through the Bible
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
-            {['Your translation', 'Your timeline', 'Weekends optional'].map((chip) => (
+            {['Your translation', 'Your timeline', 'Track your progress'].map((chip) => (
               <span
                 key={chip}
                 className="rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700 dark:border-primary-500/30 dark:bg-primary-500/10 dark:text-primary-300"
