@@ -91,7 +91,7 @@ All routes use HashRouter (URLs contain `#`):
 - `/privacy` — PrivacyPolicyPage (public)
 - `/terms` — TermsOfServicePage (public)
 - `/install` — InstallPage (public): device-detected, step-by-step "install the app" guide
-- `/faq` — FaqPage (public): plain-language Q&A for older readers (cost, why no NIV, longest plan, changing a plan, starting over, ahead/behind, fun facts), with screenshots in `public/faq/`. Linked from every footer and the dashboard gear menu ("Help & FAQ")
+- `/faq` — FaqPage (public): plain-language Q&A for older readers (cost, why no NIV, longest plan, changing a plan, starting over, ahead/behind, catching up, fun facts, more than one device, forgotten password), with screenshots in `public/faq/`. Linked from every footer and the dashboard gear menu ("Help & FAQ")
 - `/onboarding` — OnboardingPage (auth required; skips to dashboard if already complete)
 - `/dashboard` — DashboardPage (auth required)
 - `*` wildcard — redirects to dashboard or onboarding based on auth/onboarding state

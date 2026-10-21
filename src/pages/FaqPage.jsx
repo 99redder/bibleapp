@@ -154,6 +154,31 @@ const QUESTIONS = [
     )
   },
   {
+    question: 'I missed some days. How do I catch up?',
+    answer: (
+      <>
+        <p>
+          Don't worry, nothing gets skipped. Your next reading is always the one right after the last one you
+          finished, and the <strong>Your Progress</strong> box shows how many days behind you are.
+        </p>
+        <Screenshot
+          src="/faq/progress-behind.webp"
+          alt="The Your Progress box showing 2 days behind, Day 59 of 365"
+          width={756}
+          height={620}
+        />
+        <p>
+          To catch up, read more than one reading in a day. After you tap <strong>Mark as Read</strong>, the next
+          reading appears right away, so you can keep going.
+        </p>
+        <p>
+          If you'd rather not double up, use <strong>Change plan</strong> to give yourself more time. It spreads the
+          rest of your readings out starting today and puts you back on track.
+        </p>
+      </>
+    )
+  },
+  {
     question: 'What are the fun facts?',
     answer: (
       <>
@@ -188,6 +213,47 @@ const QUESTIONS = [
           width={780}
           height={666}
         />
+      </>
+    )
+  },
+  {
+    question: 'Can I use it on my phone and my tablet or computer?',
+    answer: (
+      <>
+        <p>
+          Yes. Sign in with the same account on each one. Your plan and progress are saved to your account, so what
+          you read on one shows up on the others.
+        </p>
+        <p>
+          Sign in the same way you signed up: with your email and password, or with <strong>Continue with
+          Google</strong>.
+        </p>
+        <p>
+          If you added Bible Reading Plan to an iPhone or iPad home screen, sign in once inside that app too. It keeps
+          its own sign-in, separate from Safari.
+        </p>
+      </>
+    )
+  },
+  {
+    question: 'I forgot my password. What do I do?',
+    answer: (
+      <>
+        <p>
+          On the sign-in screen, type your email address in the <strong>Email</strong> box, then tap{' '}
+          <strong>Forgot your password?</strong> We'll email you a link to set a new password. If it doesn't arrive
+          in a few minutes, check your junk or spam folder.
+        </p>
+        <Screenshot
+          src="/faq/forgot-password.webp"
+          alt="The sign-in box with an email address typed in and Forgot your password? circled"
+          width={756}
+          height={880}
+        />
+        <p>
+          If you signed up with <strong>Continue with Google</strong>, you don't have a separate password for Bible
+          Reading Plan. Just tap Continue with Google.
+        </p>
       </>
     )
   }
