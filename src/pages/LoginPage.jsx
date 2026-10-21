@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Input } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
+import { LogoBadge } from '../components/ui/BrandLogo'
 import { isInAppBrowser, getInAppBrowserName } from '../utils/browserDetection.js'
 
 export function LoginPage() {
@@ -63,25 +64,34 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center px-4 py-12 bg-gray-50 dark:bg-gray-900">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+    <div className="relative min-h-screen flex flex-col justify-center overflow-hidden px-4 py-12 bg-gradient-to-b from-sky-50 to-white dark:from-gray-900 dark:to-gray-950">
+      {/* Decorative background glow */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-24 left-1/2 h-[32rem] w-[32rem] -translate-x-1/2 rounded-full bg-primary-400/20 blur-3xl dark:bg-primary-600/20" />
+        <div className="absolute bottom-0 right-0 h-96 w-96 translate-x-1/3 translate-y-1/3 rounded-full bg-amber-300/10 blur-3xl dark:bg-amber-500/10" />
+      </div>
+
+      <div className="relative sm:mx-auto sm:w-full sm:max-w-md">
         {/* Logo and App Info */}
         <div className="text-center mb-8">
-          <div className="mx-auto w-20 h-20 mb-4 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <svg className="w-12 h-12 text-white" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H6zm0 2h12v16H6V4zm2 2v2h8V6H8zm0 4v2h8v-2H8zm0 4v2h5v-2H8z"/>
-            </svg>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Bible Planner App</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <LogoBadge className="mb-5" />
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Bible Planner App</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">
             Build your own plan to read through the Bible
           </p>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">
-            Pick your translation, timeline, and weekends — read right in the app and pick up where you left off.
-          </p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {['Your translation', 'Your timeline', 'Weekends optional'].map((chip) => (
+              <span
+                key={chip}
+                className="rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-xs font-medium text-primary-700 dark:border-primary-500/30 dark:bg-primary-500/10 dark:text-primary-300"
+              >
+                {chip}
+              </span>
+            ))}
+          </div>
         </div>
 
-        <div className="card">
+        <div className="card shadow-xl ring-1 ring-black/5 dark:ring-white/10">
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               label="Email"
