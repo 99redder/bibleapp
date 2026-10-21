@@ -70,8 +70,9 @@ export function isStandaloneApp() {
 const LEGACY_HOSTS = ['bibleplannerapp.com', 'www.bibleplannerapp.com']
 
 /**
- * True when running on the old domain. Apps installed from there keep working
- * (Cloudflare proxies it to biblereadingplan.app) but should move to the new domain.
+ * True when running on the old domain, mostly apps installed before the rename.
+ * They keep working (Cloudflare proxies it to biblereadingplan.app), so users
+ * there have nothing to do.
  */
 export function isLegacyHost() {
   return LEGACY_HOSTS.includes(window.location.hostname)

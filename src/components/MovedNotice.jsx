@@ -1,37 +1,47 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import { isLegacyHost } from '../utils/browserDetection'
 
-const NEW_SITE_URL = 'https://biblereadingplan.app/'
+const DISMISSED_KEY = 'renameNoticeDismissed'
 
-// Shown only on the old domain (mostly apps installed from it, whose service
-// worker keeps them there). Sign-in is per-domain, so users sign in once on the
-// new site; their plan and progress live in their account and come along.
+// Shown once on the old domain, which is mostly apps installed before the
+// rename. Those apps keep working and updating (Cloudflare proxies the old
+// domain), so this only explains the new name next to the old home-screen icon
+// and reassures people that there is nothing to do.
 export function MovedNotice() {
-  if (!isLegacyHost()) return null
+  const [dismissed, setDismissed] = useState(() => {
+    try {
+      return localStorage.getItem(DISMISSED_KEY) === '1'
+    } catch {
+      return false
+    }
+  })
+
+  if (dismissed || !isLegacyHost()) return null
+
+  const handleDismiss = () => {
+    setDismissed(true)
+    try {
+      localStorage.setItem(DISMISSED_KEY, '1')
+    } catch {
+      // ignore
+    }
+  }
 
   return (
     <div className="bg-primary-700 px-4 py-3 text-white">
-      <div className="mx-auto flex max-w-3xl flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-        <p className="text-sm sm:flex-1">
-          <span className="font-semibold">We've moved to biblereadingplan.app.</span>{' '}
-          Your plan and progress come with you.
+      <div className="mx-auto flex max-w-3xl flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <p className="text-base sm:flex-1">
+          <span className="font-semibold">Bible Planner is now called Bible Reading Plan.</span>{' '}
+          You don't need to do anything. Keep using the app just like before; your reading plan and progress are all
+          here.
         </p>
-        <div className="flex shrink-0 gap-2">
-          <Link
-            to="/install"
-            className="rounded-lg bg-white px-3 py-1.5 text-sm font-semibold text-primary-700 hover:bg-primary-50"
-          >
-            How to switch
-          </Link>
-          <a
-            href={NEW_SITE_URL}
-            target="_blank"
-            rel="noopener"
-            className="rounded-lg px-3 py-1.5 text-sm font-semibold text-white ring-1 ring-white/60 hover:bg-primary-600"
-          >
-            Open new site
-          </a>
-        </div>
+        <button
+          type="button"
+          onClick={handleDismiss}
+          className="self-start rounded-lg bg-white px-6 py-2 text-base font-semibold text-primary-700 hover:bg-primary-50 sm:self-auto"
+        >
+          OK
+        </button>
       </div>
     </div>
   )
