@@ -45,9 +45,35 @@ async function fetchLocalPassage(version, bookAbbrev, chapter) {
  */
 export async function fetchDayPassages(versionKey, passages) {
   const results = await Promise.all(
-    passages.map(p => fetchPassage(versionKey, p.abbrev, p.chapter))
+    passages.map(async (p) => selectPassagePart(await fetchPassage(versionKey, p.abbrev, p.chapter), p))
   )
   return results
+}
+
+/**
+ * Narrow a fetched chapter to the part a reading covers (`partStart`/`partEnd`
+ * are fractions of the chapter's verses), labeled with this translation's own
+ * verse numbers, e.g. "Genesis 1:17–31".
+ */
+export function selectPassagePart(data, passage) {
+  if (passage.partStart == null && passage.partEnd == null) return data
+
+  const count = data.verses.length
+  const verses = data.verses.slice(
+    Math.round((passage.partStart ?? 0) * count),
+    Math.round((passage.partEnd ?? 1) * count)
+  )
+  if (!verses.length) return data
+
+  const firstVerse = verses[0].verse
+  const lastVerse = verses[verses.length - 1].verse
+  return {
+    ...data,
+    verses,
+    content: formatVerses(verses),
+    chapterReference: data.reference,
+    reference: `${data.reference}:${firstVerse}${lastVerse !== firstVerse ? `–${lastVerse}` : ''}`
+  }
 }
 
 export function prefetchDayPassages(versionKey, passages = []) {

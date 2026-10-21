@@ -173,12 +173,7 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
           testament,
           includeWeekends,
           totalDays: preview.totalDays,
-          paceAnchor: {
-            date: Timestamp.fromDate(startDate),
-            dayNumber: historyCount + 1,
-            dayCount: preview.newDays.length,
-            spanDays: preview.spanDays
-          }
+          paceAnchor: { date: Timestamp.fromDate(startDate), dayNumber: historyCount + 1 }
         }
         const progress = userDoc.progress || {}
 
@@ -208,13 +203,9 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
     }
   }
 
-  const isSpaced = preview && preview.spanDays > preview.readingDays
-  const chaptersPerWeek = isSpaced
-    ? Math.max(1, Math.round((preview.readingDays / preview.spanDays) * (includeWeekends ? 7 : 5)))
-    : 0
   const paceLabel = preview && (
-    isSpaced
-      ? `About ${plural(chaptersPerWeek, 'chapter')} a week`
+    preview.isSplit
+      ? `About ${plural(preview.versesPerDay, 'verse')} a day`
       : preview.chaptersPerDay.min === preview.chaptersPerDay.max
         ? `${plural(preview.chaptersPerDay.max, 'chapter')} a day`
         : `${preview.chaptersPerDay.min}–${preview.chaptersPerDay.max} chapters a day`

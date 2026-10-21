@@ -1,10 +1,11 @@
-import { getAllChapters } from '../utils/bibleStructure'
-import { getTotalReadingDays, addReadingDays } from '../utils/dateHelpers'
-import { spacedOffset } from '../utils/planSchedule'
+import { getTotalReadingDays } from '../utils/dateHelpers'
+import { buildReschedule, passageVerseRange } from './planReschedule'
 import { Timestamp } from './firebase'
 
 /**
- * Generate a complete reading plan based on user settings
+ * Generate a complete reading plan based on user settings. Plans faster than a
+ * chapter a day get a few whole chapters per day; slower plans split chapters
+ * by verse count so there's a reading every day.
  * @param {Object} settings - User's reading plan settings
  * @param {Date} settings.startDate - When to start reading
  * @param {number} settings.durationMonths - How many months to complete (6, 12, 18, 24)
@@ -15,53 +16,15 @@ import { Timestamp } from './firebase'
 export function generateReadingPlan(settings) {
   const { startDate, durationMonths, testament, includeWeekends } = settings
 
-  // Get chapters filtered by testament selection
-  const allChapters = getAllChapters(testament || 'BOTH')
+  const { days } = buildReschedule({
+    planDays: [],
+    testament: testament || 'BOTH',
+    includeWeekends,
+    readingDays: getTotalReadingDays(durationMonths, includeWeekends),
+    startDate: new Date(startDate)
+  })
 
-  // Calculate reading days in the timeframe. Plans longer than one chapter a day
-  // have one chapter per reading, spaced evenly across the timeframe.
-  const spanDays = getTotalReadingDays(durationMonths, includeWeekends)
-  const totalDays = Math.min(spanDays, allChapters.length)
-
-  // Calculate chapters per day
-  const chaptersPerDay = allChapters.length / totalDays
-  const baseChapters = Math.floor(chaptersPerDay)
-  const extraChapters = allChapters.length - (baseChapters * totalDays)
-
-  // Distribute chapters across days
-  const readingPlan = []
-  let chapterIndex = 0
-  let currentDate = new Date(startDate)
-
-  for (let day = 1; day <= totalDays; day++) {
-    // Determine how many chapters for this day
-    // Distribute extra chapters evenly throughout the plan
-    const hasExtraChapter = day <= extraChapters
-    const numChapters = baseChapters + (hasExtraChapter ? 1 : 0)
-
-    // Get the chapters for this day
-    const passages = []
-    for (let i = 0; i < numChapters && chapterIndex < allChapters.length; i++) {
-      passages.push(allChapters[chapterIndex])
-      chapterIndex++
-    }
-
-    // Calculate the scheduled date for this reading
-    const offset = spacedOffset(day - 1, totalDays, spanDays)
-    const scheduledDate = offset === 0
-      ? new Date(startDate)
-      : addReadingDays(startDate, offset, includeWeekends)
-
-    readingPlan.push({
-      dayNumber: day,
-      scheduledDate: Timestamp.fromDate(scheduledDate),
-      passages,
-      completed: false,
-      completedAt: null
-    })
-  }
-
-  return readingPlan
+  return days.map(day => ({ ...day, scheduledDate: Timestamp.fromDate(day.scheduledDate) }))
 }
 
 /**
@@ -72,12 +35,16 @@ export function generateReadingPlan(settings) {
 export function formatPassageDescription(passages) {
   if (!passages || passages.length === 0) return ''
 
-  // Group consecutive chapters from the same book
+  // Group consecutive whole chapters from the same book; part of a chapter is
+  // shown with its verse range (e.g. "Genesis 1:17–31")
   const groups = []
   let currentGroup = null
 
   passages.forEach(passage => {
-    if (currentGroup && currentGroup.book === passage.book &&
+    const { n, from, to } = passageVerseRange(passage)
+    const part = from > 0 || to < n ? { firstVerse: from + 1, lastVerse: to } : null
+
+    if (!part && currentGroup && !currentGroup.part && currentGroup.book === passage.book &&
         passage.chapter === currentGroup.endChapter + 1) {
       // Extend current group
       currentGroup.endChapter = passage.chapter
@@ -87,7 +54,8 @@ export function formatPassageDescription(passages) {
       currentGroup = {
         book: passage.book,
         startChapter: passage.chapter,
-        endChapter: passage.chapter
+        endChapter: passage.chapter,
+        part
       }
     }
   })
@@ -95,6 +63,10 @@ export function formatPassageDescription(passages) {
 
   // Format each group
   return groups.map(group => {
+    if (group.part) {
+      const { firstVerse, lastVerse } = group.part
+      return `${group.book} ${group.startChapter}:${firstVerse}${lastVerse > firstVerse ? `–${lastVerse}` : ''}`
+    }
     if (group.startChapter === group.endChapter) {
       return `${group.book} ${group.startChapter}`
     }

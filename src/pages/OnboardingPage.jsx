@@ -9,7 +9,8 @@ import { Toggle } from '../components/ui/Toggle'
 import { generateReadingPlan } from '../services/readingPlanGenerator'
 import { updateUserSettings, saveReadingPlan, Timestamp } from '../services/firebase'
 import { BIBLE_VERSIONS, TESTAMENTS, getTestamentChapterCount } from '../utils/bibleStructure'
-import { getTomorrow, formatDate, getTotalReadingDays } from '../utils/dateHelpers'
+import { getTomorrow, formatDate } from '../utils/dateHelpers'
+import { countVerses } from '../services/planReschedule'
 
 const STEPS = [
   { id: 'start-date', title: 'When do you want to start?' },
@@ -131,14 +132,6 @@ export function OnboardingPage() {
         includeWeekends
       })
 
-      // A plan longer than one chapter a day spaces its readings out; record
-      // that so pace, streaks, and the calendar know about the rest days.
-      const spanDays = getTotalReadingDays(actualDuration, includeWeekends)
-      if (plan.length < spanDays) {
-        settings.totalDays = plan.length
-        settings.paceAnchor = { date: settings.startDate, dayNumber: 1, dayCount: plan.length, spanDays }
-      }
-
       // Save settings and plan to Firestore
       await updateUserSettings(user.uid, settings)
       await saveReadingPlan(user.uid, plan)
@@ -159,12 +152,12 @@ export function OnboardingPage() {
   const monthsUntilEndOfYear = getMonthsUntilEndOfYear()
   const chaptersPerDayEndOfYear = Math.ceil(totalChapters / (monthsUntilEndOfYear * 30))
 
-  // Readable pace for a timeframe; slower than a chapter a day reads as per week.
+  // Readable pace for a timeframe; slower than a chapter a day, chapters are
+  // split, so describe it in verses.
   const describePace = (months) => {
     const perDay = totalChapters / (months * 30)
     if (perDay >= 1) return `About ${Math.ceil(perDay)} chapters per day`
-    const perWeek = Math.max(1, Math.round(perDay * 7))
-    return `About ${perWeek} chapter${perWeek === 1 ? '' : 's'} per week`
+    return `About ${Math.max(1, Math.round(countVerses(testament) / (months * 30)))} verses per day`
   }
 
   const testamentOptions = [

@@ -63,7 +63,11 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
   const activeTriviaIndex = showTrivia ? triviaIndex : null
 
   const passageTrivia = useMemo(() => passages.map(passage => {
+    // For part of a chapter, only keep facts for the verses shown (and
+    // chapter-level facts on the part that starts the chapter).
+    const shownVerses = passage.verses?.length ? new Set(passage.verses.map(verse => verse.verse)) : null
     const entries = getChapterTrivia(activeTriviaIndex, bibleVersion, passage.abbrev, passage.chapter)
+      .filter(entry => !shownVerses || shownVerses.has(entry.verseStart ?? 1))
     const byVerse = new Map()
     for (const entry of entries) {
       if (entry.verseStart == null) continue
@@ -188,6 +192,7 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
               <div ref={scriptureScrollRef} className="max-h-96 overflow-y-auto">
                 {passages.map((passage, index) => {
                   const trivia = passageTrivia[index]
+                  const chapterReference = passage.chapterReference || passage.reference
 
                   return (
                     <div key={index} className="mb-6 last:mb-0">
@@ -195,7 +200,7 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
                         {passage.reference}
                         {trivia?.chapterLevel.length > 0 && (
                           <TriviaMarker
-                            label={`Fun fact about ${passage.reference}`}
+                            label={`Fun fact about ${chapterReference}`}
                             onClick={() => setSheetEntries(trivia.chapterLevel)}
                           />
                         )}
@@ -211,7 +216,7 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
                                 {verse.verse} {verse.text}
                                 {verseTrivia && (
                                   <TriviaMarker
-                                    label={`Fun fact about ${passage.reference}:${verse.verse}`}
+                                    label={`Fun fact about ${chapterReference}:${verse.verse}`}
                                     onClick={() => setSheetEntries(verseTrivia)}
                                   />
                                 )}
