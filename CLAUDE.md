@@ -184,6 +184,8 @@ service cloud.firestore {
     bibleVersion: "WEB",
     includeWeekends: boolean,
     showTrivia: boolean,           // "Fun facts" verse trivia; undefined = pre-feature account (dashboard offers it once)
+    totalDays: number,             // set when a plan is changed mid-way; otherwise derived from durationMonths
+    paceAnchor: { date: Timestamp, dayNumber: number },  // set by "Change plan": pace measured from here
     emailDailyPortion: false       // not yet implemented
   },
   progress: {
@@ -340,6 +342,12 @@ Demo videos output to `/out/` folder: demo-intro.mp4, demo-onboarding.mp4, demo-
 
 ### Note
 Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands.
+
+## Change Plan ("Live Switch")
+- Dashboard settings menu → "Change plan" (`src/components/dashboard/ChangePlanDialog.jsx`): change translation, timeframe ("keep finish date", N months from today, end of year, custom), weekends, or testament mid-plan, with a live preview.
+- Translation-only changes just update `settings.bibleVersion`.
+- Schedule changes (`src/services/planReschedule.js`, pure/testable): completed days are kept as history renumbered 1..k; every unread chapter of the chosen testament (including missed ones) is re-spread in canonical order starting today (tomorrow if already read today; skipping weekends if weekday-only). Written in one atomic Firestore batch (`applyPlanChanges`), blocked while offline or while completions are still syncing.
+- Pace resets to on track via `settings.paceAnchor`; always use `getExpectedDay(settings, today)` and `getPlanTotalDays(settings)` from `src/utils/planSchedule.js` instead of computing from `startDate`/`durationMonths` directly. Already-passed % milestones are marked shown on change so a shorter plan doesn't trigger celebrations.
 
 ## Fun Facts (Verse Trivia)
 - Data: `src/data/verseTrivia.json` — array of `{ id, book, chapter, verseStart|null, verseEnd|null, category, title, text, source: { label, url }, needsReview? }`. `verseStart: null` = chapter-level fact. Categories in `src/utils/triviaCategories.js`.

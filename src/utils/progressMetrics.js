@@ -1,5 +1,5 @@
-import { calculateExpectedDay } from '../services/readingPlanGenerator'
-import { getTotalReadingDays, timestampToDate, getToday } from './dateHelpers'
+import { getToday } from './dateHelpers'
+import { getExpectedDay, getPlanTotalDays } from './planSchedule'
 import { displayStreak } from './streakHelpers'
 
 /**
@@ -19,15 +19,14 @@ export function computeMetrics(userDoc, today = getToday()) {
   }
 
   const includeWeekends = settings.includeWeekends
-  const totalDays = getTotalReadingDays(settings.durationMonths, includeWeekends)
+  const totalDays = getPlanTotalDays(settings)
 
   const completedCount = (progress.completedDays || []).length
   const percent = totalDays > 0
     ? Math.min(100, Math.round((completedCount / totalDays) * 100))
     : 0
 
-  const startDate = timestampToDate(settings.startDate)
-  const expectedDay = startDate ? calculateExpectedDay(startDate, today, includeWeekends) : 0
+  const expectedDay = getExpectedDay(settings, today)
   const currentDay = progress.currentDay || 1
   const daysAhead = Math.max(0, currentDay - expectedDay)
 

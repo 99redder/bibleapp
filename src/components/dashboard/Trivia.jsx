@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { SparkleIcon } from '../ui/SparkleIcon'
+import { useDialogBehavior } from '../../hooks/useDialogBehavior'
 import { TRIVIA_CATEGORIES } from '../../utils/triviaCategories'
 import { formatTriviaReference } from '../../services/trivia'
 
@@ -51,26 +52,7 @@ export function TriviaEntry({ entry }) {
 // returns them to exactly where they were reading.
 export function TriviaSheet({ entries, onClose }) {
   const closeButtonRef = useRef(null)
-  const onCloseRef = useRef(onClose)
-  onCloseRef.current = onClose
-
-  useEffect(() => {
-    const previouslyFocused = document.activeElement
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    closeButtonRef.current?.focus({ preventScroll: true })
-
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onCloseRef.current()
-    }
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = previousOverflow
-      previouslyFocused?.focus?.({ preventScroll: true })
-    }
-  }, [])
+  useDialogBehavior(onClose, closeButtonRef)
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:pb-8">

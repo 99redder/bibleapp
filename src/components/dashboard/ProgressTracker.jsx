@@ -1,5 +1,6 @@
-import { calculateExpectedDay, calculateProgressStatus } from '../../services/readingPlanGenerator'
-import { timestampToDate, getToday } from '../../utils/dateHelpers'
+import { calculateProgressStatus } from '../../services/readingPlanGenerator'
+import { getToday } from '../../utils/dateHelpers'
+import { getExpectedDay, getPlanTotalDays } from '../../utils/planSchedule'
 
 export function ProgressTracker({ userDoc }) {
   if (!userDoc?.settings || !userDoc?.progress) {
@@ -7,11 +8,10 @@ export function ProgressTracker({ userDoc }) {
   }
 
   const { settings, progress } = userDoc
-  const startDate = timestampToDate(settings.startDate)
   const today = getToday()
 
   // Calculate expected day based on schedule
-  const expectedDay = calculateExpectedDay(startDate, today, settings.includeWeekends)
+  const expectedDay = getExpectedDay(settings, today)
   const currentDay = progress?.currentDay || 1
   const completedDays = progress?.completedDays || []
 
@@ -19,9 +19,7 @@ export function ProgressTracker({ userDoc }) {
   const status = calculateProgressStatus(currentDay, expectedDay)
 
   // Calculate completion percentage
-  const totalDays = settings.includeWeekends
-    ? Math.round(settings.durationMonths * 30.44)
-    : Math.round(settings.durationMonths * 22)
+  const totalDays = getPlanTotalDays(settings)
   const completionPercent = Math.min(100, Math.round((completedDays.length / totalDays) * 100))
 
   return (

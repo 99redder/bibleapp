@@ -149,6 +149,41 @@ export const saveReadingPlan = async (uid, readingPlan) => {
   await batch.commit()
 }
 
+export const getAllPlanDays = async (uid) => {
+  const snapshot = await getDocs(collection(db, 'users', uid, 'readingPlan'))
+  return snapshot.docs
+    .map(document => document.data())
+    .filter(day => Number.isFinite(day.dayNumber))
+}
+
+// Replace the plan's days and update its settings/progress in a single atomic
+// batch, used when a reader changes their plan mid-way. Fields in `settings` and
+// `progress` are merged into the existing objects.
+export const applyPlanChanges = async (uid, { days, staleDayNumbers = [], settings = {}, progress = {} }) => {
+  const batch = writeBatch(db)
+
+  days.forEach((day) => {
+    const dayRef = doc(db, 'users', uid, 'readingPlan', `day-${day.dayNumber}`)
+    batch.set(dayRef, {
+      ...day,
+      scheduledDate: day.scheduledDate instanceof Date
+        ? Timestamp.fromDate(day.scheduledDate)
+        : day.scheduledDate
+    })
+  })
+
+  staleDayNumbers.forEach((dayNumber) => {
+    batch.delete(doc(db, 'users', uid, 'readingPlan', `day-${dayNumber}`))
+  })
+
+  const userUpdate = {}
+  Object.entries(settings).forEach(([key, value]) => { userUpdate[`settings.${key}`] = value })
+  Object.entries(progress).forEach(([key, value]) => { userUpdate[`progress.${key}`] = value })
+  batch.update(doc(db, 'users', uid), userUpdate)
+
+  await batch.commit()
+}
+
 export const getReadingPlanDay = async (uid, dayNumber) => {
   const dayRef = doc(db, 'users', uid, 'readingPlan', `day-${dayNumber}`)
   const daySnap = await getDoc(dayRef)

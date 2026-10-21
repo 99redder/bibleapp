@@ -8,7 +8,7 @@ import { StreakCard } from '../components/dashboard/StreakCard'
 import { RewardToastStack } from '../components/dashboard/RewardToast'
 import { getReadingPlanDay, markDayComplete, getCompletedDays, resetReadingPlan, updateBibleVersion, updateShownMilestones, updateTriviaSetting } from '../services/firebase'
 import { SparkleIcon } from '../components/ui/SparkleIcon'
-import { getCachedDashboard, setCachedDashboard } from '../services/localCache'
+import { clearCachedDashboard, getCachedDashboard, setCachedDashboard } from '../services/localCache'
 import { clearPendingCompletions, enqueueCompletion, getPendingCompletions, removePendingCompletion } from '../services/completionQueue'
 import { flushClientDiagnostics, recordClientDiagnostic } from '../services/clientDiagnostics'
 import { prefetchDayPassages } from '../services/bibleAPI'
@@ -17,6 +17,7 @@ import { computeMetrics } from '../utils/progressMetrics'
 import { detectRewards, achievedMilestones } from '../utils/rewards'
 
 const Calendar = lazy(() => import('../components/dashboard/Calendar').then(module => ({ default: module.Calendar })))
+const ChangePlanDialog = lazy(() => import('../components/dashboard/ChangePlanDialog').then(module => ({ default: module.ChangePlanDialog })))
 const CelebrationOverlay = lazy(() => import('../components/dashboard/CelebrationOverlay').then(module => ({ default: module.CelebrationOverlay })))
 
 export function DashboardPage() {
@@ -38,6 +39,7 @@ export function DashboardPage() {
   const [showCalendar, setShowCalendar] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [savingTrivia, setSavingTrivia] = useState(false)
+  const [showChangePlan, setShowChangePlan] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [migrationBibleVersion, setMigrationBibleVersion] = useState('WEB')
@@ -471,6 +473,12 @@ export function DashboardPage() {
     }
   }
 
+  const handlePlanChanged = async () => {
+    clearCachedDashboard(user.uid)
+    setShowChangePlan(false)
+    await refreshUserDoc()
+  }
+
   const dismissCelebration = () => setCelebrationQueue(prev => prev.slice(1))
   const removeToast = (id) => setToasts(prev => prev.filter(t => t.id !== id))
 
@@ -610,6 +618,20 @@ export function DashboardPage() {
                   </button>
                   <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
                   <button
+                    type="button"
+                    onClick={() => {
+                      setShowChangePlan(true)
+                      setShowSettings(false)
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                    Change plan
+                  </button>
+                  <button
                     onClick={() => {
                       setShowResetConfirm(true)
                       setShowSettings(false)
@@ -641,6 +663,17 @@ export function DashboardPage() {
           </div>
         </div>
       </header>
+
+      {showChangePlan && userDoc?.settings && (
+        <Suspense fallback={null}>
+          <ChangePlanDialog
+            uid={user.uid}
+            userDoc={userDoc}
+            onClose={() => setShowChangePlan(false)}
+            onSaved={handlePlanChanged}
+          />
+        </Suspense>
+      )}
 
       {/* Reset confirmation modal */}
       {showResetConfirm && (
