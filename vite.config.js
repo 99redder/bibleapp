@@ -38,7 +38,10 @@ export default defineConfig({
         name: 'Bible Planner App',
         short_name: 'Bible Planner',
         description: 'Build a personalized plan to read through the Bible — your translation, your timeline, free forever.',
-        theme_color: '#4f46e5',
+        id: '/',
+        lang: 'en',
+        categories: ['books', 'education', 'lifestyle'],
+        theme_color: '#0284c7',
         background_color: '#f9fafb',
         display: 'standalone',
         orientation: 'portrait',
@@ -48,15 +51,18 @@ export default defineConfig({
           {
             src: 'pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: 'pwa-512x512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
-            src: 'pwa-512x512.png',
+            // Artwork kept inside the safe zone so Android's circle/squircle masks don't clip it
+            src: 'pwa-maskable-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'

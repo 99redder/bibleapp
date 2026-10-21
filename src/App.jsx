@@ -11,6 +11,7 @@ const OnboardingPage = lazy(() => import('./pages/OnboardingPage').then(module =
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(module => ({ default: module.DashboardPage })))
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage').then(module => ({ default: module.PrivacyPolicyPage })))
 const TermsOfServicePage = lazy(() => import('./pages/TermsOfServicePage').then(module => ({ default: module.TermsOfServicePage })))
+const InstallPage = lazy(() => import('./pages/InstallPage').then(module => ({ default: module.InstallPage })))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(module => ({ default: module.NotFoundPage })))
 
 function LoadingScreen() {
@@ -80,6 +81,7 @@ function AppRoutes() {
         />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/terms" element={<TermsOfServicePage />} />
+        <Route path="/install" element={<InstallPage />} />
 
         {/* Protected routes */}
         <Route

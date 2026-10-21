@@ -136,6 +136,12 @@ export function LandingPage() {
             </Link>
           </div>
           <p className="mt-4 text-sm text-gray-500 dark:text-gray-500">Free forever — no subscription, no in-app purchases, no credit card.</p>
+          <Link
+            to="/install"
+            className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+          >
+            <span aria-hidden="true">📱</span> Install it on your phone →
+          </Link>
         </section>
 
         {/* ── Features ── */}
@@ -303,6 +309,10 @@ export function LandingPage() {
           {' · '}
           <Link to="/login" className="hover:text-primary-400 transition-colors">
             Sign In
+          </Link>
+          {' · '}
+          <Link to="/install" className="hover:text-primary-400 transition-colors">
+            Install the App
           </Link>
         </p>
       </footer>

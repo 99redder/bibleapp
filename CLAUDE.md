@@ -89,6 +89,7 @@ All routes use HashRouter (URLs contain `#`):
 - `/signup` — SignupPage (unauthenticated only)
 - `/privacy` — PrivacyPolicyPage (public)
 - `/terms` — TermsOfServicePage (public)
+- `/install` — InstallPage (public): device-detected, step-by-step "install the app" guide
 - `/onboarding` — OnboardingPage (auth required; skips to dashboard if already complete)
 - `/dashboard` — DashboardPage (auth required)
 - `*` wildcard — redirects to dashboard or onboarding based on auth/onboarding state
@@ -254,7 +255,6 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 
 ## Known Issues / Future Enhancements
 - Email daily portion feature (skipped for now, setting exists but not implemented)
-- PWA icons (pwa-192x192.png, pwa-512x512.png) are placeholder icons — should be replaced with real branded icons
 - Consider adding streak tracking
 - Consider adding notes/highlights feature
 - Consider adding verse sharing (social media)
@@ -284,7 +284,14 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - Local Bible chapter JSON cached for offline-friendly reading
 - Firebase requests are network-only (auth and Firestore must be fresh)
 - Manifest configured for standalone display, portrait orientation
-- Icons: pwa-192x192.png and pwa-512x512.png (placeholder — replace with real icons)
+- Icons: `pwa-192x192.png` / `pwa-512x512.png` (purpose `any`), `pwa-maskable-512x512.png` (purpose `maskable`; artwork shrunk into the 40%-radius safe zone so Android masks don't clip it), `apple-touch-icon.png` (180×180, iOS home screen), favicons. Theme color `#0284c7`. iOS title via `apple-mobile-web-app-title`.
+
+## Install Guide
+- `/install` (`src/pages/InstallPage.jsx`), steps in `src/utils/installGuides.js`: iPhone/iPad Safari, iPhone/iPad Chrome/Edge/Firefox, Android Chrome, Samsung Internet, Android Firefox, Chrome/Edge desktop, Mac Safari, desktop Firefox (unsupported → alternatives), and in-app browsers (Facebook/Instagram → open in browser / copy link). A device switcher covers wrong detections.
+- Detection: `getInstallPlatform()` / `isStandaloneApp()` in `src/utils/browserDetection.js` (iPadOS detected via "Macintosh" UA + touch).
+- One-tap install: `src/services/installPrompt.js` captures `beforeinstallprompt` before React mounts (`initInstallPrompt()` in `main.jsx`); `useInstallState()` exposes it. Chrome/Edge/Samsung only.
+- Entry points: dismissible dashboard banner (`InstallBanner`, hidden in the installed app; dismissal stored in localStorage `installBannerDismissed`), "Install app" in the settings menu, and landing page links.
+- iOS note shown to users: an installed iOS web app has its own storage, so they sign in once inside it.
 
 ## CSS Custom Classes (index.css)
 - `.input` — Form inputs with dark mode support, box-sizing fixes for mobile
