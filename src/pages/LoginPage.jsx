@@ -72,12 +72,12 @@ export function LoginPage() {
               <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H6zm0 2h12v16H6V4zm2 2v2h8V6H8zm0 4v2h8v-2H8zm0 4v2h5v-2H8z"/>
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Bible Reading Plan</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Bible Planner App</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Read through the Bible on your own schedule
+            Build your own plan to read through the Bible
           </p>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">
-            Create a personalized plan, track your progress, and stay on track with daily readings.
+            Pick your translation, timeline, and weekends — read right in the app and pick up where you left off.
           </p>
         </div>
 

@@ -91,9 +91,12 @@ export function SignupPage() {
               <path d="M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H6zm0 2h12v16H6V4zm2 2v2h8V6H8zm0 4v2h8v-2H8zm0 4v2h5v-2H8z"/>
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create Account</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create Your Account</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Start your Bible reading journey today
+            Build a personalized Bible reading plan — your translation, your timeline, weekends optional.
+          </p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-500">
+            Read in the app, track your pace, and pick up right where you left off.
           </p>
         </div>
 

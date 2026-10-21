@@ -35,18 +35,18 @@ const SunIcon = ({ className }) => (
 
 const features = [
   {
-    title: 'Your Timeline, Your Pace',
-    description: 'Choose a reading plan that fits your life — finish the entire Bible in 6, 12, 18, or 24 months, or set a custom duration. No guilt, no rushing.',
-    icon: '📅',
+    title: 'Build a Plan That Fits You',
+    description: 'You decide everything: pick your Bible translation, set how long you want to take, and choose weekdays only or include weekends. Fully personalized to your life.',
+    icon: '🎯',
   },
   {
-    title: 'Daily Readings on Your Phone',
-    description: 'Open the app each day to see exactly which chapters to read. Scripture text loads right in the app — no Bible required.',
+    title: 'Read Right in the App',
+    description: 'Open the app each day to see exactly which chapters to read — and the full scripture text loads right there. No separate Bible required.',
     icon: '📖',
   },
   {
-    title: 'Track Your Progress',
-    description: 'Mark each day complete and watch your progress build. See a calendar of completed days, and know at a glance if you\'re on track, ahead, or behind.',
+    title: 'Never Lose Your Place',
+    description: 'Every time you sign back in, the app picks up right where you left off and shows if you\'re on track, ahead, or behind — so you always know your next step.',
     icon: '✅',
   },
 ]
@@ -59,13 +59,13 @@ const steps = [
   },
   {
     number: '2',
-    title: 'Set up your plan',
-    description: 'Pick your start date, reading timeline, and Bible translation.',
+    title: 'Customize your plan',
+    description: 'Pick your start date, timeline, and Bible translation, and choose whether to include weekends.',
   },
   {
     number: '3',
     title: 'Read a little every day',
-    description: 'Open the app daily, read your assigned chapters, and mark them complete.',
+    description: 'Open the app daily, read your assigned chapters in-app, and mark them complete. Sign back in anytime and continue right where you left off.',
   },
 ]
 
@@ -120,8 +120,9 @@ export function LandingPage() {
             Read Through the Bible<br />on Your Own Schedule
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-xl mx-auto">
-            A guided Bible reading plan app designed for your phone. Pick your timeline,
-            get daily scripture readings, and track every chapter from Genesis to Revelation.
+            Build your own Bible reading plan in the app — pick your translation, set your timeline,
+            and choose whether to include weekends. Read right here, track how far ahead or behind
+            you are, and pick up where you left off every time you sign in.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
@@ -236,8 +237,12 @@ export function LandingPage() {
             </h2>
             <ul className="space-y-4">
               {[
-                'Personalized reading schedule based on your start date',
+                'Choose your Bible translation and reading timeline',
+                'Include weekends or read weekdays only',
+                'Full scripture text loads right in the app',
                 'Daily chapter assignments — always know what to read',
+                'Picks up right where you left off when you sign back in',
+                'See at a glance if you\'re on track, ahead, or behind',
                 'Mark readings complete and track your streak',
                 'Read ahead on good days; catch up on busy ones',
                 'Calendar view shows completed and missed days',
