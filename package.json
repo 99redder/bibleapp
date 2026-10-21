@@ -24,6 +24,7 @@
     "remotion:demo:all": "npm run remotion:demo:intro && npm run remotion:demo:onboarding && npm run remotion:demo:dashboard"
   },
   "dependencies": {
+    "@fontsource/cinzel": "^5.2.6",
     "@remotion/cli": "^4.0.409",
     "@remotion/player": "^4.0.409",
     "canvas-confetti": "^1.9.4",

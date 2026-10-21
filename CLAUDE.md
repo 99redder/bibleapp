@@ -307,7 +307,8 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 ## UI/Branding
 - App name: "Bible Planner" / "Bible Reading Plan"
 - Tagline: "Read through the Bible on your own schedule"
-- Bible icon: SVG book with text lines, white on primary-600 background, rounded corners
+- Logo: open book with a gold cross rising from its spine (`BrandMark` in `src/components/ui/BrandLogo.jsx`), on a sky→indigo gradient badge (`LogoBadge` for large, `BrandLockup` = badge + wordmark for headers/footers). App icons, favicon, and maskable icon use the same artwork.
+- Wordmark font: Cinzel 700, self-hosted via `@fontsource/cinzel` (imported in `main.jsx`; Tailwind `font-display`). "BIBLE PLANNER" with a small gold "Daily reading plan" tagline.
 - Login and Signup pages display the icon, app name, and tagline
 - Footer credit: "Website created and maintained by Eastern Shore AI, LLC" (links to easternshore.ai)
 - Footer links: Privacy Policy, Terms of Service

@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
-import { BrandMark } from '../components/ui/BrandLogo'
-
-const BookIcon = BrandMark
+import { BrandLockup, LogoBadge } from '../components/ui/BrandLogo'
 
 const CheckIcon = ({ className }) => (
   <svg className={className} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -76,30 +74,25 @@ export function LandingPage() {
 
       {/* ── Header ── */}
       <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center flex-shrink-0">
-              <BookIcon className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-base font-bold text-gray-900 dark:text-white">Bible Planner App</span>
-          </div>
-          <div className="flex items-center gap-1 sm:gap-2">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2">
+          <BrandLockup />
+          <div className="flex shrink-0 items-center gap-0.5 sm:gap-2">
             <button
               onClick={toggleDarkMode}
-              className="p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-1.5 sm:p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               aria-label="Toggle dark mode"
             >
               {darkMode ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
             </button>
             <Link
               to="/login"
-              className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-2 sm:px-3 py-1.5"
+              className="whitespace-nowrap text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-1.5 sm:px-3 py-1.5"
             >
               Sign In
             </Link>
             <Link
               to="/signup"
-              className="text-xs sm:text-sm font-semibold bg-primary-600 hover:bg-primary-700 text-white px-3 sm:px-4 py-1.5 rounded-lg transition-colors"
+              className="whitespace-nowrap text-xs sm:text-sm font-semibold bg-primary-600 hover:bg-primary-700 text-white px-2.5 sm:px-4 py-1.5 rounded-lg transition-colors"
             >
               Get Started
             </Link>
@@ -110,9 +103,7 @@ export function LandingPage() {
       <main>
         {/* ── Hero ── */}
         <section className="px-4 py-16 text-center max-w-2xl mx-auto">
-          <div className="mx-auto w-20 h-20 mb-6 bg-primary-600 rounded-2xl flex items-center justify-center shadow-lg">
-            <BookIcon className="w-12 h-12 text-white" />
-          </div>
+          <LogoBadge className="mb-6" />
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
             Read Through the Bible<br />on Your Own Schedule
           </h1>
@@ -281,12 +272,7 @@ export function LandingPage() {
 
       {/* ── Footer ── */}
       <footer className="px-4 py-8 bg-gray-900 text-center">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <div className="w-7 h-7 bg-primary-600 rounded-lg flex items-center justify-center">
-            <BookIcon className="w-4 h-4 text-white" />
-          </div>
-          <span className="text-white font-semibold text-sm">Bible Planner App</span>
-        </div>
+        <BrandLockup onDark tagline={false} className="mb-4 justify-center" />
         <p className="text-xs text-gray-500 mb-3">
           Website created and maintained by{' '}
           <a

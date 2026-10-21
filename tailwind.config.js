@@ -23,6 +23,7 @@ export default {
       },
       fontFamily: {
         serif: ['Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
+        display: ['Cinzel', 'Georgia', 'serif'],
       }
     },
   },

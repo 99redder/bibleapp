@@ -10,6 +10,7 @@ import { StreakCard } from '../components/dashboard/StreakCard'
 import { RewardToastStack } from '../components/dashboard/RewardToast'
 import { getReadingPlanDay, markDayComplete, getCompletedDays, resetReadingPlan, updateBibleVersion, updateShownMilestones, updateTriviaSetting } from '../services/firebase'
 import { SparkleIcon } from '../components/ui/SparkleIcon'
+import { BrandMark } from '../components/ui/BrandLogo'
 import { clearCachedDashboard, getCachedDashboard, setCachedDashboard } from '../services/localCache'
 import { clearPendingCompletions, enqueueCompletion, getPendingCompletions, removePendingCompletion } from '../services/completionQueue'
 import { flushClientDiagnostics, recordClientDiagnostic } from '../services/clientDiagnostics'
@@ -532,23 +533,12 @@ export function DashboardPage() {
             {/* Logo mark + wordmark */}
             <div className="flex items-center gap-2 flex-shrink-0">
               {/* Bible icon */}
-              <svg
-                className="w-8 h-8 text-primary-600 dark:text-primary-400"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                {/* Simple book icon */}
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 0 4 19.5z" />
-              </svg>
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-400 via-primary-600 to-indigo-700 shadow-sm ring-1 ring-white/20">
+                <BrandMark className="h-6 w-6 text-white" />
+              </span>
 
               {/* Compact wordmark */}
-              <span className="text-[10px] leading-[1.05] font-serif font-semibold text-primary-700 dark:text-primary-300 select-none">
+              <span className="text-[10px] leading-[1.1] font-display font-bold tracking-wide text-primary-700 dark:text-primary-300 select-none">
                 <span className="block">Bible</span>
                 <span className="block">Planner</span>
                 <span className="block">App.com</span>
