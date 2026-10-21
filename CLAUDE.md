@@ -109,6 +109,7 @@ All routes use HashRouter (URLs contain `#`):
 1. Go to Firebase Console → Authentication → Sign-in method
 2. Enable Google provider
 3. Add your domain(s) to Authorized domains (`biblereadingplan.app`; keep `www.bibleplannerapp.com` too while installed apps still run there)
+4. A new domain also goes in the browser API key's website restrictions and the reCAPTCHA key's domain list (Google Cloud console); otherwise every Firebase call from it fails
 
 ### Onboarding Survey (5 Steps)
 1. **Start Date** - When to begin the reading plan (validates: no past dates, today OK)
@@ -375,7 +376,9 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 ### 2026-10-21: Rename to "Bible Reading Plan" + biblereadingplan.app
 - **Name**: "Bible Reading Plan" everywhere users see it (manifest, meta/SEO, wordmark, install guides, legal pages). Internal storage keys keep the `biblePlanner` prefix (see Important Notes).
 - **Domain**: new primary domain biblereadingplan.app (Cloudflare Registrar, proxied, SSL mode Full → GitHub Pages). The old www.bibleplannerapp.com had been proxied too, which is why GitHub's certificate renewal failed (`bad_authz`).
-- **Old domains**: bibleplannerapp.com (+www) and bibleplanapp.com (was a Squarespace "Coming Soon" page) run `cloudflare/legacy-domain-worker.js` (deploy: `cd cloudflare && wrangler deploy`). Page loads 301 to the new domain; service worker, assets, and Bible JSON are proxied, so apps installed from the old domain keep updating. On the old host the app shows `MovedNotice` (open the new site, sign in once, reinstall) and hides `InstallBanner`. Firebase Auth authorized domains and the App Check reCAPTCHA key must keep listing the old domain while those apps exist.
+- **Old domains**: bibleplannerapp.com (+www) and bibleplanapp.com (was a Squarespace "Coming Soon" page) run `cloudflare/legacy-domain-worker.js` (deploy: `cd cloudflare && wrangler deploy`). Page loads 301 to the new domain; service worker, assets, and Bible JSON are proxied, so apps installed from the old domain keep updating. On the old host the app shows `MovedNotice` (open the new site, sign in once, reinstall) and hides `InstallBanner`. Every domain the app runs on must be listed in three places: Firebase Auth → Authorized domains, the reCAPTCHA key (Google Cloud → Fraud Defense → Keys → `bibleapp`), and the Firebase browser API key's website restrictions (Google Cloud → APIs & Services → Credentials). Missing the API key entry blocks sign-in, App Check, and Firestore with `API_KEY_HTTP_REFERRER_BLOCKED`. Keep the old domains listed while apps installed from them exist.
+- **Cutover**: the Pages domain was switched with `gh api -X PUT repos/99redder/bibleapp/pages -f cname=biblereadingplan.app` right before `wrangler deploy`. Cloudflare had cached the pre-merge `sw.js`, so the zone cache was purged (Caching → Configuration → Purge Everything); do the same if a deploy ever lands mid-domain-change. Cloudflare's cookie-free Web Analytics beacon runs on the zone and is disclosed in the privacy policy.
+- **SEO**: title no longer repeats the name, `og:image`/`twitter:image` use `pwa-512x512.png`, old domains 301 with paths kept.
 - **Security review**: Firestore App Check is enforced (Authentication is still in monitoring mode). Deleted the orphaned `bibleApi` Cloud Function, its `BIBLE_API_KEY` secret, and the stale `VITE_BIBLE_API_KEY` / `VITE_BIBLE_PROXY_BASE` GitHub secrets. The project is on Blaze with a $5/month budget that only sends alerts (50/90/100%). Google's enforced spend caps can't cover Firestore or Auth, so none are set.
 
 ### 2026-10-21: Branding, SEO, Legal, and Fully-Offline Bible

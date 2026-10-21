@@ -108,6 +108,7 @@ export function PrivacyPolicyPage() {
               <li><strong>Google Firebase</strong> - Authentication and data storage</li>
               <li><strong>Google Sign-In</strong> - Optional authentication method</li>
               <li><strong>Google reCAPTCHA (App Check)</strong> - Protects the Service from abuse and automated access. reCAPTCHA v3 runs in the background and may collect device and usage information, subject to Google's own Privacy Policy and Terms.</li>
+              <li><strong>Cloudflare</strong> - Delivers and secures the website and provides cookie-free visit statistics. Cloudflare processes technical request data such as IP address and browser type.</li>
             </ul>
             <p className="text-gray-700 dark:text-gray-300">
               These services have their own privacy policies governing their use of data.
