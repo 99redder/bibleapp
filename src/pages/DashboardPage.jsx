@@ -540,8 +540,8 @@ export function DashboardPage() {
               {/* Compact wordmark */}
               <span className="text-[10px] leading-[1.1] font-display font-bold tracking-wide text-primary-700 dark:text-primary-300 select-none">
                 <span className="block">Bible</span>
-                <span className="block">Planner</span>
-                <span className="block">App.com</span>
+                <span className="block">Reading</span>
+                <span className="block">Plan.app</span>
               </span>
             </div>
           </h1>
