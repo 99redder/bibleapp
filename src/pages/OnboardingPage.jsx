@@ -9,7 +9,7 @@ import { Toggle } from '../components/ui/Toggle'
 import { generateReadingPlan } from '../services/readingPlanGenerator'
 import { updateUserSettings, saveReadingPlan, Timestamp } from '../services/firebase'
 import { BIBLE_VERSIONS, DEFAULT_VERSION_BY_LANGUAGE, getTestamentChapterCount, getVersionsForLanguage } from '../utils/bibleStructure'
-import { getTomorrow, formatDate } from '../utils/dateHelpers'
+import { getTomorrow, formatDate, toCivilDateKey } from '../utils/dateHelpers'
 import { countVerses } from '../services/planReschedule'
 import { createT } from '../i18n'
 
@@ -42,9 +42,9 @@ export function OnboardingPage() {
 
   // Form state
   const [language, setLanguage] = useState('en')
-  const [startDate, setStartDate] = useState(
-    getTomorrow().toISOString().split('T')[0]
-  )
+  // YYYY-MM-DD in the reader's own time zone (toISOString would give the UTC
+  // date, a day off in the evening or east of UTC)
+  const [startDate, setStartDate] = useState(() => toCivilDateKey(getTomorrow()))
   const [durationMonths, setDurationMonths] = useState('12')
   const [customMonths, setCustomMonths] = useState('')
   const [testament, setTestament] = useState('BOTH')
@@ -56,6 +56,10 @@ export function OnboardingPage() {
   const steps = language === 'es' ? STEPS.filter(step => step !== 'trivia') : STEPS
   const stepId = steps[currentStep]
 
+  // The chosen day at local midnight. new Date('YYYY-MM-DD') would be UTC
+  // midnight, the evening before in the US, starting the plan a day early.
+  const startDay = new Date(startDate + 'T00:00:00')
+
   const handleLanguageChange = (value) => {
     setLanguage(value)
     setBibleVersion(DEFAULT_VERSION_BY_LANGUAGE[value])
@@ -63,10 +67,9 @@ export function OnboardingPage() {
 
   // Calculate months until end of year from start date
   const getMonthsUntilEndOfYear = () => {
-    const start = new Date(startDate)
-    const endOfYear = new Date(start.getFullYear(), 11, 31)
-    const diffMonths = (endOfYear.getFullYear() - start.getFullYear()) * 12 +
-                       (endOfYear.getMonth() - start.getMonth())
+    const endOfYear = new Date(startDay.getFullYear(), 11, 31)
+    const diffMonths = (endOfYear.getFullYear() - startDay.getFullYear()) * 12 +
+                       (endOfYear.getMonth() - startDay.getMonth())
     return Math.max(1, diffMonths)
   }
 
@@ -101,9 +104,8 @@ export function OnboardingPage() {
     if (stepId === 'start-date') {
       const today = new Date()
       today.setHours(0, 0, 0, 0)
-      // Parse as local time by appending T00:00:00 (without 'Z')
-      const selected = new Date(startDate + 'T00:00:00')
-      if (selected < today) {
+      // Also catches a cleared date field (Invalid Date)
+      if (!(startDay >= today)) {
         setError(t('onboarding.error.pastDate'))
         return
       }
@@ -135,7 +137,7 @@ export function OnboardingPage() {
     try {
       const actualDuration = getActualDuration()
       const settings = {
-        startDate: Timestamp.fromDate(new Date(startDate)),
+        startDate: Timestamp.fromDate(startDay),
         durationMonths: actualDuration,
         testament: testament,
         language,
@@ -147,7 +149,7 @@ export function OnboardingPage() {
 
       // Generate the reading plan
       const plan = generateReadingPlan({
-        startDate: new Date(startDate),
+        startDate: startDay,
         durationMonths: actualDuration,
         testament: testament,
         includeWeekends
@@ -235,7 +237,7 @@ export function OnboardingPage() {
               type="date"
               value={startDate}
               onChange={handleStartDateChange}
-              min={new Date().toISOString().split('T')[0]}
+              min={toCivilDateKey(new Date())}
               required
               error={error || undefined}
             />
@@ -385,7 +387,7 @@ export function OnboardingPage() {
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                 <span className="text-gray-600 dark:text-gray-400">{t('onboarding.confirm.startDate')}</span>
-                <span className="font-medium text-gray-900 dark:text-white">{formatDate(new Date(startDate), language)}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{formatDate(startDay, language)}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
                 <span className="text-gray-600 dark:text-gray-400">{t('onboarding.confirm.duration')}</span>
