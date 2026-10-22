@@ -1,7 +1,10 @@
+import { useT } from '../../i18n'
+
 // Always-visible streak indicator (flame + day count), modeled on the familiar
 // streak chips in habit apps. Shows the current live streak prominently and the
 // all-time best underneath for extra motivation.
 export function StreakCard({ currentStreak = 0, longestStreak = 0 }) {
+  const t = useT()
   const active = currentStreak > 0
 
   return (
@@ -33,13 +36,13 @@ export function StreakCard({ currentStreak = 0, longestStreak = 0 }) {
             {currentStreak}
           </span>
           <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-            day{currentStreak === 1 ? '' : 's'} in a row
+            {t('streak.inARow', { n: currentStreak })}
           </span>
         </div>
         <p className="text-sm text-gray-500 dark:text-gray-400">
           {active
-            ? `Read today to keep it going!${longestStreak > currentStreak ? ` · Best: ${longestStreak}` : ''}`
-            : 'Read today to start a new streak'}
+            ? `${t('streak.keepGoing')}${longestStreak > currentStreak ? ` · ${t('streak.best', { n: longestStreak })}` : ''}`
+            : t('streak.start')}
         </p>
       </div>
     </div>

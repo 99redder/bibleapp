@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { LogoBadge } from '../components/ui/BrandLogo'
+import { useLanguage, useT } from '../i18n'
 
 // Screenshots live in public/faq. They were captured at 2x on a 390px-wide
 // phone from the real screens with sample data, so the sizes below are pixels.
@@ -259,8 +260,227 @@ const QUESTIONS = [
   }
 ]
 
+// Shown instead to signed-in Spanish readers. Same plain style; the sign-in
+// screen is English, so its buttons are named as they appear there.
+const QUESTIONS_ES = [
+  {
+    question: '¿Cuesta dinero?',
+    answer: (
+      <p>
+        No. Bible Reading Plan es totalmente gratis, y siempre lo será. No hay suscripción, ni compras dentro de la
+        aplicación, ni anuncios, y nunca necesitará una tarjeta de crédito.
+      </p>
+    )
+  },
+  {
+    question: '¿Por qué no está la Reina-Valera 1960 ni la NVI?',
+    answer: (
+      <>
+        <p>
+          La Reina-Valera 1960 y la Nueva Versión Internacional (NVI) tienen derechos de autor, y sus licencias no
+          permiten incluirlas en una aplicación gratuita como esta. Las 3 traducciones en español de Bible Reading Plan
+          se pueden compartir libremente, y por eso podemos incluirlas.
+        </p>
+        <p>
+          Si le gusta la Reina-Valera 1960, pruebe la <strong>Reina-Valera 1909</strong>: es la revisión anterior de
+          la misma traducción y su lenguaje es muy parecido. Si prefiere un español más moderno, pruebe la{' '}
+          <strong>Versión Biblia Libre (VBL)</strong>. Puede cambiar de traducción cuando quiera con Cambiar plan.
+        </p>
+      </>
+    )
+  },
+  {
+    question: '¿Cuál es el plazo más largo que puedo elegir?',
+    answer: (
+      <>
+        <p>
+          <strong>Hasta 10 años (120 meses).</strong>
+        </p>
+        <p>
+          Al crear su plan, elija 6, 12, 18 o 24 meses, elija terminar antes de fin de año, o toque{' '}
+          <strong>Otra duración</strong> y escriba cualquier número de meses del 1 al 120. Mientras más largo sea su
+          plan, más corta será la lectura de cada día. Un plan de 10 años es de unos 9 versículos por día.
+        </p>
+        <Screenshot
+          src="/faq/es/plan-length.webp"
+          alt="El paso Duración del plan con Otra duración elegida y 120 meses escritos, que muestra unos 9 versículos por día"
+          width={756}
+          height={1480}
+        />
+        <p>¿Necesita más tiempo después? Con Cambiar plan puede añadir hasta 3 años más cada vez.</p>
+      </>
+    )
+  },
+  {
+    question: '¿Puedo cambiar mi plan después de crearlo?',
+    answer: (
+      <>
+        <p>
+          Sí, cuando quiera. En la pantalla principal, toque el <strong>botón del engranaje</strong> arriba y luego
+          toque <strong>Cambiar plan</strong>.
+        </p>
+        <Screenshot
+          src="/faq/es/change-plan-menu.webp"
+          alt="El botón del engranaje arriba a la derecha está marcado, y en el menú de abajo está marcado Cambiar plan"
+          width={780}
+          height={616}
+        />
+        <p>
+          Puede cambiar su traducción de la Biblia, darse más o menos tiempo, incluir o saltar los fines de semana, o
+          leer solo el Antiguo o el Nuevo Testamento. Antes de guardar, verá su nueva lectura diaria y la fecha en que
+          terminará.
+        </p>
+        <Screenshot
+          src="/faq/es/change-plan.webp"
+          alt="La pantalla Cambiar su plan con un nuevo plazo elegido y un resumen del nuevo plan y la fecha final"
+          width={780}
+          height={1766}
+        />
+        <p>Las lecturas que ya terminó, su racha y su calendario se conservan.</p>
+      </>
+    )
+  },
+  {
+    question: '¿Cómo empiezo de nuevo?',
+    answer: (
+      <>
+        <p>
+          Si solo quiere otro ritmo, otra traducción u otro plazo, use <strong>Cambiar plan</strong>. Así conserva
+          todo lo que ya leyó.
+        </p>
+        <p>
+          Para comenzar un plan completamente nuevo desde el principio, toque el <strong>botón del engranaje</strong>{' '}
+          arriba en la pantalla principal y luego toque <strong>Empezar de nuevo</strong>.
+        </p>
+        <Screenshot
+          src="/faq/es/start-over-menu.webp"
+          alt="El botón del engranaje arriba a la derecha está marcado, y en el menú de abajo está marcado Empezar de nuevo"
+          width={780}
+          height={616}
+        />
+        <p>
+          Se le pedirá que confirme. Empezar de nuevo borra su plan actual y todo su progreso, incluidos su racha y su
+          calendario, y no se puede deshacer. Después creará un plan nuevo.
+        </p>
+        <Screenshot
+          src="/faq/es/start-over-confirm.webp"
+          alt="La confirmación ¿Empezar de nuevo?, que advierte que se borrará su plan y todo su progreso, con los botones Cancelar y Empezar de nuevo"
+          width={716}
+          height={488}
+        />
+      </>
+    )
+  },
+  {
+    question: '¿Cómo sé si voy al día con mi plan?',
+    answer: (
+      <>
+        <p>
+          Mire el cuadro <strong>Su progreso</strong> en la pantalla principal. Le dice si va al día, o cuántos días de
+          adelanto o de atraso lleva.
+        </p>
+        <Screenshot
+          src="/faq/es/progress.webp"
+          alt="El cuadro Su progreso, que muestra 3 días de adelanto, Día 64 de 365"
+          width={756}
+          height={620}
+        />
+        <p>
+          Para ver cada día, toque el <strong>botón del calendario</strong> arriba en la pantalla principal. Los días en
+          verde son los que leyó, y los días en rojo son los que no leyó.
+        </p>
+        <Screenshot
+          src="/faq/es/calendar.webp"
+          alt="El calendario con círculos verdes en los días leídos y un círculo rojo en un día sin leer"
+          width={756}
+          height={922}
+        />
+      </>
+    )
+  },
+  {
+    question: 'Me salté algunos días. ¿Cómo me pongo al día?',
+    answer: (
+      <>
+        <p>
+          No se preocupe, no se pierde nada. Su próxima lectura siempre es la que sigue a la última que terminó, y el
+          cuadro <strong>Su progreso</strong> muestra cuántos días de atraso lleva.
+        </p>
+        <Screenshot
+          src="/faq/es/progress-behind.webp"
+          alt="El cuadro Su progreso, que muestra 2 días de atraso, Día 59 de 365"
+          width={756}
+          height={620}
+        />
+        <p>
+          Para ponerse al día, lea más de una lectura en un día. Después de tocar <strong>Marcar como leída</strong>,
+          la siguiente lectura aparece enseguida, así que puede seguir leyendo.
+        </p>
+        <p>
+          Si prefiere no leer el doble, use <strong>Cambiar plan</strong> para darse más tiempo. Reparte el resto de
+          sus lecturas a partir de hoy, y usted vuelve a quedar al día.
+        </p>
+      </>
+    )
+  },
+  {
+    question: '¿Puedo usarla en mi teléfono y en mi tableta o computadora?',
+    answer: (
+      <>
+        <p>
+          Sí. Inicie sesión con la misma cuenta en cada uno. Su plan y su progreso se guardan en su cuenta, así que lo
+          que lea en uno aparece en los demás.
+        </p>
+        <p>
+          Inicie sesión de la misma forma en que se registró: con su correo y contraseña, o con{' '}
+          <strong>Continue with Google</strong>. (La pantalla para iniciar sesión está en inglés.)
+        </p>
+        <p>
+          Si agregó Bible Reading Plan a la pantalla de inicio de un iPhone o iPad, inicie sesión una vez dentro de esa
+          aplicación también. Guarda su propia sesión, aparte de Safari.
+        </p>
+      </>
+    )
+  },
+  {
+    question: 'Olvidé mi contraseña. ¿Qué hago?',
+    answer: (
+      <>
+        <p>
+          La pantalla para iniciar sesión está en inglés. Escriba su correo en el cuadro <strong>Email</strong> y luego
+          toque <strong>Forgot your password?</strong> («¿Olvidó su contraseña?»). Le enviaremos un correo (en inglés)
+          con un enlace para crear una contraseña nueva. Si no le llega en unos minutos, revise su carpeta de correo no
+          deseado (spam).
+        </p>
+        <Screenshot
+          src="/faq/forgot-password.webp"
+          alt="El cuadro para iniciar sesión con un correo escrito y Forgot your password? marcado"
+          width={756}
+          height={880}
+        />
+        <p>
+          Si se registró con <strong>Continue with Google</strong>, no tiene una contraseña aparte para Bible Reading
+          Plan. Solo toque Continue with Google.
+        </p>
+      </>
+    )
+  },
+  {
+    question: '¿Puedo cambiar el idioma?',
+    answer: (
+      <p>
+        El idioma se elige una sola vez, al crear su plan. Para usar la aplicación en inglés, tendría que tocar{' '}
+        <strong>Empezar de nuevo</strong> y elegir English, y eso borra su progreso. Para cambiar solo de traducción,
+        use Cambiar plan.
+      </p>
+    )
+  }
+]
+
 export function FaqPage() {
   const { user } = useAuth()
+  const t = useT()
+  const questions = useLanguage() === 'es' ? QUESTIONS_ES : QUESTIONS
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white px-4 py-8 dark:from-gray-900 dark:to-gray-950">
@@ -269,16 +489,16 @@ export function FaqPage() {
           to={user ? '/dashboard' : '/'}
           className="text-base text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
         >
-          &larr; Back
+          &larr; {t('common.back')}
         </Link>
 
         <header className="mt-6 text-center">
           <LogoBadge className="mb-5" />
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Frequently Asked Questions</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{t('faq.title')}</h1>
         </header>
 
         <div className="mt-8 space-y-6">
-          {QUESTIONS.map(({ question, answer }) => (
+          {questions.map(({ question, answer }) => (
             <section key={question} className="card">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{question}</h2>
               <div className="mt-3 space-y-4 text-base leading-relaxed text-gray-700 dark:text-gray-300">{answer}</div>

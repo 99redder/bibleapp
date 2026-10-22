@@ -8,29 +8,23 @@ import { applyPlanChanges, getAllPlanDays, updateBibleVersion, Timestamp } from 
 import { getPendingCompletions } from '../../services/completionQueue'
 import { formatPassageDescription } from '../../services/readingPlanGenerator'
 import { buildReschedule, getScheduleStartDate, hasReadToday, readingDaysForTimeframe } from '../../services/planReschedule'
-import { BIBLE_VERSIONS } from '../../utils/bibleStructure'
-import { formatDate, getToday, isToday, timestampToDate } from '../../utils/dateHelpers'
+import { BIBLE_VERSIONS, DEFAULT_VERSION_BY_LANGUAGE, getVersionsForLanguage } from '../../utils/bibleStructure'
+import { dateLocale, formatDate, getToday, isToday, timestampToDate } from '../../utils/dateHelpers'
 import { computeMetrics } from '../../utils/progressMetrics'
 import { achievedMilestones, mergeShown } from '../../utils/rewards'
+import { createT, getLanguage } from '../../i18n/translate'
 
-const TESTAMENT_OPTIONS = [
-  { value: 'BOTH', label: 'Full Bible (Old and New Testament)' },
-  { value: 'OT', label: 'Old Testament only' },
-  { value: 'NT', label: 'New Testament only' }
+const TESTAMENTS = [
+  { value: 'BOTH', key: 'changePlan.testament.both' },
+  { value: 'OT', key: 'changePlan.testament.ot' },
+  { value: 'NT', key: 'changePlan.testament.nt' }
 ]
 
 const MONTH_CHOICES = [3, 6, 9, 12, 18, 24]
-const EXTEND_CHOICES = [
-  { months: 3, label: '3 months' },
-  { months: 6, label: '6 months' },
-  { months: 12, label: '1 year' },
-  { months: 24, label: '2 years' },
-  { months: 36, label: '3 years' }
-]
+const EXTEND_MONTHS = [3, 6, 12, 24, 36]
 const HEAVY_PACE_CHAPTERS = 10
 
-const plural = (count, word) => `${count.toLocaleString()} ${word}${count === 1 ? '' : 's'}`
-const compactDate = (date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+const compactDate = (date, language) => date.toLocaleDateString(dateLocale(language), { month: 'short', day: 'numeric', year: 'numeric' })
 
 function addMonths(date, months) {
   const result = new Date(date)
@@ -51,6 +45,9 @@ function CheckIcon() {
 // chapters are re-spread over the new schedule, starting on track.
 export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays = getAllPlanDays }) {
   const settings = userDoc.settings
+  // Readers only ever see translations in the language they chose.
+  const language = getLanguage(settings)
+  const t = useMemo(() => createT(language), [language])
   const today = useMemo(() => getToday(), [])
   const closeButtonRef = useRef(null)
   useDialogBehavior(onClose, closeButtonRef)
@@ -62,7 +59,7 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
 
   const currentTestament = settings.testament || 'BOTH'
   const currentWeekends = Boolean(settings.includeWeekends)
-  const currentVersion = BIBLE_VERSIONS[settings.bibleVersion] ? settings.bibleVersion : 'WEB'
+  const currentVersion = BIBLE_VERSIONS[settings.bibleVersion] ? settings.bibleVersion : DEFAULT_VERSION_BY_LANGUAGE[language]
 
   const [bibleVersion, setBibleVersion] = useState(currentVersion)
   const [testament, setTestament] = useState(currentTestament)
@@ -79,7 +76,7 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
       .then(days => { if (!cancelled) setPlanDays(days) })
       .catch((err) => {
         console.error('Error loading plan:', err)
-        if (!cancelled) setLoadError('Could not load your plan. Check your connection and try again.')
+        if (!cancelled) setLoadError(t('changePlan.loadFailed'))
       })
     return () => { cancelled = true }
   }, [uid])
@@ -128,9 +125,9 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
 
   const nothingLeft = preview && preview.remainingChapterCount === 0
   const blockedReason = !isOnline
-    ? "You're offline. Connect to the internet to change your plan."
+    ? t('changePlan.offline')
     : scheduleChanged && hasPendingCompletions
-      ? 'Some recent readings are still syncing. Try again in a moment so none of your progress is missed.'
+      ? t('changePlan.syncing')
       : null
 
   const canSave = !saving && !blockedReason && !customInvalid && !nothingLeft &&
@@ -138,24 +135,26 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
 
   const timeframeGroups = [
     {
-      label: 'Keep or add time',
+      label: t('changePlan.group.keep'),
       options: [
         {
           value: 'keep',
-          label: currentFinishDate ? `Keep my finish date (${compactDate(currentFinishDate)})` : 'Keep my current finish date'
+          label: currentFinishDate
+            ? t('changePlan.keepDate', { date: compactDate(currentFinishDate, language) })
+            : t('changePlan.keepCurrent')
         },
-        ...EXTEND_CHOICES.map(({ months, label }) => ({
+        ...EXTEND_MONTHS.map(months => ({
           value: `extend-${months}`,
-          label: `Add ${label} (finish ${compactDate(addMonths(extendFrom, months))})`
+          label: t('changePlan.add', { months, date: compactDate(addMonths(extendFrom, months), language) })
         }))
       ]
     },
     {
-      label: 'Set a new timeframe from today',
+      label: t('changePlan.group.new'),
       options: [
-        ...MONTH_CHOICES.map(months => ({ value: String(months), label: `Finish in ${months} months from today` })),
-        { value: 'end-of-year', label: `Finish by the end of ${today.getFullYear()}` },
-        { value: 'custom', label: 'Custom number of months' }
+        ...MONTH_CHOICES.map(months => ({ value: String(months), label: t('changePlan.finishIn', { n: months }) })),
+        { value: 'end-of-year', label: t('changePlan.endOfYear', { year: today.getFullYear() }) },
+        { value: 'custom', label: t('changePlan.custom') }
       ]
     }
   ]
@@ -198,17 +197,17 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
       await onSaved()
     } catch (err) {
       console.error('Error changing plan:', err)
-      setSaveError('Could not update your plan. Nothing was changed — please try again.')
+      setSaveError(t('changePlan.saveFailed'))
       setSaving(false)
     }
   }
 
   const paceLabel = preview && (
     preview.isSplit
-      ? `About ${plural(preview.versesPerDay, 'verse')} a day`
+      ? t('changePlan.pace.verses', { n: preview.versesPerDay })
       : preview.chaptersPerDay.min === preview.chaptersPerDay.max
-        ? `${plural(preview.chaptersPerDay.max, 'chapter')} a day`
-        : `${preview.chaptersPerDay.min}–${preview.chaptersPerDay.max} chapters a day`
+        ? t('changePlan.pace.chapters', { n: preview.chaptersPerDay.max })
+        : t('changePlan.pace.chapterRange', preview.chaptersPerDay)
   )
   const firstNewDay = preview?.newDays[0]
 
@@ -223,16 +222,16 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
       >
         <div className="mb-5 flex items-start justify-between gap-3">
           <div>
-            <h2 id="change-plan-title" className="text-lg font-semibold text-gray-900 dark:text-white">Change your plan</h2>
+            <h2 id="change-plan-title" className="text-lg font-semibold text-gray-900 dark:text-white">{t('changePlan.title')}</h2>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Your completed readings, streak, and calendar stay just as they are.
+              {t('changePlan.subtitle')}
             </p>
           </div>
           <button
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t('common.close')}
             className="-mr-2 -mt-1 rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-200"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -250,12 +249,12 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
         ) : (
           <div className="space-y-5">
             <Select
-              label="Bible translation"
+              label={t('changePlan.translation')}
               name="change-bible-version"
               value={bibleVersion}
               onChange={(e) => setBibleVersion(e.target.value)}
-              options={Object.entries(BIBLE_VERSIONS).map(([key, version]) => ({
-                value: key,
+              options={getVersionsForLanguage(language).map(version => ({
+                value: version.key,
                 label: `${version.name} (${version.abbreviation})`
               }))}
             />
@@ -263,7 +262,7 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
             <div className="space-y-2">
               <div className="space-y-1">
                 <label htmlFor="change-timeframe" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Timeframe
+                  {t('changePlan.timeframe')}
                 </label>
                 <select
                   id="change-timeframe"
@@ -282,29 +281,29 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
               </div>
               {timeframe === 'custom' && (
                 <Input
-                  label="Months from today"
+                  label={t('changePlan.monthsFromToday')}
                   type="number"
                   value={customMonths}
                   onChange={(e) => setCustomMonths(e.target.value)}
-                  placeholder="e.g. 15"
+                  placeholder={t('changePlan.monthsPlaceholder')}
                   min="1"
                   max="120"
-                  error={customMonths && customInvalid ? 'Enter a number from 1 to 120' : undefined}
+                  error={customMonths && customInvalid ? t('changePlan.monthsError') : undefined}
                 />
               )}
             </div>
 
             <Select
-              label="What to read"
+              label={t('changePlan.whatToRead')}
               name="change-testament"
               value={testament}
               onChange={(e) => setTestament(e.target.value)}
-              options={TESTAMENT_OPTIONS}
+              options={TESTAMENTS.map(({ value, key }) => ({ value, label: t(key) }))}
             />
 
             <Toggle
-              label="Include weekends"
-              description={includeWeekends ? 'Readings 7 days a week' : 'Readings Monday through Friday'}
+              label={t('changePlan.weekends')}
+              description={includeWeekends ? t('changePlan.weekendsOn') : t('changePlan.weekendsOff')}
               checked={includeWeekends}
               onChange={setIncludeWeekends}
             />
@@ -312,61 +311,63 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
             {/* Live preview of the result */}
             <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm dark:border-gray-700 dark:bg-gray-900/40">
               {!scheduleChanged && !versionChanged && (
-                <p className="text-gray-600 dark:text-gray-400">Choose what you'd like to change above.</p>
+                <p className="text-gray-600 dark:text-gray-400">{t('changePlan.chooseAbove')}</p>
               )}
 
               {!scheduleChanged && versionChanged && (
                 <div className="flex gap-2 text-gray-700 dark:text-gray-300">
                   <CheckIcon />
-                  <p>Only your translation changes. You'll keep reading right where you left off, in the {BIBLE_VERSIONS[bibleVersion].name}.</p>
+                  <p>{t('changePlan.onlyTranslation', { name: BIBLE_VERSIONS[bibleVersion].name })}</p>
                 </div>
               )}
 
               {scheduleChanged && customInvalid && (
-                <p className="text-gray-600 dark:text-gray-400">Enter how many months you'd like to take.</p>
+                <p className="text-gray-600 dark:text-gray-400">{t('changePlan.enterMonths')}</p>
               )}
 
               {nothingLeft && (
                 <p className="text-gray-700 dark:text-gray-300">
-                  You've already read every chapter in this selection — there's nothing left to schedule.
+                  {t('changePlan.nothingLeft')}
                 </p>
               )}
 
               {preview && !nothingLeft && (
                 <div className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Your new schedule</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">{t('changePlan.newSchedule')}</p>
                   <dl className="grid grid-cols-2 gap-3">
                     <div>
-                      <dt className="text-xs text-gray-500 dark:text-gray-400">Chapters left</dt>
+                      <dt className="text-xs text-gray-500 dark:text-gray-400">{t('changePlan.chaptersLeft')}</dt>
                       <dd className="font-semibold text-gray-900 dark:text-white">{preview.remainingChapterCount.toLocaleString()}</dd>
                     </div>
                     <div>
-                      <dt className="text-xs text-gray-500 dark:text-gray-400">Daily reading</dt>
+                      <dt className="text-xs text-gray-500 dark:text-gray-400">{t('changePlan.dailyReading')}</dt>
                       <dd className="font-semibold text-gray-900 dark:text-white">{paceLabel}</dd>
                     </div>
                     <div>
-                      <dt className="text-xs text-gray-500 dark:text-gray-400">Reading days</dt>
+                      <dt className="text-xs text-gray-500 dark:text-gray-400">{t('changePlan.readingDays')}</dt>
                       <dd className="font-semibold text-gray-900 dark:text-white">{preview.readingDays.toLocaleString()}</dd>
                     </div>
                     <div>
-                      <dt className="text-xs text-gray-500 dark:text-gray-400">Finish by</dt>
-                      <dd className="font-semibold text-gray-900 dark:text-white">{formatDate(preview.finishDate)}</dd>
+                      <dt className="text-xs text-gray-500 dark:text-gray-400">{t('changePlan.finishBy')}</dt>
+                      <dd className="font-semibold text-gray-900 dark:text-white">{formatDate(preview.finishDate, language)}</dd>
                     </div>
                   </dl>
                   {firstNewDay && (
                     <p className="text-gray-700 dark:text-gray-300">
-                      Next reading ({isToday(firstNewDay.scheduledDate) ? 'today' : formatDate(firstNewDay.scheduledDate)}):{' '}
-                      <span className="font-medium">{formatPassageDescription(firstNewDay.passages)}</span>
+                      {t('changePlan.nextReading', {
+                        when: isToday(firstNewDay.scheduledDate) ? t('changePlan.today') : formatDate(firstNewDay.scheduledDate, language)
+                      })}{' '}
+                      <span className="font-medium">{formatPassageDescription(firstNewDay.passages, language)}</span>
                     </p>
                   )}
                   {preview.chaptersPerDay.max > HEAVY_PACE_CHAPTERS && (
                     <p className="rounded-lg bg-amber-50 p-2 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
-                      That's a heavy daily pace. A longer timeframe would make each day lighter.
+                      {t('changePlan.heavy')}
                     </p>
                   )}
                   <ul className="space-y-1.5 border-t border-gray-200 pt-3 text-gray-700 dark:border-gray-700 dark:text-gray-300">
-                    <li className="flex gap-2"><CheckIcon />Your {plural(preview.history.length, 'completed reading')}, streak, and calendar are kept</li>
-                    <li className="flex gap-2"><CheckIcon />Your pace resets, so you start the new schedule on track</li>
+                    <li className="flex gap-2"><CheckIcon />{t('changePlan.kept', { n: preview.history.length })}</li>
+                    <li className="flex gap-2"><CheckIcon />{t('changePlan.paceReset')}</li>
                   </ul>
                 </div>
               )}
@@ -385,11 +386,11 @@ export function ChangePlanDialog({ uid, userDoc, onClose, onSaved, loadPlanDays 
                 onClick={onClose}
                 className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <div className="flex-1">
                 <Button onClick={handleSave} loading={saving} disabled={!canSave} fullWidth>
-                  Save changes
+                  {t('changePlan.save')}
                 </Button>
               </div>
             </div>

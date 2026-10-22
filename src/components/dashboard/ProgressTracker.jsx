@@ -1,8 +1,13 @@
 import { calculateProgressStatus } from '../../services/readingPlanGenerator'
 import { getToday } from '../../utils/dateHelpers'
 import { getExpectedDay, getPlanTotalDays } from '../../utils/planSchedule'
+import { useT } from '../../i18n'
+
+const STATUS_TEXT = { ahead: 'progress.ahead', behind: 'progress.behind', ontrack: 'progress.onTrack' }
 
 export function ProgressTracker({ userDoc }) {
+  const t = useT()
+
   if (!userDoc?.settings || !userDoc?.progress) {
     return null
   }
@@ -24,12 +29,12 @@ export function ProgressTracker({ userDoc }) {
 
   return (
     <div className="card">
-      <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Your Progress</h3>
+      <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('progress.title')}</h3>
 
       {/* Progress bar */}
       <div className="mb-4">
         <div className="flex justify-between text-sm mb-1">
-          <span className="text-gray-600 dark:text-gray-400">Overall completion</span>
+          <span className="text-gray-600 dark:text-gray-400">{t('progress.overall')}</span>
           <span className="font-medium text-gray-900 dark:text-white">{completionPercent}%</span>
         </div>
         <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -71,10 +76,10 @@ export function ProgressTracker({ userDoc }) {
             status.type === 'behind' ? 'text-amber-700 dark:text-amber-300' :
             'text-blue-700 dark:text-blue-300'
           }`}>
-            {status.message}
+            {t(STATUS_TEXT[status.type], { n: status.difference })}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Day {currentDay} of {totalDays}
+            {t('progress.dayOf', { n: currentDay, total: totalDays })}
           </p>
         </div>
       </div>
@@ -85,13 +90,13 @@ export function ProgressTracker({ userDoc }) {
           <p className="text-2xl font-bold text-primary-600 dark:text-primary-400">
             {completedDays.length}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Days completed</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{t('progress.completed')}</p>
         </div>
         <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
             {totalDays - completedDays.length}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Days remaining</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{t('progress.remaining')}</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import confetti from 'canvas-confetti'
+import { useT } from '../../i18n'
 
 // Icons keyed by reward type. Kept inline (matching the rest of the app's SVG style).
 function RewardIcon({ icon }) {
@@ -61,6 +62,7 @@ function prefersReducedMotion() {
 }
 
 export function CelebrationOverlay({ reward, onDismiss }) {
+  const t = useT()
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -126,7 +128,7 @@ export function CelebrationOverlay({ reward, onDismiss }) {
           onClick={onDismiss}
           className={`mt-6 w-full rounded-xl px-4 py-3 font-semibold text-white transition-colors ${theme.btn}`}
         >
-          Keep going
+          {t('reward.keepGoing')}
         </button>
       </div>
     </div>

@@ -58,11 +58,15 @@ A mobile-first React application that helps users read through the Bible on a cu
   /context
     AuthContext.jsx          - Firebase auth state; exposes user, userDoc, login, logout, etc.
     ThemeContext.jsx         - Dark mode state; reads/writes localStorage; applies 'dark' class to html
+  /i18n                      - English/Spanish text for the signed-in screens (see "Languages")
+    en.js / es.js            - Dictionaries (flat keys; functions for plurals)
+    translate.js             - createT(language), getLanguage(settings): plain JS, safe in utils
+    index.js                 - useT() / useLanguage() hooks reading userDoc.settings.language
   /pages
     LandingPage.jsx          - Public marketing/landing page (route /) with SEO content
     LoginPage.jsx            - Email/password + Google OAuth login
     SignupPage.jsx           - Account creation (email/password + Google OAuth)
-    OnboardingPage.jsx       - 5-step wizard to configure the reading plan
+    OnboardingPage.jsx       - Setup wizard (language first) to configure the reading plan
     DashboardPage.jsx        - Main reading interface (largest file ~19KB)
     PrivacyPolicyPage.jsx    - Privacy policy (linked in footer)
     TermsOfServicePage.jsx   - Terms of service (linked in footer)
@@ -90,8 +94,8 @@ All routes use HashRouter (URLs contain `#`):
 - `/signup` — SignupPage (unauthenticated only)
 - `/privacy` — PrivacyPolicyPage (public)
 - `/terms` — TermsOfServicePage (public)
-- `/install` — InstallPage (public): device-detected, step-by-step "install the app" guide
-- `/faq` — FaqPage (public): plain-language Q&A for older readers (cost, why no NIV, longest plan, changing a plan, starting over, ahead/behind, catching up, fun facts, more than one device, forgotten password), with screenshots in `public/faq/`. Linked from every footer and the dashboard gear menu ("Help & FAQ")
+- `/install` — InstallPage (public): device-detected, step-by-step "install the app" guide (Spanish for signed-in Spanish readers)
+- `/faq` — FaqPage (public): plain-language Q&A for older readers (cost, why no NIV, longest plan, changing a plan, starting over, ahead/behind, catching up, fun facts, more than one device, forgotten password), with screenshots in `public/faq/`. Linked from every footer and the dashboard gear menu ("Help & FAQ"). Signed-in Spanish readers get `QUESTIONS_ES` instead (no fun facts; RV1960/NVI instead of NIV; a language question), with Spanish screenshots in `public/faq/es/`. The English FAQ never mentions Spanish.
 - `/onboarding` — OnboardingPage (auth required; skips to dashboard if already complete)
 - `/dashboard` — DashboardPage (auth required)
 - `*` wildcard — redirects to dashboard or onboarding based on auth/onboarding state
@@ -112,12 +116,16 @@ All routes use HashRouter (URLs contain `#`):
 3. Add your domain(s) to Authorized domains (`biblereadingplan.app`; keep `www.bibleplannerapp.com` too while installed apps still run there)
 4. A new domain also goes in the browser API key's website restrictions and the reCAPTCHA key's domain list (Google Cloud console); otherwise every Firebase call from it fails
 
-### Onboarding Survey (5 Steps)
-1. **Start Date** - When to begin the reading plan (validates: no past dates, today OK)
-2. **Duration** - 6, 12, 18, 24 months, "Finish by end of year", or custom (1–120 months)
-3. **Bible Version** - Public-domain translations included locally
-4. **Include Weekends** - Toggle for weekend readings
-5. **Review & Confirm** - Summary before generating and saving plan to Firestore
+### Onboarding Survey
+Steps are named (`STEPS` in `OnboardingPage.jsx`), not numbered:
+1. **Language / Idioma** - English (preselected) or Español; switches the wizard's own text immediately and picks the default Bible (WEB / RVR1909)
+2. **Start Date** - When to begin the reading plan (validates: no past dates, today OK)
+3. **Duration** - 6, 12, 18, 24 months, "Finish by end of year", or custom (1–120 months)
+4. **Testament** - Full Bible, Old Testament, or New Testament
+5. **Bible Version** - Only translations in the chosen language
+6. **Include Weekends** - Toggle for weekend readings
+7. **Fun facts** - English only; Spanish readers skip it and get `showTrivia: false`
+8. **Review & Confirm** - Summary (including language) before generating and saving plan to Firestore
 
 ### Dashboard
 - Daily reading card with scripture text fetched from local Bible JSON
@@ -185,6 +193,7 @@ service cloud.firestore {
   settings: {
     startDate: Timestamp,
     durationMonths: number,        // 6, 12, 18, 24, or custom
+    language: "en" | "es",         // chosen once in onboarding; missing = English (pre-Spanish accounts)
     bibleVersion: "WEB",
     includeWeekends: boolean,
     showTrivia: boolean,           // "Fun facts" verse trivia; undefined = pre-feature account (dashboard offers it once)
@@ -233,6 +242,12 @@ service cloud.firestore {
 - DRA: Douay-Rheims 1899 American Edition, public domain, generated from `https://ebible.org/Scriptures/engDRA_usfm.zip`
 - RV: English Revised Version 1885, public domain, generated from `https://ebible.org/Scriptures/eng-rv_usfm.zip`
 - T4T: Translation for Translators, CC BY-SA 4.0 (© Ellis W. Deibler, Jr.), generated from `https://ebible.org/Scriptures/eng-t4t_usfm.zip`
+- **Spanish** (`language: 'es'`, chapter files carry Spanish book names and references):
+  - RVR1909: Reina-Valera 1909, public domain, `https://ebible.org/Scriptures/spaRV1909_usfm.zip` (default for Spanish)
+  - BLM: Santa Biblia libre para el mundo, public domain (its authors call it a draft under revision), `https://ebible.org/Scriptures/spablm_usfm.zip`
+  - VBL: Versión Biblia Libre, CC BY-SA 4.0 (© 2018–2020 Jonathan Gallagher y Shelly Barrios de Avila), `https://ebible.org/Scriptures/spavbl_usfm.zip`
+  - Not usable (copyrighted, no free-app license): Reina-Valera 1960, NVI, LBLA, NBLH, RVG
+- Every `BIBLE_VERSIONS` entry has a `language`; `getVersionsForLanguage(language)` and `DEFAULT_VERSION_BY_LANGUAGE` in `bibleStructure.js`. CC BY-SA versions (T4T, VBL) have a `credit`, which `ReadingCard` shows under the text (the license requires it).
 - FBV was removed (its only open eBible source covers the New Testament and Psalms only, so it can't back a whole-Bible plan)
 - Regenerate static chapter JSON with `npm run generate:bible` (or a subset: `GENERATE_ONLY=RV,T4T npm run generate:bible`)
 
@@ -269,7 +284,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - **Storage key prefix**: localStorage keys start with `biblePlanner` (from the old name). Keep it: renaming would orphan readings queued offline in `completionQueue` before they sync.
 - **Firebase setDoc with merge:true**: Used throughout to handle cases where the user document may not exist yet
 - **Dark mode**: Stored in localStorage key `darkMode`; `dark` class applied to `<html>` element
-- **FAQ screenshots** (`public/faq/*.webp`): captured at 2x on a 390px-wide phone from the real screens rendered with mock data (auth and `services/firebase` aliased to fakes in a throwaway Vite config), via headless Chrome. Retake them when those screens change; the image sizes are hard-coded in `FaqPage.jsx`.
+- **FAQ screenshots** (`public/faq/*.webp`, Spanish in `public/faq/es/`): captured at 2x on a 390px-wide phone from the real screens rendered with mock data (auth and `services/firebase` aliased to fakes in a throwaway Vite config, with the reader's language and translation set from the URL), via headless Chrome. Retake them when those screens change; the image sizes are hard-coded in `FaqPage.jsx`. The Spanish FAQ reuses the English sign-in screenshot because the sign-in page is English.
 - **Bible text**: All translations are generated chapter JSON under `public/bibles` and load locally (offline-capable after caching). There is no runtime Bible API — the former API.Bible proxy / Firebase `bibleApi` function was removed on 2026-10-21.
 - **Date parsing**: Always use `new Date(dateString + 'T00:00:00')` to parse YYYY-MM-DD strings as local time. `new Date("YYYY-MM-DD")` parses as UTC, causing off-by-one timezone bugs.
 - **Local Time day boundary**: "Which calendar day a reading counts toward" (streaks, calendar completed/missed dots, schedule pace) is determined in the user's own local timezone — the day rolls over at the user's local midnight. Helper in `dateHelpers.js`: `toCivilDateKey(date)` returns the local YYYY-MM-DD key for a Date (used to key completed-day lookups and streak day comparisons).
@@ -296,6 +311,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 - Detection: `getInstallPlatform()` / `isStandaloneApp()` in `src/utils/browserDetection.js` (iPadOS detected via "Macintosh" UA + touch).
 - One-tap install: `src/services/installPrompt.js` captures `beforeinstallprompt` before React mounts (`initInstallPrompt()` in `main.jsx`); `useInstallState()` exposes it. Chrome/Edge/Samsung only.
 - Entry points: dismissible dashboard banner (`InstallBanner`, hidden in the installed app; dismissal stored in localStorage `installBannerDismissed`), "Install app" in the settings menu, and landing page links.
+- Spanish steps: `src/utils/installGuides.es.js` (same keys). Phone menus word things differently by region, so steps name the common alternatives («Agregar a inicio» / «Añadir a pantalla de inicio»).
 - iOS note shown to users: an installed iOS web app has its own storage, so they sign in once inside it.
 
 ## CSS Custom Classes (index.css)
@@ -373,7 +389,19 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
 - UI (`src/components/dashboard/Trivia.jsx`): small ✨ marker after a verse or chapter heading → dismissible bottom sheet (floating card on desktop); collapsed "Did you know?" recap above Mark as Read. Nothing opens automatically.
 - Setting: onboarding step (default on), dashboard settings menu toggle, and a one-time "New: fun facts" card for accounts without the setting.
 
+## Languages (English / Spanish)
+- A reader picks English or Español once, as the first onboarding step; it's saved as `settings.language`. Accounts without it are English. There is no language switch anywhere else (changing it means Start Fresh), and **English readers never see anything about Spanish** afterwards: Change plan and the removed-version prompt list only translations in the reader's language.
+- Spanish covers the signed-in app: onboarding, dashboard, reading card, progress/streak/calendar, celebrations and toasts, Change plan, install banner and `/install`, update prompt, and the FAQ. Landing, login, signup, privacy, terms, and 404 stay English (the Spanish footer marks privacy/terms "(en inglés)"); the brand wordmark stays "Bible Reading Plan.app".
+- Text: `useT()` in components (`t('key', { n })`); pure code uses `createT(language)` from `src/i18n/translate.js` (e.g. `rewards.js`'s `buildReward(type, value, language)`). Dates take a language: `formatDate`, `formatShortDate`, `formatMonthYear`, `dateLocale` in `dateHelpers.js` (Spanish capitalizes the leading weekday/month). Titles use Spanish book names via `formatPassageDescription(passages, language)` and `BOOK_NAMES_ES` (saved plans keep English names + book codes).
+- When changing English wording, edit `en.js` only; keep keys in sync in `es.js` (a missing Spanish key falls back to English). Spanish uses "usted" and plain words for older readers. A native speaker's review of `es.js`, `installGuides.es.js`, and the Spanish FAQ is still recommended.
+- Fun facts are English-only: hidden (menu switch, intro card, markers) when `language === 'es'`.
+
 ## Session History
+
+### 2026-10-21: Spanish
+- Three Spanish Bibles (RVR1909, BLM, VBL) generated from eBible with Spanish book names; translation credit line for CC BY-SA versions (T4T, VBL); Terms reworded to "public domain and openly licensed translations".
+- Language step in onboarding, `settings.language`, `src/i18n` dictionaries, Spanish signed-in screens, Spanish install guide and FAQ (with Spanish screenshots). Fun facts hidden for Spanish.
+- English text was checked unchanged by dumping every signed-in screen's text (dashboard, calendar, menu, Change plan with several timeframes, Start Fresh, behind/ahead, install guide for every device, FAQ) before and after; the only differences are the new language step and the "Language: English" review row.
 
 ### 2026-10-21: Rename to "Bible Reading Plan" + biblereadingplan.app
 - **Name**: "Bible Reading Plan" everywhere users see it (manifest, meta/SEO, wordmark, install guides, legal pages). Internal storage keys keep the `biblePlanner` prefix (see Important Notes).

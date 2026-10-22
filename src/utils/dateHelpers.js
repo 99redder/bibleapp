@@ -61,21 +61,36 @@ export function addReadingDays(startDate, daysToAdd, includeWeekends) {
   return result
 }
 
+// Locale for dates shown to a reader of this language ('en' or 'es')
+export function dateLocale(language) {
+  return language === 'es' ? 'es' : 'en-US'
+}
+
+// Spanish writes weekday and month names in lowercase; capitalize the start
+function capitalizeFirst(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
 // Format date for display
-export function formatDate(date) {
+export function formatDate(date, language = 'en') {
   const d = date instanceof Date ? date : new Date(date)
-  return d.toLocaleDateString('en-US', {
+  return capitalizeFirst(d.toLocaleDateString(dateLocale(language), {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric'
-  })
+  }))
+}
+
+// Month and year, e.g. "October 2026"
+export function formatMonthYear(date, language = 'en') {
+  return capitalizeFirst(date.toLocaleDateString(dateLocale(language), { month: 'long', year: 'numeric' }))
 }
 
 // Format short date
-export function formatShortDate(date) {
+export function formatShortDate(date, language = 'en') {
   const d = date instanceof Date ? date : new Date(date)
-  return d.toLocaleDateString('en-US', {
+  return d.toLocaleDateString(dateLocale(language), {
     month: 'short',
     day: 'numeric'
   })

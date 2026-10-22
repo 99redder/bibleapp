@@ -15,9 +15,10 @@ import { clearCachedDashboard, getCachedDashboard, setCachedDashboard } from '..
 import { clearPendingCompletions, enqueueCompletion, getPendingCompletions, removePendingCompletion } from '../services/completionQueue'
 import { flushClientDiagnostics, recordClientDiagnostic } from '../services/clientDiagnostics'
 import { prefetchDayPassages } from '../services/bibleAPI'
-import { BIBLE_VERSIONS } from '../utils/bibleStructure'
+import { BIBLE_VERSIONS, DEFAULT_VERSION_BY_LANGUAGE, getVersionsForLanguage } from '../utils/bibleStructure'
 import { computeMetrics } from '../utils/progressMetrics'
 import { detectRewards, achievedMilestones } from '../utils/rewards'
+import { useLanguage, useT } from '../i18n'
 
 const Calendar = lazy(() => import('../components/dashboard/Calendar').then(module => ({ default: module.Calendar })))
 const ChangePlanDialog = lazy(() => import('../components/dashboard/ChangePlanDialog').then(module => ({ default: module.ChangePlanDialog })))
@@ -27,6 +28,8 @@ export function DashboardPage() {
   const { user, userDoc, logout, refreshUserDoc } = useAuth()
   const { darkMode, toggleDarkMode } = useTheme()
   const navigate = useNavigate()
+  const t = useT()
+  const language = useLanguage()
   const readingSectionRef = useRef(null)
   const syncingCompletionsRef = useRef(false)
 
@@ -45,7 +48,7 @@ export function DashboardPage() {
   const [showChangePlan, setShowChangePlan] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [resetting, setResetting] = useState(false)
-  const [migrationBibleVersion, setMigrationBibleVersion] = useState('WEB')
+  const [migrationBibleVersion, setMigrationBibleVersion] = useState(DEFAULT_VERSION_BY_LANGUAGE[language])
   const [savingMigration, setSavingMigration] = useState(false)
   const [migrationError, setMigrationError] = useState(null)
   const [celebrationQueue, setCelebrationQueue] = useState([])
@@ -255,7 +258,7 @@ export function DashboardPage() {
     } catch (queueError) {
       console.error('Error saving completion for later:', queueError)
       recordClientDiagnostic(user.uid, queueError, { operation: 'save_completion_queue', dayNumber })
-      setMarkCompleteError('We could not save this reading on this device. Keep the app open, reconnect, and try again.')
+      setMarkCompleteError(t('markError.device'))
       return false
     }
   }
@@ -359,7 +362,7 @@ export function DashboardPage() {
 
       // Detect any newly-earned milestones and surface celebrations / toasts.
       const metrics = computeMetrics({ settings: userDoc?.settings, progress: newProgress })
-      const { rewards, shownMilestones } = detectRewards(metrics, priorShown)
+      const { rewards, shownMilestones } = detectRewards(metrics, priorShown, language)
       if (rewards.length > 0) {
         const major = rewards.filter(r => r.tier === 'major')
         const minor = rewards.filter(r => r.tier === 'minor')
@@ -404,7 +407,7 @@ export function DashboardPage() {
         dayNumber: currentDayData.dayNumber
       })
       if (completionCommitted) {
-        setMarkCompleteError('Your reading was marked complete, but the dashboard could not fully refresh. Try again to sync it.')
+        setMarkCompleteError(t('markError.refresh'))
       } else if (!navigator.onLine || [
         'unavailable',
         'deadline-exceeded',
@@ -416,9 +419,9 @@ export function DashboardPage() {
       ].some(code => errorCode.includes(code))) {
         saveCompletionForLater(currentDayData.dayNumber, completedAt, err)
       } else if (errorCode.includes('permission-denied') || errorCode.includes('unauthenticated')) {
-        setMarkCompleteError('We could not verify your session. Check your connection, then try again.')
+        setMarkCompleteError(t('markError.session'))
       } else {
-        setMarkCompleteError('This reading was not marked complete. Please try again.')
+        setMarkCompleteError(t('markError.failed'))
       }
     } finally {
       setMarkingComplete(false)
@@ -458,7 +461,7 @@ export function DashboardPage() {
       await refreshUserDoc()
     } catch (err) {
       console.error('Error updating Bible version:', err)
-      setMigrationError('Could not update your Bible version. Please try again.')
+      setMigrationError(t('migration.failed'))
     } finally {
       setSavingMigration(false)
     }
@@ -483,7 +486,7 @@ export function DashboardPage() {
   }
 
   const dismissCelebration = () => setCelebrationQueue(prev => prev.slice(1))
-  const removeToast = (id) => setToasts(prev => prev.filter(t => t.id !== id))
+  const removeToast = (id) => setToasts(prev => prev.filter(toast => toast.id !== id))
 
   if (loading && !currentDayData) {
     return (
@@ -499,13 +502,15 @@ export function DashboardPage() {
   const isViewingCompletedDay = completedDays.some(d => d.dayNumber === viewingDayNumber)
   const isViewingPendingDay = pendingCompletions.some(entry => entry.dayNumber === viewingDayNumber)
   const canMarkComplete = !!currentDayData && !isViewingCompletedDay && !isViewingPendingDay
-  const triviaEnabled = userDoc?.settings?.showTrivia === true
+  // Fun facts are English-only; Spanish readers never see them or their setting.
+  const triviaAvailable = language === 'en'
+  const triviaEnabled = triviaAvailable && userDoc?.settings?.showTrivia === true
   // Accounts created before fun facts existed have no setting yet; offer it once.
-  const showTriviaIntro = !!userDoc?.settings && userDoc.settings.showTrivia === undefined
+  const showTriviaIntro = triviaAvailable && !!userDoc?.settings && userDoc.settings.showTrivia === undefined
   const currentBibleVersionKey = userDoc?.settings?.bibleVersion
   const needsBibleVersionMigration = !!currentBibleVersionKey && !BIBLE_VERSIONS[currentBibleVersionKey]
-  const migrationVersionOptions = Object.entries(BIBLE_VERSIONS).map(([key, version]) => ({
-    value: key,
+  const migrationVersionOptions = getVersionsForLanguage(language).map(version => ({
+    value: version.key,
     label: `${version.name} (${version.abbreviation})`
   }))
 
@@ -526,8 +531,8 @@ export function DashboardPage() {
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl sm:text-xl font-bold text-gray-900 dark:text-white flex items-center gap-3 leading-tight">
             <span className="block text-center">
-              <span className="block">Your Bible</span>
-              <span className="block">Reading Plan</span>
+              <span className="block">{t('dashboard.titleLine1')}</span>
+              <span className="block">{t('dashboard.titleLine2')}</span>
             </span>
 
             {/* Logo mark + wordmark */}
@@ -550,7 +555,7 @@ export function DashboardPage() {
             <button
               onClick={toggleDarkMode}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-              aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label={darkMode ? t('dashboard.lightMode') : t('dashboard.darkMode')}
             >
               {darkMode ? (
                 <svg className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -566,7 +571,7 @@ export function DashboardPage() {
             <button
               onClick={() => setShowCalendar(!showCalendar)}
               className={`p-2 rounded-lg ${showCalendar ? 'bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-400' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
-              aria-label="Toggle calendar"
+              aria-label={t('dashboard.toggleCalendar')}
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -578,7 +583,7 @@ export function DashboardPage() {
               <button
                 onClick={() => setShowSettings(!showSettings)}
                 className={`p-2 rounded-lg ${showSettings ? 'bg-gray-100 dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
-                aria-label="Settings"
+                aria-label={t('dashboard.settings')}
               >
                 <svg className="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -589,26 +594,30 @@ export function DashboardPage() {
               {/* Settings dropdown */}
               {showSettings && (
                 <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20">
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={triviaEnabled}
-                    disabled={savingTrivia}
-                    onClick={() => handleSetTrivia(!triviaEnabled)}
-                    className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between gap-2 disabled:opacity-60"
-                  >
-                    <span className="flex items-center gap-2">
-                      <SparkleIcon className="w-4 h-4 text-amber-500" />
-                      Fun facts
-                    </span>
-                    <span
-                      aria-hidden="true"
-                      className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${triviaEnabled ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'}`}
-                    >
-                      <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${triviaEnabled ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                    </span>
-                  </button>
-                  <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
+                  {triviaAvailable && (
+                    <>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={triviaEnabled}
+                        disabled={savingTrivia}
+                        onClick={() => handleSetTrivia(!triviaEnabled)}
+                        className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between gap-2 disabled:opacity-60"
+                      >
+                        <span className="flex items-center gap-2">
+                          <SparkleIcon className="w-4 h-4 text-amber-500" />
+                          Fun facts
+                        </span>
+                        <span
+                          aria-hidden="true"
+                          className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${triviaEnabled ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'}`}
+                        >
+                          <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${triviaEnabled ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                        </span>
+                      </button>
+                      <div className="my-1 border-t border-gray-100 dark:border-gray-700" />
+                    </>
+                  )}
                   <button
                     type="button"
                     onClick={() => {
@@ -621,7 +630,7 @@ export function DashboardPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                         d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                     </svg>
-                    Change plan
+                    {t('menu.changePlan')}
                   </button>
                   {!isStandaloneApp() && (
                     <Link
@@ -632,7 +641,7 @@ export function DashboardPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                           d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
-                      Install app
+                      {t('install.install')}
                     </Link>
                   )}
                   <Link
@@ -643,7 +652,7 @@ export function DashboardPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                         d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Help &amp; FAQ
+                    {t('menu.help')}
                   </Link>
                   <button
                     onClick={() => {
@@ -656,7 +665,7 @@ export function DashboardPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                         d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Start Fresh
+                    {t('menu.startFresh')}
                   </button>
                   <button
                     onClick={() => {
@@ -669,7 +678,7 @@ export function DashboardPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
-                    Log Out
+                    {t('menu.logOut')}
                   </button>
                 </div>
               )}
@@ -693,23 +702,23 @@ export function DashboardPage() {
       {showResetConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Start Fresh?</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{t('reset.title')}</h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              This will delete your current reading plan and all progress. You'll go through setup again to create a new plan.
+              {t('reset.body')}
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowResetConfirm(false)}
                 className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleStartFresh}
                 disabled={resetting}
                 className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
               >
-                {resetting ? 'Resetting...' : 'Start Fresh'}
+                {resetting ? t('reset.resetting') : t('reset.confirm')}
               </button>
             </div>
           </div>
@@ -737,13 +746,13 @@ export function DashboardPage() {
               <p>
                 {!isOnline
                   ? pendingCompletions.length > 0
-                    ? `${pendingCompletions.length} reading ${pendingCompletions.length === 1 ? 'is' : 'are'} saved on this device and will sync when you reconnect.`
-                    : 'You are offline. If you finish a reading, it will be saved on this device and synced later.'
+                    ? t('sync.offlinePending', { n: pendingCompletions.length })
+                    : t('sync.offline')
                   : completionSyncState === 'syncing'
-                    ? `Syncing ${pendingCompletions.length} saved ${pendingCompletions.length === 1 ? 'reading' : 'readings'}…`
+                    ? t('sync.syncing', { n: pendingCompletions.length })
                     : pendingCompletions.length > 0
-                      ? `${pendingCompletions.length} saved ${pendingCompletions.length === 1 ? 'reading needs' : 'readings need'} to sync.`
-                      : 'All saved readings are synced.'}
+                      ? t('sync.needed', { n: pendingCompletions.length })
+                      : t('sync.done')}
               </p>
               {isOnline && pendingCompletions.length > 0 && completionSyncState !== 'syncing' && (
                 <button
@@ -751,7 +760,7 @@ export function DashboardPage() {
                   onClick={syncPendingCompletions}
                   className="shrink-0 font-semibold underline underline-offset-2"
                 >
-                  Sync now
+                  {t('sync.now')}
                 </button>
               )}
             </div>
@@ -776,16 +785,16 @@ export function DashboardPage() {
         {/* Removed Bible version migration */}
         {needsBibleVersionMigration && (
           <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-100">
-            <div className="font-semibold">Choose a new Bible version</div>
+            <div className="font-semibold">{t('migration.title')}</div>
             <p className="mt-1">
-              The Bible version you previously selected is no longer available. Your reading plan and progress are safe; only the translation needs to be updated.
+              {t('migration.body')}
             </p>
             <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto]">
               <select
                 value={migrationBibleVersion}
                 onChange={(e) => setMigrationBibleVersion(e.target.value)}
                 className="input bg-white dark:bg-gray-800"
-                aria-label="Choose replacement Bible version"
+                aria-label={t('migration.choose')}
               >
                 {migrationVersionOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -799,7 +808,7 @@ export function DashboardPage() {
                 disabled={savingMigration}
                 className="rounded-lg bg-amber-600 px-4 py-2 font-medium text-white hover:bg-amber-700 disabled:opacity-50"
               >
-                {savingMigration ? 'Saving...' : 'Save'}
+                {savingMigration ? t('migration.saving') : t('migration.save')}
               </button>
             </div>
             {migrationError && (
@@ -811,14 +820,14 @@ export function DashboardPage() {
         {/* Day navigation */}
         <div ref={readingSectionRef} className="scroll-mt-24 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {isViewingCurrentDay ? "Today's Reading" : `Day ${viewingDayNumber}`}
+            {isViewingCurrentDay ? t('dashboard.todaysReading') : t('reading.day', { n: viewingDayNumber })}
           </h2>
           <div className="flex items-center gap-2">
             <button
               onClick={goToPreviousDay}
               disabled={viewingDayNumber <= 1}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed"
-              aria-label="Previous day"
+              aria-label={t('dashboard.previousDay')}
             >
               <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -829,13 +838,13 @@ export function DashboardPage() {
                 onClick={goToCurrentDay}
                 className="px-3 py-1 text-sm bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full hover:bg-primary-200 dark:hover:bg-primary-800"
               >
-                Today
+                {t('common.today')}
               </button>
             )}
             <button
               onClick={goToNextDay}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-              aria-label="Next day"
+              aria-label={t('dashboard.nextDay')}
             >
               <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -850,7 +859,7 @@ export function DashboardPage() {
             <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <span className="text-sm text-green-700 dark:text-green-300">This reading is complete</span>
+            <span className="text-sm text-green-700 dark:text-green-300">{t('dashboard.readingComplete')}</span>
           </div>
         )}
 
@@ -909,7 +918,7 @@ export function DashboardPage() {
               disabled={markingComplete}
               className="mt-2 text-sm font-semibold text-primary-700 hover:text-primary-800 disabled:opacity-50 dark:text-primary-300 dark:hover:text-primary-200"
             >
-              Try again
+              {t('common.tryAgain')}
             </button>
           </div>
         )}
@@ -920,7 +929,7 @@ export function DashboardPage() {
             onClick={goToNextDay}
             className="w-full py-3 text-center text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 rounded-lg transition-colors"
           >
-            Preview tomorrow's reading
+            {t('dashboard.previewTomorrow')}
           </button>
         )}
 
@@ -932,7 +941,7 @@ export function DashboardPage() {
             onClick={async () => {
               const shareData = {
                 title: 'Bible Reading Plan',
-                text: 'Join me in reading through the Bible! This app helps you create a personalized reading plan.',
+                text: t('share.text'),
                 url: window.location.origin + window.location.pathname
               }
 
@@ -949,7 +958,7 @@ export function DashboardPage() {
                 // Fallback: copy link to clipboard
                 try {
                   await navigator.clipboard.writeText(shareData.url)
-                  alert('Link copied to clipboard!')
+                  alert(t('share.copied'))
                 } catch (err) {
                   console.error('Copy failed:', err)
                 }
@@ -961,12 +970,12 @@ export function DashboardPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                 d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
             </svg>
-            Invite Others
+            {t('share.invite')}
           </button>
 
           <div className="flex flex-col items-center justify-center gap-2 text-sm">
             <p className="text-gray-500 dark:text-gray-400">
-              Website created and maintained by{' '}
+              {t('footer.credit')}{' '}
               <a
                 href="https://www.easternshore.ai"
                 target="_blank"
@@ -980,19 +989,19 @@ export function DashboardPage() {
               to="/privacy"
               className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
             >
-              Privacy Policy
+              {t('footer.privacy')}
             </Link>
             <Link
               to="/terms"
               className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
             >
-              Terms of Service
+              {t('footer.terms')}
             </Link>
             <Link
               to="/faq"
               className="text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
             >
-              FAQ
+              {t('footer.faq')}
             </Link>
           </div>
         </div>

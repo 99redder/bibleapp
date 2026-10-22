@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { MovedNotice } from './components/MovedNotice'
+import { useT } from './i18n'
 
 const LandingPage = lazy(() => import('./pages/LandingPage').then(module => ({ default: module.LandingPage })))
 const LoginPage = lazy(() => import('./pages/LoginPage').then(module => ({ default: module.LoginPage })))
@@ -25,6 +26,7 @@ function LoadingScreen() {
 }
 
 function UpdatePrompt() {
+  const t = useT()
   const [updateSW, setUpdateSW] = useState(null)
 
   useEffect(() => {
@@ -37,21 +39,21 @@ function UpdatePrompt() {
 
   return (
     <div className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-md rounded-lg border border-primary-200 bg-white p-4 shadow-lg dark:border-primary-800 dark:bg-gray-800">
-      <p className="text-sm font-medium text-gray-900 dark:text-white">A faster version is ready.</p>
+      <p className="text-sm font-medium text-gray-900 dark:text-white">{t('update.ready')}</p>
       <div className="mt-3 flex gap-2">
         <button
           type="button"
           onClick={() => updateSW(true)}
           className="rounded-lg bg-primary-600 px-3 py-2 text-sm font-semibold text-white hover:bg-primary-700"
         >
-          Refresh
+          {t('update.refresh')}
         </button>
         <button
           type="button"
           onClick={() => setUpdateSW(null)}
           className="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
         >
-          Later
+          {t('update.later')}
         </button>
       </div>
     </div>

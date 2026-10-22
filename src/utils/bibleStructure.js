@@ -194,54 +194,63 @@ export const BIBLE_VERSIONS = {
     key: 'BSB',
     name: 'Berean Standard Bible',
     abbreviation: 'BSB',
+    language: 'en',
     source: 'local'
   },
   WEB: {
     key: 'WEB',
     name: 'World English Bible',
     abbreviation: 'WEB',
+    language: 'en',
     source: 'local'
   },
   KJV: {
     key: 'KJV',
     name: 'King James Version',
     abbreviation: 'KJV',
+    language: 'en',
     source: 'local'
   },
   ASV: {
     key: 'ASV',
     name: 'American Standard Version',
     abbreviation: 'ASV',
+    language: 'en',
     source: 'local'
   },
   BBE: {
     key: 'BBE',
     name: 'Bible in Basic English',
     abbreviation: 'BBE',
+    language: 'en',
     source: 'local'
   },
   YLT: {
     key: 'YLT',
     name: "Young's Literal Translation",
     abbreviation: 'YLT',
+    language: 'en',
     source: 'local'
   },
   DARBY: {
     key: 'DARBY',
     name: 'Darby Translation',
     abbreviation: 'DARBY',
+    language: 'en',
     source: 'local'
   },
   WBT: {
     key: 'WBT',
     name: "Webster's Bible Translation",
     abbreviation: 'WBT',
+    language: 'en',
     source: 'local'
   },
   DRA: {
     key: 'DRA',
     name: 'Douay-Rheims 1899 American Edition',
     abbreviation: 'DRA',
+    language: 'en',
     source: 'local',
     psalmNumbering: 'vulgate'
   },
@@ -249,12 +258,14 @@ export const BIBLE_VERSIONS = {
     key: 'RV',
     name: 'Revised Version 1885',
     abbreviation: 'RV',
+    language: 'en',
     source: 'local'
   },
   T4T: {
     key: 'T4T',
     name: 'Translation for Translators',
     abbreviation: 'T4T',
+    language: 'en',
     source: 'local',
     // CC BY-SA requires visible credit; ReadingCard shows it under the text.
     credit: {
@@ -262,5 +273,41 @@ export const BIBLE_VERSIONS = {
       license: 'CC BY-SA 4.0',
       url: 'https://creativecommons.org/licenses/by-sa/4.0/'
     }
+  },
+  RVR1909: {
+    key: 'RVR1909',
+    name: 'Reina-Valera 1909',
+    abbreviation: 'RVR1909',
+    language: 'es',
+    source: 'local'
+  },
+  BLM: {
+    key: 'BLM',
+    name: 'Santa Biblia libre para el mundo',
+    abbreviation: 'BLM',
+    language: 'es',
+    source: 'local'
+  },
+  VBL: {
+    key: 'VBL',
+    name: 'Versión Biblia Libre',
+    abbreviation: 'VBL',
+    language: 'es',
+    source: 'local',
+    credit: {
+      text: 'Versión Biblia Libre © 2018–2020 Jonathan Gallagher y Shelly Barrios de Avila',
+      license: 'CC BY-SA 4.0',
+      url: 'https://creativecommons.org/licenses/by-sa/4.0/deed.es'
+    }
   }
+}
+
+// A reader's language is chosen once, in onboarding. Accounts from before
+// Spanish support have no language and are English.
+export const DEFAULT_VERSION_BY_LANGUAGE = { en: 'WEB', es: 'RVR1909' }
+
+// Translations a reader of this language is offered (English readers never
+// see the Spanish ones, and vice versa).
+export function getVersionsForLanguage(language = 'en') {
+  return Object.values(BIBLE_VERSIONS).filter(version => version.language === language)
 }

@@ -6,8 +6,11 @@ import { getChapterTrivia, loadTriviaIndex } from '../../services/trivia'
 import { formatPassageDescription } from '../../services/readingPlanGenerator'
 import { formatDate, timestampToDate } from '../../utils/dateHelpers'
 import { BIBLE_VERSIONS } from '../../utils/bibleStructure'
+import { useLanguage, useT } from '../../i18n'
 
 export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkComplete, loading: markingComplete }) {
+  const t = useT()
+  const language = useLanguage()
   const scriptureScrollRef = useRef(null)
   const [passages, setPassages] = useState([])
   const [loading, setLoading] = useState(true)
@@ -27,7 +30,7 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
     if (dayData?.passages && isBibleDataAvailable()) {
       loadPassages()
     } else if (!isBibleDataAvailable()) {
-      setError('Bible data is not available right now. Please try again later.')
+      setError(t('reading.unavailable'))
       setLoading(false)
     }
   }, [dayData, bibleVersion])
@@ -95,7 +98,7 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
       const data = await fetchDayPassages(bibleVersion, dayData.passages)
       setPassages(data)
     } catch (err) {
-      setError('Failed to load passage. Please check your internet connection.')
+      setError(t('reading.loadFailed'))
       console.error(err)
     } finally {
       setLoading(false)
@@ -106,14 +109,14 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
     return (
       <div className="card">
         <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-          No reading assignment for today.
+          {t('reading.none')}
         </p>
       </div>
     )
   }
 
   const scheduledDate = timestampToDate(dayData.scheduledDate)
-  const passageTitle = formatPassageDescription(dayData.passages)
+  const passageTitle = formatPassageDescription(dayData.passages, language)
   const credit = BIBLE_VERSIONS[bibleVersion]?.credit
 
   return (
@@ -121,10 +124,10 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
       {/* Header */}
       <div className="flex justify-between items-start mb-4 gap-3">
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Day {dayData.dayNumber}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t('reading.day', { n: dayData.dayNumber })}</p>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{passageTitle}</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {scheduledDate && formatDate(scheduledDate)}
+            {scheduledDate && formatDate(scheduledDate, language)}
           </p>
         </div>
 
@@ -140,7 +143,7 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
               }`}
               aria-pressed={lineSpacing === 'single'}
             >
-              Single
+              {t('reading.single')}
             </button>
             <button
               type="button"
@@ -151,14 +154,14 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
               }`}
               aria-pressed={lineSpacing === 'double'}
             >
-              Double
+              {t('reading.double')}
             </button>
           </div>
 
           <button
             onClick={() => setExpanded(!expanded)}
             className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            aria-label={expanded ? 'Collapse' : 'Expand'}
+            aria-label={expanded ? t('reading.collapse') : t('reading.expand')}
           >
             <svg
               className={`w-5 h-5 transition-transform ${expanded ? 'rotate-180' : ''}`}
@@ -186,7 +189,7 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
                 onClick={loadPassages}
                 className="mt-2 text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
               >
-                Try again
+                {t('common.tryAgain')}
               </button>
             </div>
           ) : (
@@ -265,7 +268,7 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
           loading={markingComplete}
           fullWidth
         >
-          Mark as Read
+          {t('reading.markRead')}
         </Button>
       )}
 
@@ -274,7 +277,7 @@ export function ReadingCard({ dayData, bibleVersion, showTrivia = false, onMarkC
           <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-          <span className="text-green-700 dark:text-green-300 font-medium">Completed</span>
+          <span className="text-green-700 dark:text-green-300 font-medium">{t('reading.completed')}</span>
         </div>
       )}
     </div>

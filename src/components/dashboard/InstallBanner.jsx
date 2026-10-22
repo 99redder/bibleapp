@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useInstallState } from '../../hooks/useInstallState'
 import { promptInstall } from '../../services/installPrompt'
+import { useT } from '../../i18n'
 
 const DISMISSED_KEY = 'installBannerDismissed'
 
@@ -9,6 +10,7 @@ const DISMISSED_KEY = 'installBannerDismissed'
 // installed app). Dismissing hides it on this device; "Install app" in the
 // settings menu stays available.
 export function InstallBanner() {
+  const t = useT()
   const { standalone, canPrompt, installed } = useInstallState()
   const [dismissed, setDismissed] = useState(() => {
     try {
@@ -33,9 +35,9 @@ export function InstallBanner() {
     <div className="card flex items-start gap-3">
       <img src="/apple-touch-icon.png" alt="" className="h-11 w-11 shrink-0 rounded-xl shadow-sm" />
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-semibold text-gray-900 dark:text-white">Get the app on your home screen</p>
+        <p className="text-sm font-semibold text-gray-900 dark:text-white">{t('install.title')}</p>
         <p className="mt-0.5 text-sm text-gray-600 dark:text-gray-300">
-          One tap to open today's reading — full-screen, fast, and offline-friendly.
+          {t('install.body')}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {canPrompt ? (
@@ -44,14 +46,14 @@ export function InstallBanner() {
               onClick={promptInstall}
               className="rounded-lg bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700"
             >
-              Install app
+              {t('install.install')}
             </button>
           ) : (
             <Link
               to="/install"
               className="rounded-lg bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700"
             >
-              Show me how
+              {t('install.showMe')}
             </Link>
           )}
           {canPrompt && (
@@ -59,7 +61,7 @@ export function InstallBanner() {
               to="/install"
               className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
             >
-              Learn more
+              {t('install.learnMore')}
             </Link>
           )}
         </div>
@@ -67,7 +69,7 @@ export function InstallBanner() {
       <button
         type="button"
         onClick={handleDismiss}
-        aria-label="Dismiss"
+        aria-label={t('install.dismiss')}
         className="-mr-1 -mt-1 rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-200"
       >
         <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

@@ -5,6 +5,8 @@ import { LogoBadge } from '../components/ui/BrandLogo'
 import { useInstallState } from '../hooks/useInstallState'
 import { promptInstall } from '../services/installPrompt'
 import { INSTALL_GUIDES, browserGuideForPlatform, guideForPlatform } from '../utils/installGuides'
+import { INSTALL_GUIDES_ES } from '../utils/installGuides.es'
+import { useLanguage, useT } from '../i18n'
 
 const APP_URL = 'https://biblereadingplan.app'
 
@@ -75,6 +77,7 @@ function Hint({ icon, label }) {
 }
 
 function CopyLinkButton() {
+  const t = useT()
   const [copied, setCopied] = useState(false)
   const [failed, setFailed] = useState(false)
 
@@ -95,7 +98,7 @@ function CopyLinkButton() {
         onClick={handleCopy}
         className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
       >
-        {copied ? 'Link copied ✓' : 'Copy link'}
+        {copied ? t('installPage.linkCopied') : t('installPage.copyLink')}
       </button>
       {failed && (
         <p className="mt-2 select-all rounded bg-gray-100 px-2 py-1 text-sm text-gray-800 dark:bg-gray-700 dark:text-gray-100">
@@ -107,34 +110,27 @@ function CopyLinkButton() {
 }
 
 const BENEFITS = [
-  ['📱', 'Opens full-screen from your home screen, like any app'],
-  ['⚡', 'Loads fast and picks up right where you left off'],
-  ['✈️', "Readings you've opened work even without a connection"],
-  ['🔄', 'Always up to date — no app store updates needed']
+  ['📱', 'installPage.benefit.1'],
+  ['⚡', 'installPage.benefit.2'],
+  ['✈️', 'installPage.benefit.3'],
+  ['🔄', 'installPage.benefit.4']
 ]
 
-const FAQS = [
-  {
-    question: 'Is this safe?',
-    answer: 'Yes. Bible Reading Plan is a web app from biblereadingplan.app, made by Eastern Shore AI, LLC. Installing adds it to your home screen so it opens full-screen; it runs with the same protections as any website, and you can remove it anytime.'
-  },
-  {
-    question: "Why isn't it in the App Store or Google Play?",
-    answer: "It doesn't need to be. Web apps install straight from your browser in a few seconds, take up very little space, and update automatically."
-  },
-  {
-    question: 'How do I remove it?',
-    answer: 'Press and hold the Bible Reading Plan icon and choose Remove App or Uninstall — just like any other app. Your reading plan stays saved to your account.'
-  }
-]
+const FAQS = [1, 2, 3].map(n => ({
+  question: `installPage.faq.${n}.question`,
+  answer: `installPage.faq.${n}.answer`
+}))
 
+// Shown in Spanish to signed-in Spanish readers; English for everyone else.
 export function InstallPage() {
   const { user } = useAuth()
+  const t = useT()
+  const guides = useLanguage() === 'es' ? INSTALL_GUIDES_ES : INSTALL_GUIDES
   const { platform, standalone, canPrompt, installed } = useInstallState()
   const detectedGuideKey = guideForPlatform(platform)
   const [guideKey, setGuideKey] = useState(detectedGuideKey)
   const [promptOutcome, setPromptOutcome] = useState(null)
-  const guide = INSTALL_GUIDES[guideKey]
+  const guide = guides[guideKey]
   const browserGuideKey = browserGuideForPlatform(platform)
 
   const handleInstall = async () => {
@@ -148,43 +144,43 @@ export function InstallPage() {
           to={user ? '/dashboard' : '/'}
           className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
         >
-          &larr; Back
+          &larr; {t('common.back')}
         </Link>
 
         <header className="mt-6 text-center">
           <LogoBadge className="mb-5" />
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Install Bible Reading Plan</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{t('installPage.title')}</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-300">
-            Put your daily reading one tap away. The app opens full-screen, loads fast, and works offline.
+            {t('installPage.intro')}
           </p>
         </header>
 
         {standalone || installed ? (
           <div className="card mt-8 text-center">
             <p className="text-lg font-semibold text-gray-900 dark:text-white">
-              {standalone ? "You're using the installed app 🎉" : 'Installed! 🎉'}
+              {standalone ? t('installPage.usingInstalled') : t('installPage.installed')}
             </p>
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
               {standalone
-                ? "You're all set — Bible Reading Plan is on your device."
-                : 'Open Bible Reading Plan from your home screen or app list.'}
+                ? t('installPage.allSet')
+                : t('installPage.openFromHome')}
             </p>
           </div>
         ) : (
           <>
             {canPrompt && guide.oneTap && (
               <div className="card mt-8 text-center ring-1 ring-primary-200 dark:ring-primary-500/30">
-                <p className="font-semibold text-gray-900 dark:text-white">Your browser can install Bible Reading Plan in one tap.</p>
+                <p className="font-semibold text-gray-900 dark:text-white">{t('installPage.oneTap')}</p>
                 <button
                   type="button"
                   onClick={handleInstall}
                   className="mt-4 w-full rounded-lg bg-primary-600 py-3 font-semibold text-white shadow-md hover:bg-primary-700"
                 >
-                  Install Bible Reading Plan
+                  {t('installPage.installButton')}
                 </button>
                 {promptOutcome === 'dismissed' && (
                   <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
-                    No problem — you can install anytime with the steps below.
+                    {t('installPage.dismissed')}
                   </p>
                 )}
               </div>
@@ -193,15 +189,15 @@ export function InstallPage() {
             <section className="mt-8" aria-labelledby="install-steps-title">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 id="install-steps-title" className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {canPrompt && guide.oneTap ? 'Or install it yourself' : 'How to install'}
+                  {canPrompt && guide.oneTap ? t('installPage.orYourself') : t('installPage.howTo')}
                 </h2>
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {guideKey === detectedGuideKey ? 'Detected for your device' : 'Showing another device'}
+                  {guideKey === detectedGuideKey ? t('installPage.detected') : t('installPage.otherDevice')}
                 </span>
               </div>
 
               <label htmlFor="install-device" className="mt-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Device and browser
+                {t('installPage.device')}
               </label>
               <select
                 id="install-device"
@@ -209,9 +205,9 @@ export function InstallPage() {
                 onChange={(e) => setGuideKey(e.target.value)}
                 className="input mt-1 bg-white dark:bg-gray-800"
               >
-                {Object.entries(INSTALL_GUIDES).map(([key, option]) => (
+                {Object.entries(guides).map(([key, option]) => (
                   <option key={key} value={key}>
-                    {option.label}{key === detectedGuideKey ? ' (this device)' : ''}
+                    {option.label}{key === detectedGuideKey ? ` (${t('installPage.thisDevice')})` : ''}
                   </option>
                 ))}
               </select>
@@ -233,7 +229,7 @@ export function InstallPage() {
                           onClick={() => setGuideKey(browserGuideKey)}
                           className="mt-3 block text-sm font-medium text-primary-600 hover:underline dark:text-primary-400"
                         >
-                          Show the {INSTALL_GUIDES[browserGuideKey].label} steps →
+                          {t('installPage.showSteps', { label: guides[browserGuideKey].label })}
                         </button>
                       )}
                     </div>
@@ -248,14 +244,14 @@ export function InstallPage() {
                     onClick={() => setGuideKey('ios-safari')}
                     className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
-                    Install on iPhone
+                    {t('installPage.onIphone')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setGuideKey('android-chrome')}
                     className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
-                    Install on Android
+                    {t('installPage.onAndroid')}
                   </button>
                 </div>
               )}
@@ -264,29 +260,29 @@ export function InstallPage() {
         )}
 
         <section className="card mt-8">
-          <h2 className="font-semibold text-gray-900 dark:text-white">Why install it?</h2>
+          <h2 className="font-semibold text-gray-900 dark:text-white">{t('installPage.why')}</h2>
           <ul className="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
-            {BENEFITS.map(([icon, text]) => (
-              <li key={text} className="flex gap-3">
+            {BENEFITS.map(([icon, key]) => (
+              <li key={key} className="flex gap-3">
                 <span aria-hidden="true">{icon}</span>
-                <span>{text}</span>
+                <span>{t(key)}</span>
               </li>
             ))}
           </ul>
         </section>
 
-        <section className="mt-8 space-y-2" aria-label="Questions about installing">
+        <section className="mt-8 space-y-2" aria-label={t('installPage.questions')}>
           {FAQS.map(faq => (
             <details key={faq.question} className="card group">
               <summary className="cursor-pointer list-none font-medium text-gray-900 marker:hidden dark:text-white">
                 <span className="flex items-center justify-between gap-2">
-                  {faq.question}
+                  {t(faq.question)}
                   <svg className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </span>
               </summary>
-              <p className="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-300">{faq.answer}</p>
+              <p className="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-300">{t(faq.answer)}</p>
             </details>
           ))}
         </section>

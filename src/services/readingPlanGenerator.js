@@ -1,3 +1,4 @@
+import { BOOK_NAMES_ES } from '../utils/bibleStructure'
 import { getTotalReadingDays } from '../utils/dateHelpers'
 import { buildReschedule, passageVerseRange } from './planReschedule'
 import { Timestamp } from './firebase'
@@ -30,9 +31,10 @@ export function generateReadingPlan(settings) {
 /**
  * Get a formatted description of the passages for a day
  * @param {Array} passages - Array of passage objects
+ * @param {string} language - Reader's language; Spanish uses Spanish book names
  * @returns {string} Formatted description like "Genesis 1-3" or "Genesis 50, Exodus 1"
  */
-export function formatPassageDescription(passages) {
+export function formatPassageDescription(passages, language = 'en') {
   if (!passages || passages.length === 0) return ''
 
   // Group consecutive whole chapters from the same book; part of a chapter is
@@ -53,6 +55,7 @@ export function formatPassageDescription(passages) {
       if (currentGroup) groups.push(currentGroup)
       currentGroup = {
         book: passage.book,
+        abbrev: passage.abbrev,
         startChapter: passage.chapter,
         endChapter: passage.chapter,
         part
@@ -63,14 +66,15 @@ export function formatPassageDescription(passages) {
 
   // Format each group
   return groups.map(group => {
+    const book = (language === 'es' && BOOK_NAMES_ES[group.abbrev]) || group.book
     if (group.part) {
       const { firstVerse, lastVerse } = group.part
-      return `${group.book} ${group.startChapter}:${firstVerse}${lastVerse > firstVerse ? `–${lastVerse}` : ''}`
+      return `${book} ${group.startChapter}:${firstVerse}${lastVerse > firstVerse ? `–${lastVerse}` : ''}`
     }
     if (group.startChapter === group.endChapter) {
-      return `${group.book} ${group.startChapter}`
+      return `${book} ${group.startChapter}`
     }
-    return `${group.book} ${group.startChapter}-${group.endChapter}`
+    return `${book} ${group.startChapter}-${group.endChapter}`
   }).join(', ')
 }
 

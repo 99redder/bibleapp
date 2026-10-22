@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Button } from '../components/ui/Button'
@@ -8,19 +8,29 @@ import { Select } from '../components/ui/Select'
 import { Toggle } from '../components/ui/Toggle'
 import { generateReadingPlan } from '../services/readingPlanGenerator'
 import { updateUserSettings, saveReadingPlan, Timestamp } from '../services/firebase'
-import { BIBLE_VERSIONS, TESTAMENTS, getTestamentChapterCount } from '../utils/bibleStructure'
+import { BIBLE_VERSIONS, DEFAULT_VERSION_BY_LANGUAGE, getTestamentChapterCount, getVersionsForLanguage } from '../utils/bibleStructure'
 import { getTomorrow, formatDate } from '../utils/dateHelpers'
 import { countVerses } from '../services/planReschedule'
+import { createT } from '../i18n'
 
-const STEPS = [
-  { id: 'start-date', title: 'When do you want to start?' },
-  { id: 'duration', title: 'Reading timeline' },
-  { id: 'testament', title: 'Which testament(s)?' },
-  { id: 'version', title: 'Bible version' },
-  { id: 'weekends', title: 'Include weekends?' },
-  { id: 'trivia', title: 'Fun facts along the way?' },
-  { id: 'confirm', title: 'Review your plan' }
+// Fun facts are English-only, so Spanish readers skip that step.
+const STEPS = ['language', 'start-date', 'duration', 'testament', 'version', 'weekends', 'trivia', 'confirm']
+const STEP_TITLES = {
+  language: 'onboarding.language.title',
+  'start-date': 'onboarding.startDate.title',
+  duration: 'onboarding.duration.title',
+  testament: 'onboarding.testament.title',
+  version: 'onboarding.version.title',
+  weekends: 'onboarding.weekends.title',
+  confirm: 'onboarding.confirm.title'
+}
+
+// Each language is offered in its own words.
+const LANGUAGE_OPTIONS = [
+  { value: 'en', label: 'English', description: 'Read the app and the Bible in English' },
+  { value: 'es', label: 'Español', description: 'Lea la aplicación y la Biblia en español' }
 ]
+const LANGUAGE_NAMES = { en: 'English', es: 'Español' }
 
 export function OnboardingPage() {
   const { user, refreshUserDoc } = useAuth()
@@ -31,15 +41,25 @@ export function OnboardingPage() {
   const [error, setError] = useState(null)
 
   // Form state
+  const [language, setLanguage] = useState('en')
   const [startDate, setStartDate] = useState(
     getTomorrow().toISOString().split('T')[0]
   )
   const [durationMonths, setDurationMonths] = useState('12')
   const [customMonths, setCustomMonths] = useState('')
   const [testament, setTestament] = useState('BOTH')
-  const [bibleVersion, setBibleVersion] = useState('WEB')
+  const [bibleVersion, setBibleVersion] = useState(DEFAULT_VERSION_BY_LANGUAGE.en)
   const [includeWeekends, setIncludeWeekends] = useState(true)
   const [showTrivia, setShowTrivia] = useState(true)
+
+  const t = useMemo(() => createT(language), [language])
+  const steps = language === 'es' ? STEPS.filter(step => step !== 'trivia') : STEPS
+  const stepId = steps[currentStep]
+
+  const handleLanguageChange = (value) => {
+    setLanguage(value)
+    setBibleVersion(DEFAULT_VERSION_BY_LANGUAGE[value])
+  }
 
   // Calculate months until end of year from start date
   const getMonthsUntilEndOfYear = () => {
@@ -69,7 +89,7 @@ export function OnboardingPage() {
     const selected = new Date(selectedDate + 'T00:00:00')
 
     if (selected < today) {
-      setError('Please select today or a future date')
+      setError(t('onboarding.error.pastDate'))
       return
     }
     setError(null)
@@ -77,27 +97,27 @@ export function OnboardingPage() {
   }
 
   const handleNext = () => {
-    // Validate start date on step 0
-    if (currentStep === 0) {
+    // Validate start date
+    if (stepId === 'start-date') {
       const today = new Date()
       today.setHours(0, 0, 0, 0)
       // Parse as local time by appending T00:00:00 (without 'Z')
       const selected = new Date(startDate + 'T00:00:00')
       if (selected < today) {
-        setError('Please select today or a future date')
+        setError(t('onboarding.error.pastDate'))
         return
       }
     }
     // Validate custom duration if selected
-    if (currentStep === 1 && durationMonths === 'custom') {
+    if (stepId === 'duration' && durationMonths === 'custom') {
       const months = parseInt(customMonths)
       if (!months || months < 1 || months > 120) {
-        setError('Please enter a valid number of months (1-120)')
+        setError(t('onboarding.error.months'))
         return
       }
     }
     setError(null)
-    if (currentStep < STEPS.length - 1) {
+    if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
     }
   }
@@ -118,9 +138,10 @@ export function OnboardingPage() {
         startDate: Timestamp.fromDate(new Date(startDate)),
         durationMonths: actualDuration,
         testament: testament,
+        language,
         bibleVersion,
         includeWeekends,
-        showTrivia,
+        showTrivia: language === 'es' ? false : showTrivia,
         emailDailyPortion: false
       }
 
@@ -142,7 +163,7 @@ export function OnboardingPage() {
       navigate('/dashboard')
     } catch (err) {
       console.error('Error saving plan:', err)
-      setError('Failed to create your reading plan. Please try again.')
+      setError(t('onboarding.error.save'))
     } finally {
       setLoading(false)
     }
@@ -156,27 +177,28 @@ export function OnboardingPage() {
   // split, so describe it in verses.
   const describePace = (months) => {
     const perDay = totalChapters / (months * 30)
-    if (perDay >= 1) return `About ${Math.ceil(perDay)} chapters per day`
-    return `About ${Math.max(1, Math.round(countVerses(testament) / (months * 30)))} verses per day`
+    if (perDay >= 1) return t('onboarding.pace.chapters', { n: Math.ceil(perDay) })
+    return t('onboarding.pace.verses', { n: Math.max(1, Math.round(countVerses(testament) / (months * 30))) })
   }
 
   const testamentOptions = [
-    { value: 'BOTH', label: 'Full Bible', description: 'Old and New Testament - 1,189 chapters' },
-    { value: 'OT', label: 'Old Testament only', description: 'Genesis through Malachi - 929 chapters' },
-    { value: 'NT', label: 'New Testament only', description: 'Matthew through Revelation - 260 chapters' }
+    { value: 'BOTH', label: t('onboarding.testament.both'), description: t('onboarding.testament.bothDescription') },
+    { value: 'OT', label: t('onboarding.testament.ot'), description: t('onboarding.testament.otDescription') },
+    { value: 'NT', label: t('onboarding.testament.nt'), description: t('onboarding.testament.ntDescription') }
   ]
 
   const durationOptions = [
-    { value: '6', label: '6 months', description: describePace(6) },
-    { value: '12', label: '12 months', description: describePace(12) },
-    { value: '18', label: '18 months', description: describePace(18) },
-    { value: '24', label: '24 months', description: describePace(24) },
-    { value: 'end-of-year', label: `Finish by end of year`, description: `${monthsUntilEndOfYear} months - about ${chaptersPerDayEndOfYear} chapters per day` },
-    { value: 'custom', label: 'Custom duration', description: 'Choose your own timeline' }
+    ...[6, 12, 18, 24].map(months => ({
+      value: String(months),
+      label: t('onboarding.duration.months', { n: months }),
+      description: describePace(months)
+    })),
+    { value: 'end-of-year', label: t('onboarding.duration.endOfYear'), description: t('onboarding.duration.endOfYearPace', { months: monthsUntilEndOfYear, perDay: chaptersPerDayEndOfYear }) },
+    { value: 'custom', label: t('onboarding.duration.custom'), description: t('onboarding.duration.customDescription') }
   ]
 
-  const versionOptions = Object.entries(BIBLE_VERSIONS).map(([key, v]) => ({
-    value: key,
+  const versionOptions = getVersionsForLanguage(language).map(v => ({
+    value: v.key,
     label: `${v.name} (${v.abbreviation})`,
     source: v.source || 'local',
     name: v.name,
@@ -186,30 +208,45 @@ export function OnboardingPage() {
   const selectedBibleVersion = BIBLE_VERSIONS[bibleVersion] || BIBLE_VERSIONS.WEB
 
   const renderStep = () => {
-    switch (currentStep) {
-      case 0:
+    switch (stepId) {
+      case 'language':
+        return (
+          <div className="space-y-4">
+            <p className="text-gray-600 dark:text-gray-400">
+              {t('onboarding.language.intro')}
+            </p>
+            <RadioGroup
+              name="language"
+              value={language}
+              onChange={handleLanguageChange}
+              options={LANGUAGE_OPTIONS}
+            />
+          </div>
+        )
+
+      case 'start-date':
         return (
           <div className="space-y-4 min-h-[300px]">
             <p className="text-gray-600 dark:text-gray-400">
-              Choose when you'd like to begin your reading journey.
+              {t('onboarding.startDate.intro')}
             </p>
             <Input
-              label="Start Date"
+              label={t('onboarding.startDate.label')}
               type="date"
               value={startDate}
               onChange={handleStartDateChange}
               min={new Date().toISOString().split('T')[0]}
               required
-              error={currentStep === 0 && error ? error : undefined}
+              error={error || undefined}
             />
           </div>
         )
 
-      case 1:
+      case 'duration':
         return (
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400">
-              How long would you like to take to read through the Bible?
+              {t('onboarding.duration.intro')}
             </p>
             <RadioGroup
               name="duration"
@@ -220,11 +257,11 @@ export function OnboardingPage() {
             {durationMonths === 'custom' && (
               <div className="mt-4 pl-4 border-l-2 border-primary-500">
                 <Input
-                  label="Number of months"
+                  label={t('onboarding.duration.customLabel')}
                   type="number"
                   value={customMonths}
                   onChange={(e) => setCustomMonths(e.target.value)}
-                  placeholder="Enter number of months"
+                  placeholder={t('onboarding.duration.customPlaceholder')}
                   min="1"
                   max="120"
                   required
@@ -239,11 +276,11 @@ export function OnboardingPage() {
           </div>
         )
 
-      case 2:
+      case 'testament':
         return (
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400">
-              Choose which part(s) of the Bible you'd like to read.
+              {t('onboarding.testament.intro')}
             </p>
             <RadioGroup
               name="testament"
@@ -254,15 +291,15 @@ export function OnboardingPage() {
           </div>
         )
 
-      case 3:
+      case 'version':
         return (
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400">
-              Which Bible translation would you prefer?
+              {t('onboarding.version.intro')}
             </p>
 
             <Select
-              label="Bible translation"
+              label={t('onboarding.version.label')}
               name="bible-version"
               value={bibleVersion}
               onChange={(e) => setBibleVersion(e.target.value)}
@@ -273,31 +310,31 @@ export function OnboardingPage() {
             <div className="rounded-lg border border-gray-200 bg-blue-50 p-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-blue-900/20 dark:text-gray-300">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/40 dark:text-green-300">
-                  Bundled
+                  {t('onboarding.version.bundled')}
                 </span>
                 <span className="font-medium text-gray-900 dark:text-white">
                   {selectedBibleVersion.name}
                 </span>
               </div>
               <p className="mt-2">
-                Scripture text is bundled with the app for fast loading and offline access after it is cached.
+                {t('onboarding.version.bundledNote')}
               </p>
             </div>
           </div>
         )
 
-      case 4:
+      case 'weekends':
         return (
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400">
-              Would you like reading assignments on Saturdays and Sundays?
+              {t('onboarding.weekends.intro')}
             </p>
             <Toggle
-              label="Include weekends"
+              label={t('onboarding.weekends.label')}
               description={
                 includeWeekends
-                  ? "You'll have readings 7 days a week"
-                  : "You'll only have readings Monday through Friday"
+                  ? t('onboarding.weekends.on')
+                  : t('onboarding.weekends.off')
               }
               checked={includeWeekends}
               onChange={setIncludeWeekends}
@@ -305,7 +342,8 @@ export function OnboardingPage() {
           </div>
         )
 
-      case 5:
+      // English only (Spanish readers skip this step)
+      case 'trivia':
         return (
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400">
@@ -334,45 +372,51 @@ export function OnboardingPage() {
           </div>
         )
 
-      case 6:
+      case 'confirm':
         return (
           <div className="space-y-4">
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Here's a summary of your reading plan:
+              {t('onboarding.confirm.intro')}
             </p>
             <div className="space-y-3">
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                <span className="text-gray-600 dark:text-gray-400">Start Date</span>
-                <span className="font-medium text-gray-900 dark:text-white">{formatDate(new Date(startDate))}</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('onboarding.confirm.language')}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{LANGUAGE_NAMES[language]}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                <span className="text-gray-600 dark:text-gray-400">Duration</span>
-                <span className="font-medium text-gray-900 dark:text-white">{getActualDuration()} months</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('onboarding.confirm.startDate')}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{formatDate(new Date(startDate), language)}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                <span className="text-gray-600 dark:text-gray-400">Reading Plan</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('onboarding.confirm.duration')}</span>
+                <span className="font-medium text-gray-900 dark:text-white">{t('onboarding.confirm.months', { n: getActualDuration() })}</span>
+              </div>
+              <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                <span className="text-gray-600 dark:text-gray-400">{t('onboarding.confirm.plan')}</span>
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {testament === 'BOTH' ? 'Full Bible' : testament === 'OT' ? 'Old Testament' : 'New Testament'}
+                  {testament === 'BOTH' ? t('onboarding.confirm.both') : testament === 'OT' ? t('onboarding.confirm.ot') : t('onboarding.confirm.nt')}
                 </span>
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                <span className="text-gray-600 dark:text-gray-400">Bible Version</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('onboarding.confirm.version')}</span>
                 <span className="font-medium text-gray-900 dark:text-white">
                   {selectedBibleVersion.name}
                 </span>
               </div>
               <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                <span className="text-gray-600 dark:text-gray-400">Reading Days</span>
+                <span className="text-gray-600 dark:text-gray-400">{t('onboarding.confirm.days')}</span>
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {includeWeekends ? 'Every day' : 'Weekdays only'}
+                  {includeWeekends ? t('onboarding.confirm.everyDay') : t('onboarding.confirm.weekdays')}
                 </span>
               </div>
-              <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
-                <span className="text-gray-600 dark:text-gray-400">Fun facts</span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {showTrivia ? 'On' : 'Off'}
-                </span>
-              </div>
+              {language !== 'es' && (
+                <div className="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                  <span className="text-gray-600 dark:text-gray-400">{t('onboarding.confirm.funFacts')}</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    {showTrivia ? t('common.on') : t('common.off')}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         )
@@ -388,9 +432,9 @@ export function OnboardingPage() {
         {/* Progress indicator */}
         <div className="mb-8">
           <div className="flex justify-between mb-2">
-            {STEPS.map((step, index) => (
+            {steps.map((step, index) => (
               <div
-                key={step.id}
+                key={step}
                 className={`h-2 flex-1 mx-0.5 rounded-full ${
                   index <= currentStep ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'
                 }`}
@@ -398,13 +442,15 @@ export function OnboardingPage() {
             ))}
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-            Step {currentStep + 1} of {STEPS.length}
+            {t('onboarding.step', { n: currentStep + 1, total: steps.length })}
           </p>
         </div>
 
         {/* Step content */}
         <div className="card mb-6">
-          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">{STEPS[currentStep].title}</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+            {stepId === 'trivia' ? 'Fun facts along the way?' : t(STEP_TITLES[stepId])}
+          </h2>
           {renderStep()}
         </div>
 
@@ -419,16 +465,16 @@ export function OnboardingPage() {
         <div className="flex gap-3">
           {currentStep > 0 && (
             <Button variant="secondary" onClick={handleBack} className="flex-1">
-              Back
+              {t('common.back')}
             </Button>
           )}
-          {currentStep < STEPS.length - 1 ? (
+          {currentStep < steps.length - 1 ? (
             <Button onClick={handleNext} className="flex-1">
-              Next
+              {t('common.next')}
             </Button>
           ) : (
             <Button onClick={handleSubmit} loading={loading} className="flex-1">
-              Start My Plan
+              {t('onboarding.startPlan')}
             </Button>
           )}
         </div>
