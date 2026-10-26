@@ -425,7 +425,8 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
   `<a href="/faq/">` so crawlers can follow it; the other FAQ links (dashboard gear menu, login, signup, 404) stay in-app.
   The service worker skips `/faq` (`navigateFallbackDenylist` in `vite.config.js`), otherwise installed apps would get
   the app shell there; the page isn't precached. Checked locally with the built worker in control: `/faq/` and `/faq`
-  load the static page, `/#/faq` the in-app one.
+  load the static page, `/#/faq` the in-app one. Live the same day; "Request indexing" pressed for `/faq/` in Search
+  Console. Cloudflare served the previous `sw.js` for about 10 minutes after the deploy (edge cache), then the new one.
 - **Google sign-in screen**: renamed to "Bible Reading Plan" with the current app icon; home/privacy/terms links point at biblereadingplan.app, which is now an authorized domain (old domains kept). Verification ran automatically in about a minute; after any branding edit, click "Publish branding" or users keep seeing the old one.
 - **Email lockdown**: biblereadingplan.app has the same no-mail records as the old domains (`v=spf1 -all`, `_dmarc` reject, empty `_domainkey`) so nobody can send mail as it.
 - **Security review**: Firestore App Check is enforced (Authentication is still in monitoring mode). Deleted the orphaned `bibleApi` Cloud Function, its `BIBLE_API_KEY` secret, and the stale `VITE_BIBLE_API_KEY` / `VITE_BIBLE_PROXY_BASE` GitHub secrets. The project is on Blaze with a $5/month budget that only sends alerts (50/90/100%). Google's enforced spend caps can't cover Firestore or Auth, so none are set.
