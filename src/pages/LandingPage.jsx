@@ -293,9 +293,10 @@ export function LandingPage() {
             Terms of Service
           </Link>
           {' · '}
-          <Link to="/faq" className="hover:text-primary-400 transition-colors">
+          {/* The static /faq/ page, a plain link so search engines can follow it */}
+          <a href="/faq/" className="hover:text-primary-400 transition-colors">
             FAQ
-          </Link>
+          </a>
           {' · '}
           <Link to="/login" className="hover:text-primary-400 transition-colors">
             Sign In

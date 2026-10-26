@@ -13,6 +13,8 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         // Let the browser preload navigation requests while the service worker starts.
         navigationPreload: true,
+        // /faq/ is a separate static page (scripts/prerenderFaq.mjs), not the app shell.
+        navigateFallbackDenylist: [/^\/faq(\/|$)/],
         // Cache strategies
         runtimeCaching: [
           {

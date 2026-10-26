@@ -95,7 +95,7 @@ All routes use HashRouter (URLs contain `#`):
 - `/privacy` — PrivacyPolicyPage (public)
 - `/terms` — TermsOfServicePage (public)
 - `/install` — InstallPage (public): device-detected, step-by-step "install the app" guide (Spanish for signed-in Spanish readers)
-- `/faq` — FaqPage (public): plain-language Q&A for older readers (cost, why no NIV, longest plan, changing a plan, starting over, ahead/behind, catching up, fun facts, more than one device, forgotten password), with screenshots in `public/faq/`. Linked from every footer and the dashboard gear menu ("Help & FAQ"). Signed-in Spanish readers get `QUESTIONS_ES` instead (no fun facts; RV1960/NVI instead of NIV; a language question), with Spanish screenshots in `public/faq/es/`. The English FAQ never mentions Spanish.
+- `/faq` — FaqPage (public): plain-language Q&A for older readers (cost, why no NIV, longest plan, changing a plan, starting over, ahead/behind, catching up, fun facts, more than one device, forgotten password), with screenshots in `public/faq/`. Linked from every footer and the dashboard gear menu ("Help & FAQ"). Signed-in Spanish readers get `QUESTIONS_ES` instead (no fun facts; RV1960/NVI instead of NIV; a language question), with Spanish screenshots in `public/faq/es/`. The English FAQ never mentions Spanish. The English questions are also built into a static page at `/faq/` for search engines (see "Static FAQ page").
 - `/onboarding` — OnboardingPage (auth required; skips to dashboard if already complete)
 - `/dashboard` — DashboardPage (auth required)
 - `*` wildcard — redirects to dashboard or onboarding based on auth/onboarding state
@@ -338,7 +338,7 @@ The GitHub Actions workflow injects the environment variables from GitHub Secret
 ## SEO Configuration (added 2026-02-19)
 - `index.html`: Comprehensive meta tags — title, description, keywords, canonical URL, Open Graph, Twitter Card, JSON-LD (WebApplication schema)
 - `public/robots.txt`: Allows all crawlers; references sitemap
-- `public/sitemap.xml`: Includes root URL; updated with current date
+- `public/sitemap.xml`: Root URL and the static `/faq/` page (the only two indexable addresses)
 - `src/pages/LandingPage.jsx`: Public marketing page at route `/`; keyword-rich content targeting "bible reading plan", "read through the bible", "daily bible readings"
 - **SEO target audience**: People searching for guided Bible reading plans, especially on mobile
 
@@ -413,8 +413,19 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
   Checked 2026-10-26 after Google's "Monitor the Google Search traffic" email (impressions since 2026-10-23): setup is complete.
   Sitemap read 2026-10-23 (Success, 1 page); robots.txt valid; 2 indexed, 0 not indexed (`https://` and an old `http://`
   copy of `/`, which now 301s to https); Change of Address shows "currently moving" on bibleplannerapp.com. bibleplanapp.com
-  is not in Search Console (it was only a Squarespace "Coming Soon" page; its 301s are enough). Only `/` can be indexed:
-  HashRouter pages (`/#/faq`, `/#/privacy`, …) count as the home page to Google, so the FAQ text isn't searchable on its own.
+  is not in Search Console (it was only a Squarespace "Coming Soon" page; its 301s are enough). HashRouter pages
+  (`/#/faq`, `/#/privacy`, …) count as the home page to Google, so the FAQ got its own static page the same day (see
+  "Static FAQ page" below).
+- **Static FAQ page (2026-10-26)**: `npm run build` = `vite build && node scripts/prerenderFaq.mjs`, which renders
+  `src/pages/FaqStaticPage.jsx` (English questions only) into `dist/faq/index.html`: plain HTML styled by the app's own
+  built CSS, canonical `https://biblereadingplan.app/faq/`, FAQPage JSON-LD generated from the same answers, a sign-up
+  card, and the app's light/dark choice from localStorage. The questions live in `src/pages/faqQuestions.jsx` (no
+  auth/Firebase imports, so Node can render them); the in-app `/#/faq` (`FaqPage`) uses the same module, so edit the
+  questions there and both pages follow. `/faq/` is in `sitemap.xml`, and the landing page footer's FAQ link is a plain
+  `<a href="/faq/">` so crawlers can follow it; the other FAQ links (dashboard gear menu, login, signup, 404) stay in-app.
+  The service worker skips `/faq` (`navigateFallbackDenylist` in `vite.config.js`), otherwise installed apps would get
+  the app shell there; the page isn't precached. Checked locally with the built worker in control: `/faq/` and `/faq`
+  load the static page, `/#/faq` the in-app one.
 - **Google sign-in screen**: renamed to "Bible Reading Plan" with the current app icon; home/privacy/terms links point at biblereadingplan.app, which is now an authorized domain (old domains kept). Verification ran automatically in about a minute; after any branding edit, click "Publish branding" or users keep seeing the old one.
 - **Email lockdown**: biblereadingplan.app has the same no-mail records as the old domains (`v=spf1 -all`, `_dmarc` reject, empty `_domainkey`) so nobody can send mail as it.
 - **Security review**: Firestore App Check is enforced (Authentication is still in monitoring mode). Deleted the orphaned `bibleApi` Cloud Function, its `BIBLE_API_KEY` secret, and the stale `VITE_BIBLE_API_KEY` / `VITE_BIBLE_PROXY_BASE` GitHub secrets. The project is on Blaze with a $5/month budget that only sends alerts (50/90/100%). Google's enforced spend caps can't cover Firestore or Auth, so none are set.
