@@ -416,6 +416,12 @@ Remotion requires Node.js 18+. Use `nvm use 20` before running Remotion commands
   is not in Search Console (it was only a Squarespace "Coming Soon" page; its 301s are enough). HashRouter pages
   (`/#/faq`, `/#/privacy`, …) count as the home page to Google, so the FAQ got its own static page the same day (see
   "Static FAQ page" below).
+  **"Page with redirect" is expected (checked 2026-11-09)**: Google's "New reasons prevent pages from being indexed" email
+  (first detected 2026-11-06) lists `http://biblereadingplan.app/`, `http://www.biblereadingplan.app/`, and
+  `https://www.biblereadingplan.app/`. They're aliases that 301 to `https://biblereadingplan.app/` (http→https by
+  Cloudflare, www→apex by GitHub Pages; `http://www.` takes two hops, which Google follows fine). Nothing to fix and
+  don't press "Validate fix" (it fails because the redirects are meant to stay). The real pages, `/` and `/faq/`, are
+  indexed; the site's canonical, `og:url`, sitemap, and code use only `https://biblereadingplan.app`.
 - **Static FAQ page (2026-10-26)**: `npm run build` = `vite build && node scripts/prerenderFaq.mjs`, which renders
   `src/pages/FaqStaticPage.jsx` (English questions only) into `dist/faq/index.html`: plain HTML styled by the app's own
   built CSS, canonical `https://biblereadingplan.app/faq/`, FAQPage JSON-LD generated from the same answers, a sign-up
